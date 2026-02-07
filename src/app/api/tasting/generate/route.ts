@@ -73,7 +73,7 @@ export async function POST(request: NextRequest) {
     if (d1) {
       const db = createDbClient(d1);
 
-      await db.insert(tastingPlans).values({
+      const planValues = {
         id: planId,
         occasion: input.occasion,
         foodPairing: input.foodPairing,
@@ -88,10 +88,11 @@ export async function POST(request: NextRequest) {
         isPublic: true,
         createdAt: now,
         updatedAt: now,
-      });
+      };
+      await db.insert(tastingPlans).values(planValues as typeof tastingPlans.$inferInsert);
 
       for (const wine of wines) {
-        await db.insert(tastingPlanWines).values({
+        const wineValues = {
           id: wine.id,
           planId: wine.planId,
           varietal: wine.varietal,
@@ -111,7 +112,8 @@ export async function POST(request: NextRequest) {
           estimatedPriceMax: wine.estimatedPriceMax,
           wineType: wine.wineType,
           createdAt: now,
-        });
+        };
+        await db.insert(tastingPlanWines).values(wineValues as typeof tastingPlanWines.$inferInsert);
       }
     }
 

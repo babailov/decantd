@@ -10,7 +10,7 @@ export async function generateTastingPlan(
   });
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ message: 'Failed to generate plan' }));
+    const error = await response.json().catch(() => ({ message: 'Failed to generate plan' })) as { message?: string };
     throw new Error(error.message || 'Failed to generate plan');
   }
 

@@ -3,6 +3,7 @@
 import {
   PolarAngleAxis,
   PolarGrid,
+  PolarRadiusAxis,
   Radar,
   RadarChart,
   ResponsiveContainer,
@@ -58,9 +59,9 @@ export function FlavorRadar({
             dataKey="axis"
             tick={{ fontSize: 11, fill: '#666666' }}
           />
+          <PolarRadiusAxis angle={90} domain={[0, 5]} tick={false} />
           <Radar
             dataKey="value"
-            domain={[0, 5]}
             fill={fillColors[wineType]}
             name="Profile"
             stroke={strokeColors[wineType]}
