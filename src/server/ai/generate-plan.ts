@@ -62,7 +62,13 @@ export async function generatePlan(
     throw new Error('No text response from AI');
   }
 
-  const parsed = JSON.parse(textBlock.text);
+  // Strip markdown code fences if present (```json ... ```)
+  const rawText = textBlock.text
+    .replace(/^```(?:json)?\s*\n?/i, '')
+    .replace(/\n?```\s*$/i, '')
+    .trim();
+
+  const parsed = JSON.parse(rawText);
   const validated = planResponseSchema.parse(parsed);
 
   return validated;

@@ -17,11 +17,11 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'Vino - AI Wine Tasting Planner',
+  title: 'Decantd - AI Wine Tasting Planner',
   description:
     'Plan the perfect wine tasting in seconds. AI-powered tasting plans with food pairings, flavor profiles, and expert recommendations.',
   openGraph: {
-    title: 'Vino - AI Wine Tasting Planner',
+    title: 'Decantd - AI Wine Tasting Planner',
     description:
       'Plan the perfect wine tasting in seconds. AI-powered tasting plans with food pairings, flavor profiles, and expert recommendations.',
   },

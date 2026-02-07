@@ -19,7 +19,7 @@ export function SharePlan({ planId }: SharePlanProps) {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: 'My Vino Tasting Plan',
+          title: 'My Decantd Tasting Plan',
           url,
         });
       } catch {

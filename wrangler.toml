@@ -1,4 +1,4 @@
-name = "vino"
+name = "decantd"
 compatibility_date = "2025-03-25"
 compatibility_flags = ["nodejs_compat_v2"]
 
@@ -11,18 +11,18 @@ directory = ".open-next/assets"
 
 [[d1_databases]]
 binding = "DB"
-database_name = "vino-db-dev"
+database_name = "decantd-db-dev"
 database_id = "local-dev-placeholder"
 
 [vars]
 NEXT_PUBLIC_ENV = "development"
 
 [env.production]
-name = "vino-prod"
+name = "decantd-prod"
 
 [[env.production.d1_databases]]
 binding = "DB"
-database_name = "vino-db-prod"
+database_name = "decantd-db-prod"
 database_id = "production-placeholder"
 
 [env.production.vars]
@@ -30,11 +30,11 @@ NEXT_PUBLIC_ENV = "production"
 NODE_ENV = "production"
 
 [env.staging]
-name = "vino-staging"
+name = "decantd-staging"
 
 [[env.staging.d1_databases]]
 binding = "DB"
-database_name = "vino-db-staging"
+database_name = "decantd-db-staging"
 database_id = "staging-placeholder"
 
 [env.staging.vars]
@@ -42,11 +42,11 @@ NEXT_PUBLIC_ENV = "staging"
 NODE_ENV = "production"
 
 [env.development]
-name = "vino-dev"
+name = "decantd-dev"
 
 [[env.development.d1_databases]]
 binding = "DB"
-database_name = "vino-db-dev"
+database_name = "decantd-db-dev"
 database_id = "development-placeholder"
 
 [env.development.vars]
@@ -54,11 +54,11 @@ NEXT_PUBLIC_ENV = "development"
 NODE_ENV = "production"
 
 [env.integration]
-name = "vino-integration"
+name = "decantd-integration"
 
 [[env.integration.d1_databases]]
 binding = "DB"
-database_name = "vino-db-dev"
+database_name = "decantd-db-dev"
 database_id = "integration-placeholder"
 
 [env.integration.vars]

@@ -125,7 +125,7 @@ const useTastingStore = createWithEqualityFn<TastingStore>()(
       resetWizard: () => set(initialState),
     }),
     {
-      name: 'vino-tasting-wizard',
+      name: 'decantd-tasting-wizard',
       partialize: (state) => ({
         occasion: state.occasion,
         foodPairing: state.foodPairing,

@@ -2,8 +2,8 @@ import type { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Vino - AI Wine Tasting Planner',
-    short_name: 'Vino',
+    name: 'Decantd - AI Wine Tasting Planner',
+    short_name: 'Decantd',
     description:
       'Plan the perfect wine tasting in seconds with AI-powered recommendations.',
     start_url: '/',

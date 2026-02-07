@@ -17,7 +17,7 @@ export function Header() {
       <Link className="flex items-center gap-xs" href="/">
         <Wine className="h-6 w-6 text-primary" />
         <span className="font-display text-heading-xs text-primary font-bold">
-          Vino
+          Decantd
         </span>
       </Link>
     </header>

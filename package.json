@@ -1,5 +1,5 @@
 {
-  "name": "vino",
+  "name": "decantd",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -10,7 +10,7 @@
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "db:generate": "drizzle-kit generate",
-    "db:migrate:local": "wrangler d1 execute vino-db-dev --local --file=./src/common/db/migrations/0001_initial.sql",
+    "db:migrate:local": "wrangler d1 execute decantd-db-dev --local --file=./src/common/db/migrations/0001_initial.sql",
     "lint": "next lint",
     "prettier": "prettier --write 'src/**/*.{js,jsx,ts,tsx}'",
     "check-types": "tsc"
@@ -35,6 +35,7 @@
     "recharts": "^2.15.0",
     "sonner": "^2.0.0",
     "tailwind-merge": "^3.3.1",
+    "use-sync-external-store": "^1.6.0",
     "vaul": "^1.1.0",
     "zod": "^3.25.0",
     "zustand": "^5.0.6"
