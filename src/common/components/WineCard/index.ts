@@ -1,0 +1,1 @@
+export { WineCard } from './WineCard';

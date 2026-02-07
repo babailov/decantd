@@ -1,0 +1,45 @@
+name: Deploy to Cloudflare Workers
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+      - develop
+      - 'feature/**'
+      - 'hotfix/**'
+      - 'bug/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - name: Deploy
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            DEPLOY_ENV="production"
+          elif [ "${{ github.ref }}" = "refs/heads/staging" ]; then
+            DEPLOY_ENV="staging"
+          elif [ "${{ github.ref }}" = "refs/heads/develop" ]; then
+            DEPLOY_ENV="development"
+          else
+            DEPLOY_ENV="integration"
+          fi
+
+          export DEPLOY_ENV
+          pnpm exec opennextjs-cloudflare build
+
+          DEPLOY_OUTPUT=$(pnpm exec opennextjs-cloudflare deploy -- --env $DEPLOY_ENV 2>&1)
+          echo "$DEPLOY_OUTPUT" | cat -n
+          GENERAL_URL=$(echo "$DEPLOY_OUTPUT" | awk '/Deployed/{getline; print $1}' | sed 's|/$||')
+          echo "Deployment URL: $GENERAL_URL" >> $GITHUB_STEP_SUMMARY
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

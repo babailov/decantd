@@ -1,0 +1,66 @@
+name = "vino"
+compatibility_date = "2025-03-25"
+compatibility_flags = ["nodejs_compat_v2"]
+
+main = ".open-next/worker.js"
+
+preview_urls = true
+
+[assets]
+directory = ".open-next/assets"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "vino-db-dev"
+database_id = "local-dev-placeholder"
+
+[vars]
+NEXT_PUBLIC_ENV = "development"
+
+[env.production]
+name = "vino-prod"
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "vino-db-prod"
+database_id = "production-placeholder"
+
+[env.production.vars]
+NEXT_PUBLIC_ENV = "production"
+NODE_ENV = "production"
+
+[env.staging]
+name = "vino-staging"
+
+[[env.staging.d1_databases]]
+binding = "DB"
+database_name = "vino-db-staging"
+database_id = "staging-placeholder"
+
+[env.staging.vars]
+NEXT_PUBLIC_ENV = "staging"
+NODE_ENV = "production"
+
+[env.development]
+name = "vino-dev"
+
+[[env.development.d1_databases]]
+binding = "DB"
+database_name = "vino-db-dev"
+database_id = "development-placeholder"
+
+[env.development.vars]
+NEXT_PUBLIC_ENV = "development"
+NODE_ENV = "production"
+
+[env.integration]
+name = "vino-integration"
+
+[[env.integration.d1_databases]]
+binding = "DB"
+database_name = "vino-db-dev"
+database_id = "integration-placeholder"
+
+[env.integration.vars]
+NEXT_PUBLIC_ENV = "integration"
+NODE_ENV = "production"
