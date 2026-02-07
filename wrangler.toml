@@ -12,7 +12,7 @@ directory = ".open-next/assets"
 [[d1_databases]]
 binding = "DB"
 database_name = "decantd-db-dev"
-database_id = "local-dev-placeholder"
+database_id = "b0031528-332f-404f-9f8c-0b3d7de8b37d"
 
 [vars]
 NEXT_PUBLIC_ENV = "development"
@@ -23,7 +23,7 @@ name = "decantd-prod"
 [[env.production.d1_databases]]
 binding = "DB"
 database_name = "decantd-db-prod"
-database_id = "production-placeholder"
+database_id = "54b3a0a8-d6df-4ff5-9218-eceeb3568cdf"
 
 [env.production.vars]
 NEXT_PUBLIC_ENV = "production"
@@ -35,7 +35,7 @@ name = "decantd-staging"
 [[env.staging.d1_databases]]
 binding = "DB"
 database_name = "decantd-db-staging"
-database_id = "staging-placeholder"
+database_id = "a99fee55-5eff-495d-a545-e3f39db1b93f"
 
 [env.staging.vars]
 NEXT_PUBLIC_ENV = "staging"
@@ -59,7 +59,7 @@ name = "decantd-integration"
 [[env.integration.d1_databases]]
 binding = "DB"
 database_name = "decantd-db-dev"
-database_id = "integration-placeholder"
+database_id = "b0031528-332f-404f-9f8c-0b3d7de8b37d"
 
 [env.integration.vars]
 NEXT_PUBLIC_ENV = "integration"

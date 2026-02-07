@@ -36,8 +36,15 @@ jobs:
           export DEPLOY_ENV
           pnpm exec opennextjs-cloudflare build
 
+          set +e
           DEPLOY_OUTPUT=$(pnpm exec opennextjs-cloudflare deploy -- --env $DEPLOY_ENV 2>&1)
-          echo "$DEPLOY_OUTPUT" | cat -n
+          DEPLOY_EXIT=$?
+          set -e
+          echo "$DEPLOY_OUTPUT"
+          if [ $DEPLOY_EXIT -ne 0 ]; then
+            echo "Deploy failed with exit code $DEPLOY_EXIT"
+            exit $DEPLOY_EXIT
+          fi
           GENERAL_URL=$(echo "$DEPLOY_OUTPUT" | awk '/Deployed/{getline; print $1}' | sed 's|/$||')
           echo "Deployment URL: $GENERAL_URL" >> $GITHUB_STEP_SUMMARY
         env:
