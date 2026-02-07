@@ -2,8 +2,8 @@
 
 import { motion } from 'motion/react';
 
-import { cn } from '@/common/functions/cn';
 import { OCCASIONS } from '@/common/constants/wine.const';
+import { cn } from '@/common/functions/cn';
 import { useTastingStore } from '@/common/stores/useTastingStore';
 import { Occasion } from '@/common/types/wine';
 

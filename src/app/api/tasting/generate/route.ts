@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { isDevEnvironment } from '@/common/constants/environment';
 import { createDbClient } from '@/common/db/client';
 import { tastingPlanWines, tastingPlans } from '@/common/db/schema';
+
 import { generatePlan } from '@/server/ai/generate-plan';
 
 const inputSchema = z.object({

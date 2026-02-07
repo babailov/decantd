@@ -58,11 +58,11 @@ export function BottomNav() {
           return (
             <button
               key={item.href}
+              disabled
               className={cn(
                 'flex flex-col items-center gap-0.5 py-xs px-xs',
                 'text-text-muted opacity-50',
               )}
-              disabled
             >
               <Icon className="h-5 w-5" />
               <span className="text-body-xs">{item.label}</span>

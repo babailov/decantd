@@ -8,14 +8,13 @@ import {
   Sparkles,
   Wine,
 } from 'lucide-react';
+import { motion } from 'motion/react';
 import Link from 'next/link';
 import { useState } from 'react';
-import { motion } from 'motion/react';
 
 import { Badge } from '@/common/components/Badge';
 import { Button } from '@/common/components/Button';
 import { Card } from '@/common/components/Card';
-import { cn } from '@/common/functions/cn';
 import { OCCASIONS } from '@/common/constants/wine.const';
 import { TastingPlan } from '@/common/types/tasting';
 

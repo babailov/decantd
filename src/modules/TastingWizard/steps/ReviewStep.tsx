@@ -6,7 +6,6 @@ import { toast } from 'sonner';
 
 import { Button } from '@/common/components/Button';
 import { Card } from '@/common/components/Card';
-import { cn } from '@/common/functions/cn';
 import { OCCASIONS, POPULAR_REGIONS } from '@/common/constants/wine.const';
 import { generateTastingPlan } from '@/common/services/tasting-api';
 import { useTastingStore } from '@/common/stores/useTastingStore';

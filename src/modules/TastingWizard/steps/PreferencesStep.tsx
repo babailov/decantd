@@ -4,8 +4,8 @@ import { Shuffle } from 'lucide-react';
 import { motion } from 'motion/react';
 
 import { Button } from '@/common/components/Button';
-import { cn } from '@/common/functions/cn';
 import { POPULAR_REGIONS } from '@/common/constants/wine.const';
+import { cn } from '@/common/functions/cn';
 import { useTastingStore } from '@/common/stores/useTastingStore';
 
 export function PreferencesStep() {

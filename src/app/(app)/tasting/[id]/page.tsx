@@ -1,11 +1,13 @@
 'use client';
 
 import { Wine } from 'lucide-react';
+import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
 import { Button } from '@/common/components/Button';
 import { useTastingPlan } from '@/common/hooks/services/useTastingPlan';
 import { useTastingStore } from '@/common/stores/useTastingStore';
+
 import { TastingPlanView } from '@/modules/TastingPlan/TastingPlanView';
 
 export default function TastingPlanPage() {
@@ -42,9 +44,9 @@ export default function TastingPlanPage() {
         <p className="text-body-m text-text-secondary mb-m">
           This tasting plan may have been removed or the link is incorrect.
         </p>
-        <a href="/tasting/new">
+        <Link href="/tasting/new">
           <Button>Create a New Plan</Button>
-        </a>
+        </Link>
       </div>
     );
   }

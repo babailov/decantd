@@ -4,13 +4,13 @@ import { AnimatePresence, motion } from 'motion/react';
 
 import { useTastingStore } from '@/common/stores/useTastingStore';
 
-import { WizardProgress } from './WizardProgress';
 import { BudgetStep } from './steps/BudgetStep';
 import { CountStep } from './steps/CountStep';
 import { FoodStep } from './steps/FoodStep';
 import { OccasionStep } from './steps/OccasionStep';
 import { PreferencesStep } from './steps/PreferencesStep';
 import { ReviewStep } from './steps/ReviewStep';
+import { WizardProgress } from './WizardProgress';
 
 const stepComponents: Record<string, React.ComponentType> = {
   occasion: OccasionStep,

@@ -141,4 +141,4 @@ const useTastingStore = createWithEqualityFn<TastingStore>()(
   shallow,
 );
 
-export { useTastingStore, STEP_ORDER };
+export { STEP_ORDER, useTastingStore };

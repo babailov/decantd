@@ -1,7 +1,6 @@
 'use client';
 
 import { Progress } from '@/common/components/Progress';
-import { cn } from '@/common/functions/cn';
 import { STEP_ORDER, useTastingStore } from '@/common/stores/useTastingStore';
 
 const STEP_LABELS: Record<string, string> = {

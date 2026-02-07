@@ -4,8 +4,8 @@ import { motion } from 'motion/react';
 
 import { Button } from '@/common/components/Button';
 import { Slider } from '@/common/components/Slider';
-import { cn } from '@/common/functions/cn';
 import { BUDGET_PRESETS } from '@/common/constants/wine.const';
+import { cn } from '@/common/functions/cn';
 import { useTastingStore } from '@/common/stores/useTastingStore';
 
 export function BudgetStep() {

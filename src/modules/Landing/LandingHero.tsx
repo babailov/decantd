@@ -1,8 +1,8 @@
 'use client';
 
 import { ChevronRight, Sparkles, Wine } from 'lucide-react';
-import Link from 'next/link';
 import { motion } from 'motion/react';
+import Link from 'next/link';
 
 import { Button } from '@/common/components/Button';
 
