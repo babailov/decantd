@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { isDevEnvironment } from '@/common/constants/environment';
 import { createDbClient } from '@/common/db/client';
 import { tastingPlanWines, tastingPlans } from '@/common/db/schema';
+import { TastingPlanInput } from '@/common/types/tasting';
 
 import { generatePlan } from '@/server/ai/generate-plan';
 
@@ -21,7 +22,7 @@ const inputSchema = z.object({
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const input = inputSchema.parse(body);
+    const input = inputSchema.parse(body) as TastingPlanInput;
 
     // Get API key — dual-environment pattern
     let apiKey: string;
