@@ -1,4 +1,3 @@
-import Anthropic from '@anthropic-ai/sdk';
 import { z } from 'zod';
 
 import { TastingPlanInput } from '@/common/types/tasting';
@@ -46,19 +45,31 @@ export async function generatePlan(
   input: TastingPlanInput,
   apiKey: string,
 ): Promise<GeneratedPlanResponse> {
-  const client = new Anthropic({ apiKey });
-
   const userPrompt = buildTastingPlanUserPrompt(input);
 
-  const response = await client.messages.create({
-    model: 'claude-sonnet-4-5-20250929',
-    max_tokens: 4096,
-    system: TASTING_PLAN_SYSTEM_PROMPT,
-    messages: [{ role: 'user', content: userPrompt }],
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+    },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-5-20250929',
+      max_tokens: 4096,
+      system: TASTING_PLAN_SYSTEM_PROMPT,
+      messages: [{ role: 'user', content: userPrompt }],
+    }),
   });
 
-  const textBlock = response.content.find((block) => block.type === 'text');
-  if (!textBlock || textBlock.type !== 'text') {
+  if (!response.ok) {
+    const errorBody = await response.text().catch(() => 'Unknown error');
+    throw new Error(`Anthropic API error (${response.status}): ${errorBody}`);
+  }
+
+  const data = await response.json() as { content: Array<{ type: string; text?: string }> };
+  const textBlock = data.content.find((block) => block.type === 'text');
+  if (!textBlock || !textBlock.text) {
     throw new Error('No text response from AI');
   }
 
