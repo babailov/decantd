@@ -9,7 +9,7 @@ import { tastingPlanWines, tastingPlans } from '@/common/db/schema';
 import { generatePlan } from '@/server/ai/generate-plan';
 
 const inputSchema = z.object({
-  occasion: z.string(),
+  occasion: z.enum(['dinner_party', 'date_night', 'casual', 'celebration', 'educational', 'business']),
   foodPairing: z.string(),
   regionPreferences: z.array(z.string()),
   budgetMin: z.number().positive(),
