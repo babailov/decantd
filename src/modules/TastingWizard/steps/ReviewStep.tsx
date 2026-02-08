@@ -25,6 +25,7 @@ export function ReviewStep() {
     setIsGenerating,
     setGeneratedPlan,
     setGenerationError,
+    resetWizard,
     prevStep,
   } = useTastingStore();
 
@@ -56,6 +57,7 @@ export function ReviewStep() {
 
       setGeneratedPlan(plan);
       queryClient.invalidateQueries({ queryKey: queryKeys.user.plans });
+      resetWizard();
       router.push(`/tasting/${plan.id}`);
     } catch (err) {
       const message =
