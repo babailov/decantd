@@ -1,6 +1,7 @@
 'use client';
 
 import { AnimatePresence, motion } from 'motion/react';
+import { useEffect } from 'react';
 
 import { useTastingStore } from '@/common/stores/useTastingStore';
 
@@ -22,6 +23,12 @@ const stepComponents: Record<string, React.ComponentType> = {
 };
 
 export function TastingWizard() {
+  const resetWizard = useTastingStore((s) => s.resetWizard);
+
+  useEffect(() => {
+    resetWizard();
+  }, [resetWizard]);
+
   const currentStep = useTastingStore((s) => s.currentStep);
   const StepComponent = stepComponents[currentStep];
 
