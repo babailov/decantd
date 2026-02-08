@@ -1,11 +1,11 @@
 'use client';
 
 import {
+  BookOpen,
   Compass,
   Home,
   Plus,
   User,
-  Users,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -22,7 +22,7 @@ export function BottomNav() {
     { href: '/', icon: Home, label: 'Home', enabled: true },
     { href: '/corkage', icon: Compass, label: 'Explore', enabled: true },
     { href: '/tasting/new', icon: Plus, label: 'New', enabled: true, primary: true },
-    { href: '/social', icon: Users, label: 'Social', enabled: false },
+    { href: '/journal', icon: BookOpen, label: 'Journal', enabled: loggedIn },
     { href: '/profile', icon: User, label: 'Profile', enabled: loggedIn },
   ];
 

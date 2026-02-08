@@ -1,7 +1,7 @@
 import { desc, eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { tastingPlanWines, wineRatings } from '@/common/db/schema';
+import { tastingPlans, tastingPlanWines, wineRatings } from '@/common/db/schema';
 
 import { getDb } from '@/server/auth/get-db';
 import { getUserFromRequest } from '@/server/auth/session';
@@ -45,25 +45,50 @@ export async function GET(request: NextRequest) {
       wines.filter(Boolean).map((w) => [w!.id, w!]),
     );
 
+    // Fetch associated plan details for titles
+    const planIds = [...new Set(ratings.map((r) => r.planId))];
+    const plans = planIds.length > 0
+      ? await Promise.all(
+          planIds.map((id) =>
+            db.query.tastingPlans.findFirst({
+              where: eq(tastingPlans.id, id),
+            }),
+          ),
+        )
+      : [];
+
+    const planMap = new Map(
+      plans.filter(Boolean).map((p) => [p!.id, p!]),
+    );
+
     const results = ratings.map((r) => {
       const wine = wineMap.get(r.planWineId);
+      const plan = planMap.get(r.planId);
       return {
         id: r.id,
         rating: r.rating,
         tastingNotes: r.tastingNotes,
         tried: r.tried,
         createdAt: r.createdAt,
+        planId: r.planId,
         wine: wine
           ? {
               id: wine.id,
               varietal: wine.varietal,
               region: wine.region,
               wineType: wine.wineType,
+              description: wine.description,
               acidity: wine.acidity,
               tannin: wine.tannin,
               sweetness: wine.sweetness,
               alcohol: wine.alcohol,
               body: wine.body,
+            }
+          : null,
+        plan: plan
+          ? {
+              id: plan.id,
+              title: plan.title,
             }
           : null,
       };

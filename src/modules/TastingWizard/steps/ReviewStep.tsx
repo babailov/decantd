@@ -1,11 +1,13 @@
 'use client';
 
+import { useQueryClient } from '@tanstack/react-query';
 import { Sparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { Button } from '@/common/components/Button';
 import { Card } from '@/common/components/Card';
+import { queryKeys } from '@/common/constants/queryKeys';
 import { OCCASIONS, POPULAR_REGIONS } from '@/common/constants/wine.const';
 import { generateTastingPlan } from '@/common/services/tasting-api';
 import { useTastingStore } from '@/common/stores/useTastingStore';
@@ -27,6 +29,7 @@ export function ReviewStep() {
   } = useTastingStore();
 
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const occasionLabel =
     OCCASIONS.find((o) => o.value === occasion)?.label || occasion;
@@ -52,6 +55,7 @@ export function ReviewStep() {
       });
 
       setGeneratedPlan(plan);
+      queryClient.invalidateQueries({ queryKey: queryKeys.user.plans });
       router.push(`/tasting/${plan.id}`);
     } catch (err) {
       const message =

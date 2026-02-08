@@ -1,11 +1,19 @@
+import { useAuthStore } from '@/common/stores/useAuthStore';
 import { TastingPlan, TastingPlanInput } from '@/common/types/tasting';
+
+function getAuthHeaders(): Record<string, string> {
+  const token = useAuthStore.getState().token;
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  if (token) headers['x-auth-token'] = token;
+  return headers;
+}
 
 export async function generateTastingPlan(
   input: TastingPlanInput,
 ): Promise<TastingPlan> {
   const response = await fetch('/api/tasting/generate', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: getAuthHeaders(),
     body: JSON.stringify(input),
   });
 
@@ -18,7 +26,9 @@ export async function generateTastingPlan(
 }
 
 export async function getTastingPlan(id: string): Promise<TastingPlan> {
-  const response = await fetch(`/api/tasting/${id}`);
+  const response = await fetch(`/api/tasting/${id}`, {
+    headers: getAuthHeaders(),
+  });
 
   if (!response.ok) {
     throw new Error('Plan not found');
