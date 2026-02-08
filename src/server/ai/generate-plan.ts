@@ -16,6 +16,7 @@ const flavorProfileSchema = z.object({
 });
 
 const wineSchema = z.object({
+  wineName: z.string().optional(),
   varietal: z.string(),
   region: z.string(),
   subRegion: z.string().optional(),

@@ -4,6 +4,7 @@ import type { PropsWithChildren } from 'react';
 import { Sonner } from '@/common/components/Toast';
 import { playfairDisplay, sourceSans } from '@/common/fonts';
 import { cn } from '@/common/functions/cn';
+import { AuthProvider } from '@/common/providers/AuthProvider';
 import { QueryProvider } from '@/common/providers/QueryProvider';
 
 import '@/common/styles/main.css';
@@ -35,7 +36,9 @@ const GlobalLayout = ({ children }: PropsWithChildren) => {
     >
       <body className="bg-background text-text-primary font-body">
         <QueryProvider>
-          {children}
+          <AuthProvider>
+            {children}
+          </AuthProvider>
           <Sonner />
         </QueryProvider>
       </body>

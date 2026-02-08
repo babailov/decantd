@@ -8,11 +8,13 @@ import { WineRecommendation as WineRecommendationType } from '@/common/types/win
 interface WineRecommendationProps {
   wine: WineRecommendationType;
   index: number;
+  children?: React.ReactNode;
 }
 
 export function WineRecommendation({
   wine,
   index,
+  children,
 }: WineRecommendationProps) {
   return (
     <motion.div
@@ -32,9 +34,12 @@ export function WineRecommendation({
         subRegion={wine.subRegion}
         tastingOrder={wine.tastingOrder}
         varietal={wine.varietal}
+        wineName={wine.wineName}
         wineType={wine.wineType}
         yearRange={wine.yearRange}
-      />
+      >
+        {children}
+      </WineCard>
     </motion.div>
   );
 }

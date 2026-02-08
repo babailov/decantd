@@ -1,0 +1,1 @@
+export { PalateProfileCard } from './PalateProfileCard';

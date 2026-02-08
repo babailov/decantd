@@ -8,6 +8,7 @@ import { tastingPlanWines, tastingPlans } from '@/common/db/schema';
 import { TastingPlanInput } from '@/common/types/tasting';
 
 import { generatePlan } from '@/server/ai/generate-plan';
+import { getUserFromRequest } from '@/server/auth/session';
 
 const inputSchema = z.object({
   occasion: z.enum(['dinner_party', 'date_night', 'casual', 'celebration', 'educational', 'business']),
@@ -73,8 +74,18 @@ export async function POST(request: NextRequest) {
     if (d1) {
       const db = createDbClient(d1);
 
+      // Check if user is authenticated
+      let userId: string | null = null;
+      try {
+        const user = await getUserFromRequest(request, db);
+        userId = user?.id || null;
+      } catch {
+        // Not authenticated — that's fine
+      }
+
       const planValues = {
         id: planId,
+        userId,
         occasion: input.occasion,
         foodPairing: input.foodPairing,
         regionPreferences: input.regionPreferences,
@@ -131,6 +142,7 @@ export async function POST(request: NextRequest) {
       wineCount: input.wineCount,
       wines: generatedPlan.wines.map((wine, i) => ({
         id: wines[i].id,
+        wineName: wine.wineName,
         ...wine,
         tastingOrder: wine.tastingOrder || i + 1,
       })),

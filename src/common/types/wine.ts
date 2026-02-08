@@ -18,6 +18,7 @@ export interface FlavorProfile {
 
 export interface WineRecommendation {
   id: string;
+  wineName?: string;
   varietal: string;
   region: string;
   subRegion?: string;

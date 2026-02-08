@@ -3,25 +3,28 @@
 import {
   Compass,
   Home,
-  LayoutDashboard,
   Plus,
+  User,
   Users,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 import { cn } from '@/common/functions/cn';
-
-const navItems = [
-  { href: '/', icon: Home, label: 'Home', enabled: true },
-  { href: '/explore', icon: Compass, label: 'Explore', enabled: false },
-  { href: '/tasting/new', icon: Plus, label: 'New', enabled: true, primary: true },
-  { href: '/social', icon: Users, label: 'Social', enabled: false },
-  { href: '/dashboard', icon: LayoutDashboard, label: 'Profile', enabled: false },
-];
+import { useAuthStore } from '@/common/stores/useAuthStore';
 
 export function BottomNav() {
   const pathname = usePathname();
+  const { isAuthenticated } = useAuthStore();
+  const loggedIn = isAuthenticated();
+
+  const navItems = [
+    { href: '/', icon: Home, label: 'Home', enabled: true },
+    { href: '/corkage', icon: Compass, label: 'Explore', enabled: true },
+    { href: '/tasting/new', icon: Plus, label: 'New', enabled: true, primary: true },
+    { href: '/social', icon: Users, label: 'Social', enabled: false },
+    { href: '/profile', icon: User, label: 'Profile', enabled: loggedIn },
+  ];
 
   return (
     <nav

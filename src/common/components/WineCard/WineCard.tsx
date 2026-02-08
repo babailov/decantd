@@ -1,6 +1,6 @@
 'use client';
 
-import { Wine } from 'lucide-react';
+import { ExternalLink, ShoppingCart, Wine } from 'lucide-react';
 
 import { Badge } from '@/common/components/Badge';
 import { Card } from '@/common/components/Card';
@@ -8,6 +8,7 @@ import { FlavorRadar } from '@/common/components/FlavorRadar';
 import { cn } from '@/common/functions/cn';
 
 interface WineCardProps {
+  wineName?: string;
   varietal: string;
   region: string;
   subRegion?: string;
@@ -27,6 +28,7 @@ interface WineCardProps {
   estimatedPriceMax: number;
   tastingOrder: number;
   className?: string;
+  children?: React.ReactNode;
 }
 
 const borderColors: Record<string, string> = {
@@ -43,7 +45,13 @@ const badgeVariants: Record<string, 'red' | 'white' | 'rose' | 'sparkling'> = {
   sparkling: 'sparkling',
 };
 
+function buildSearchUrl(wineName: string, varietal: string, region: string): string {
+  const query = wineName || `${varietal} ${region}`;
+  return `https://www.vivino.com/search/wines?q=${encodeURIComponent(query)}`;
+}
+
 export function WineCard({
+  wineName,
   varietal,
   region,
   subRegion,
@@ -57,7 +65,10 @@ export function WineCard({
   estimatedPriceMax,
   tastingOrder,
   className,
+  children,
 }: WineCardProps) {
+  const searchUrl = buildSearchUrl(wineName || '', varietal, region);
+
   return (
     <Card
       className={cn(
@@ -76,6 +87,11 @@ export function WineCard({
             <h3 className="font-display text-heading-xs text-primary">
               {varietal}
             </h3>
+            {wineName && (
+              <p className="text-body-xs text-text-primary font-medium">
+                {wineName}
+              </p>
+            )}
             <p className="text-body-xs text-text-secondary">
               {region}
               {subRegion ? `, ${subRegion}` : ''}
@@ -110,10 +126,27 @@ export function WineCard({
             {pairingRationale}
           </p>
         </div>
-        <p className="text-body-s font-medium text-accent">
-          ${estimatedPriceMin}–${estimatedPriceMax}
-        </p>
+        <div className="flex items-center justify-between">
+          <p className="text-body-s font-medium text-accent">
+            ${estimatedPriceMin}–${estimatedPriceMax}
+          </p>
+          <a
+            className={cn(
+              'inline-flex items-center gap-1 text-body-xs font-medium',
+              'text-primary hover:text-primary-hover transition-colors',
+            )}
+            href={searchUrl}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <ShoppingCart className="h-3.5 w-3.5" />
+            Buy This Wine
+            <ExternalLink className="h-3 w-3" />
+          </a>
+        </div>
       </div>
+
+      {children}
     </Card>
   );
 }
