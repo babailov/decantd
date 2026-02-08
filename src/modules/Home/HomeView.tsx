@@ -3,7 +3,6 @@
 import { BookOpen, ChevronRight, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 
-import { BottomNav, Header } from '@/common/components/AppShell';
 import { Button } from '@/common/components/Button';
 import { useAuthStore } from '@/common/stores/useAuthStore';
 
@@ -14,60 +13,54 @@ export function HomeView() {
   const { user } = useAuthStore();
 
   return (
-    <>
-      <Header />
-      <main className="pt-[var(--header-height)] pb-[var(--bottom-nav-height)] min-h-screen">
-        <div className="px-s py-m max-w-lg mx-auto">
-          {/* Greeting */}
-          <h1 className="font-display text-heading-m text-primary mb-m">
-            Welcome back, {user?.displayName}
-          </h1>
+    <div className="px-s py-m max-w-lg mx-auto">
+      {/* Greeting */}
+      <h1 className="font-display text-heading-m text-primary mb-m">
+        Welcome back, {user?.displayName}
+      </h1>
 
-          {/* Create new plan CTA */}
-          <Link href="/tasting/new">
-            <Button className="w-full gap-xs mb-l" size="lg">
-              <Sparkles className="w-5 h-5" />
-              Create New Tasting Plan
-              <ChevronRight className="w-4 h-4" />
-            </Button>
-          </Link>
+      {/* Create new plan CTA */}
+      <Link href="/tasting/new">
+        <Button className="w-full gap-xs mb-l" size="lg">
+          <Sparkles className="w-5 h-5" />
+          Create New Tasting Plan
+          <ChevronRight className="w-4 h-4" />
+        </Button>
+      </Link>
 
-          {/* Palate Profile */}
-          <div className="mb-l">
-            <h2 className="font-display text-heading-xs text-primary mb-s">
-              My Palate
-            </h2>
-            <PalateProfileCard />
-          </div>
+      {/* Palate Profile */}
+      <div className="mb-l">
+        <h2 className="font-display text-heading-xs text-primary mb-s">
+          My Palate
+        </h2>
+        <PalateProfileCard />
+      </div>
 
-          {/* Recent Plans */}
-          <div className="mb-l">
-            <div className="flex items-center justify-between mb-s">
-              <h2 className="font-display text-heading-xs text-primary">
-                My Recent Plans
-              </h2>
-              <Link
-                className="text-body-s text-accent font-medium"
-                href="/profile"
-              >
-                View all
-              </Link>
-            </div>
-            <UserPlansList />
-          </div>
-
-          {/* Journal link */}
+      {/* Recent Plans */}
+      <div className="mb-l">
+        <div className="flex items-center justify-between mb-s">
+          <h2 className="font-display text-heading-xs text-primary">
+            My Recent Plans
+          </h2>
           <Link
-            className="flex items-center gap-xs text-body-m text-accent font-medium"
-            href="/journal"
+            className="text-body-s text-accent font-medium"
+            href="/profile"
           >
-            <BookOpen className="w-5 h-5" />
-            View your tasting journal
-            <ChevronRight className="w-4 h-4" />
+            View all
           </Link>
         </div>
-      </main>
-      <BottomNav />
-    </>
+        <UserPlansList />
+      </div>
+
+      {/* Journal link */}
+      <Link
+        className="flex items-center gap-xs text-body-m text-accent font-medium"
+        href="/journal"
+      >
+        <BookOpen className="w-5 h-5" />
+        View your tasting journal
+        <ChevronRight className="w-4 h-4" />
+      </Link>
+    </div>
   );
 }
