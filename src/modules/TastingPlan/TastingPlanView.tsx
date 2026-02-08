@@ -1,5 +1,6 @@
 'use client';
 
+import { useQuery } from '@tanstack/react-query';
 import {
   Bookmark,
   ChevronDown,
@@ -10,7 +11,6 @@ import {
   Sparkles,
   Wine,
 } from 'lucide-react';
-import { useQuery } from '@tanstack/react-query';
 import { motion } from 'motion/react';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -218,7 +218,7 @@ export function TastingPlanView({ plan }: TastingPlanViewProps) {
           initial={{ opacity: 0, y: 10 }}
           transition={{ duration: 0.4, delay: 0.45 }}
         >
-          <Card variant="elevated" className="text-center">
+          <Card className="text-center" variant="elevated">
             <Bookmark className="h-6 w-6 text-accent mx-auto mb-xs" />
             <p className="font-display text-body-l font-semibold text-primary mb-1">
               Save this plan to your collection
@@ -227,9 +227,9 @@ export function TastingPlanView({ plan }: TastingPlanViewProps) {
               Create an account to track your tastings, rate wines, and build your palate profile.
             </p>
             <Button
-              onClick={() => setAuthOpen(true)}
               size="md"
               variant="secondary"
+              onClick={() => setAuthOpen(true)}
             >
               Create Free Account
             </Button>

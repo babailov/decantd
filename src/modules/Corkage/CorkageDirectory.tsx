@@ -14,7 +14,6 @@ import { useState } from 'react';
 
 import { Badge } from '@/common/components/Badge';
 import { Card } from '@/common/components/Card';
-import { Input } from '@/common/components/Input';
 import { queryKeys } from '@/common/constants/queryKeys';
 import { cn } from '@/common/functions/cn';
 
@@ -95,9 +94,9 @@ export function CorkageDirectory() {
               'w-full rounded-xl border border-border bg-surface-elevated pl-9 pr-s py-xs text-body-m text-text-primary',
               'placeholder:text-text-muted focus:border-primary focus:outline-none',
             )}
-            onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search by name, neighborhood, or cuisine..."
             value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
       </div>
@@ -206,7 +205,7 @@ export function CorkageDirectory() {
       )}
 
       <p className="text-body-xs text-text-muted text-center mt-m">
-        Know a corkage-friendly restaurant? We'd love to add it.
+        Know a corkage-friendly restaurant? We&apos;d love to add it.
       </p>
     </div>
   );

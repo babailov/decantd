@@ -12,6 +12,7 @@ import { Card } from '@/common/components/Card';
 import { cn } from '@/common/functions/cn';
 import { logout } from '@/common/services/auth-api';
 import { useAuthStore } from '@/common/stores/useAuthStore';
+
 import { PalateProfileCard } from '@/modules/PalateProfile';
 
 import { UserPlansList } from './UserPlansList';
@@ -44,7 +45,7 @@ export function ProfileView() {
   return (
     <div className="px-s py-m max-w-lg mx-auto">
       {/* Profile header */}
-      <Card variant="elevated" className="mb-m">
+      <Card className="mb-m" variant="elevated">
         <div className="flex items-center gap-s">
           <div className={cn(
             'w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center',
@@ -93,9 +94,9 @@ export function ProfileView() {
         </Link>
         <Button
           className="w-full"
-          onClick={handleLogout}
           size="md"
           variant="ghost"
+          onClick={handleLogout}
         >
           <LogOut className="h-4 w-4 mr-xs" />
           Sign Out

@@ -85,34 +85,34 @@ export function AuthDialog({ open, onOpenChange, defaultMode = 'signup' }: AuthD
         <form className="flex flex-col gap-s" onSubmit={handleSubmit}>
           {mode === 'signup' && (
             <Input
+              required
               id="displayName"
               label="Display Name"
               placeholder="Your name"
               value={displayName}
               onChange={(e) => setDisplayName(e.target.value)}
-              required
             />
           )}
 
           <Input
+            required
             id="email"
             label="Email"
             placeholder="you@example.com"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            required
           />
 
           <Input
+            required
             id="password"
             label="Password"
+            minLength={mode === 'signup' ? 8 : undefined}
             placeholder={mode === 'signup' ? '8+ characters' : 'Your password'}
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            minLength={mode === 'signup' ? 8 : undefined}
-            required
           />
 
           {error && (
@@ -136,8 +136,8 @@ export function AuthDialog({ open, onOpenChange, defaultMode = 'signup' }: AuthD
               'text-primary font-medium hover:underline',
               'focus:outline-none focus-visible:underline',
             )}
-            onClick={toggleMode}
             type="button"
+            onClick={toggleMode}
           >
             {mode === 'signup' ? 'Sign in' : 'Create one'}
           </button>

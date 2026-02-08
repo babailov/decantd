@@ -7,9 +7,9 @@ import Link from 'next/link';
 
 import { Badge } from '@/common/components/Badge';
 import { Card } from '@/common/components/Card';
-import { cn } from '@/common/functions/cn';
 import { queryKeys } from '@/common/constants/queryKeys';
 import { OCCASIONS } from '@/common/constants/wine.const';
+import { cn } from '@/common/functions/cn';
 
 interface PlanSummary {
   id: string;
@@ -72,10 +72,10 @@ export function UserPlansList() {
         return (
           <Link key={plan.id} href={`/tasting/${plan.id}`}>
             <Card
-              variant="outlined"
               className={cn(
                 'flex items-center gap-s hover:bg-surface transition-colors cursor-pointer',
               )}
+              variant="outlined"
             >
               <div className="flex-1 min-w-0">
                 <p className="font-display text-body-l text-primary font-medium truncate">

@@ -5,7 +5,6 @@ import { Star } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
-import { Button } from '@/common/components/Button';
 import { queryKeys } from '@/common/constants/queryKeys';
 import { cn } from '@/common/functions/cn';
 import { useAuthStore } from '@/common/stores/useAuthStore';
@@ -104,11 +103,11 @@ export function WineRating({ planWineId, planId, existingRating }: WineRatingPro
               'placeholder:text-text-muted resize-none',
               'focus:border-primary focus:outline-none',
             )}
-            onBlur={handleNotesBlur}
-            onChange={(e) => setNotes(e.target.value)}
             placeholder="Add tasting notes..."
             rows={2}
             value={notes}
+            onBlur={handleNotesBlur}
+            onChange={(e) => setNotes(e.target.value)}
           />
         </div>
       )}

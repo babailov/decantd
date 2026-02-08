@@ -54,7 +54,7 @@ export function PalateProfileCard() {
 
   if (!data?.ready || !data.profile) {
     return (
-      <Card variant="outlined" className="text-center py-l">
+      <Card className="text-center py-l" variant="outlined">
         <Wine className="h-8 w-8 text-text-muted mx-auto mb-xs" />
         <p className="font-display text-body-l font-semibold text-primary mb-1">
           Your Palate Profile
@@ -114,7 +114,7 @@ export function PalateProfileCard() {
               Decantd
             </span>
           </div>
-          <Button onClick={handleShare} size="sm" variant="ghost">
+          <Button size="sm" variant="ghost" onClick={handleShare}>
             <Share2 className="h-4 w-4 mr-1" />
             Share
           </Button>
