@@ -22,7 +22,7 @@ interface Combo {
 }
 
 export class CacheWarmupWorkflow extends WorkflowEntrypoint<Env> {
-  async run(event: WorkflowEvent<void>, step: WorkflowStep) {
+  async run(event: WorkflowEvent<unknown>, step: WorkflowStep) {
     // Step 1: Enumerate all 36 combos
     const combos = await step.do('enumerate', async () => {
       const result: Combo[] = [];
