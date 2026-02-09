@@ -3,7 +3,10 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect } from 'react';
 
+import { useAuthStore } from '@/common/stores/useAuthStore';
 import { useTastingStore } from '@/common/stores/useTastingStore';
+
+import { GuestPlansList } from '@/modules/Landing/GuestPlansList';
 
 import { BudgetStep } from './steps/BudgetStep';
 import { CountStep } from './steps/CountStep';
@@ -24,6 +27,7 @@ const stepComponents: Record<string, React.ComponentType> = {
 
 export function TastingWizard() {
   const resetWizard = useTastingStore((s) => s.resetWizard);
+  const { isAuthenticated } = useAuthStore();
 
   useEffect(() => {
     resetWizard();
@@ -34,6 +38,8 @@ export function TastingWizard() {
 
   return (
     <div className="max-w-md mx-auto px-s py-m">
+      {!isAuthenticated() && <GuestPlansList compact />}
+
       <WizardProgress />
 
       <AnimatePresence mode="wait">

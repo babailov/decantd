@@ -10,6 +10,7 @@ import { Card } from '@/common/components/Card';
 import { queryKeys } from '@/common/constants/queryKeys';
 import { OCCASIONS, POPULAR_REGIONS } from '@/common/constants/wine.const';
 import { generateTastingPlan } from '@/common/services/tasting-api';
+import { usePlanHistoryStore } from '@/common/stores/usePlanHistoryStore';
 import { useTastingStore } from '@/common/stores/useTastingStore';
 
 export function ReviewStep() {
@@ -56,6 +57,13 @@ export function ReviewStep() {
       });
 
       setGeneratedPlan(plan);
+      usePlanHistoryStore.getState().addPlan({
+        id: plan.id,
+        title: plan.title,
+        occasion: plan.occasion,
+        wineCount: plan.wineCount,
+        createdAt: plan.createdAt,
+      });
       queryClient.invalidateQueries({ queryKey: queryKeys.user.plans });
       resetWizard();
       router.push(`/tasting/${plan.id}`);

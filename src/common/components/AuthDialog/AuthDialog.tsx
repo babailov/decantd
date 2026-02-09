@@ -15,6 +15,7 @@ import { Input } from '@/common/components/Input';
 import { cn } from '@/common/functions/cn';
 import { login, signUp } from '@/common/services/auth-api';
 import { useAuthStore } from '@/common/stores/useAuthStore';
+import { usePlanHistoryStore } from '@/common/stores/usePlanHistoryStore';
 
 interface AuthDialogProps {
   open: boolean;
@@ -52,10 +53,12 @@ export function AuthDialog({ open, onOpenChange, defaultMode = 'signup' }: AuthD
       if (mode === 'signup') {
         const session = await signUp({ email, password, displayName });
         setAuth(session.user, session.token);
+        usePlanHistoryStore.getState().clearHistory();
         toast.success('Welcome to Decantd!');
       } else {
         const session = await login({ email, password });
         setAuth(session.user, session.token);
+        usePlanHistoryStore.getState().clearHistory();
         toast.success('Welcome back!');
       }
       resetForm();
