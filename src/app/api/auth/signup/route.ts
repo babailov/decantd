@@ -60,6 +60,7 @@ export async function POST(request: NextRequest) {
         email: input.email.toLowerCase(),
         displayName: input.displayName,
         avatarUrl: null,
+        subscriptionTier: 'free',
         createdAt: now,
       },
     });

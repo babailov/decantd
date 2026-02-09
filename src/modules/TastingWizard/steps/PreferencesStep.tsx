@@ -4,8 +4,10 @@ import { Shuffle } from 'lucide-react';
 import { motion } from 'motion/react';
 
 import { Button } from '@/common/components/Button';
+import { UpgradeCTA } from '@/common/components/UpgradeCTA';
 import { POPULAR_REGIONS } from '@/common/constants/wine.const';
 import { cn } from '@/common/functions/cn';
+import { useTierConfig } from '@/common/hooks/useTierConfig';
 import { useTastingStore } from '@/common/stores/useTastingStore';
 
 export function PreferencesStep() {
@@ -15,6 +17,9 @@ export function PreferencesStep() {
   const setSurpriseMe = useTastingStore((s) => s.setSurpriseMe);
   const nextStep = useTastingStore((s) => s.nextStep);
   const prevStep = useTastingStore((s) => s.prevStep);
+  const tierConfig = useTierConfig();
+
+  const isForced = tierConfig.forceSurpriseMe;
 
   return (
     <div>
@@ -31,7 +36,9 @@ export function PreferencesStep() {
           surpriseMe
             ? 'border-accent bg-accent/10'
             : 'border-border bg-surface-elevated hover:border-accent/30',
+          isForced && 'opacity-70 cursor-not-allowed',
         )}
+        disabled={isForced}
         onClick={() => setSurpriseMe(!surpriseMe)}
       >
         <Shuffle className="w-5 h-5 text-accent" />
@@ -45,7 +52,7 @@ export function PreferencesStep() {
         </div>
       </button>
 
-      {!surpriseMe && (
+      {!surpriseMe && !isForced && (
         <div className="flex flex-wrap gap-2">
           {POPULAR_REGIONS.map((region, i) => (
             <motion.button
@@ -66,6 +73,10 @@ export function PreferencesStep() {
             </motion.button>
           ))}
         </div>
+      )}
+
+      {isForced && (
+        <UpgradeCTA message="Sign up to choose specific wine regions." />
       )}
 
       <div className="flex gap-s mt-l">

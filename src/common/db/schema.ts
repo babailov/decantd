@@ -9,6 +9,7 @@ export const users = sqliteTable('users', {
   passwordHash: text('password_hash').notNull(),
   displayName: text('display_name').notNull(),
   avatarUrl: text('avatar_url'),
+  subscriptionTier: text('subscription_tier').notNull().default('free'),
   createdAt: text('created_at')
     .notNull()
     .default(sql`(datetime('now'))`),
@@ -116,6 +117,46 @@ export const wineRatings = sqliteTable('wine_ratings', {
     .notNull()
     .default(sql`(datetime('now'))`),
   updatedAt: text('updated_at')
+    .notNull()
+    .default(sql`(datetime('now'))`),
+});
+
+// ── Plan Cache ────────────────────────────────────────
+
+export const cachedPlans = sqliteTable('cached_plans', {
+  id: text('id').primaryKey(),
+  inputHash: text('input_hash').notNull().unique(),
+  occasion: text('occasion').notNull(),
+  foodPairing: text('food_pairing').notNull(),
+  regionPreferences: text('region_preferences', { mode: 'json' })
+    .notNull()
+    .$type<string[]>()
+    .default([]),
+  budgetMin: real('budget_min').notNull(),
+  budgetMax: real('budget_max').notNull(),
+  wineCount: integer('wine_count').notNull(),
+  planId: text('plan_id')
+    .notNull()
+    .references(() => tastingPlans.id),
+  expiresAt: text('expires_at'),
+  createdAt: text('created_at')
+    .notNull()
+    .default(sql`(datetime('now'))`),
+});
+
+// ── Generation Logs ───────────────────────────────────
+
+export const generationLogs = sqliteTable('generation_logs', {
+  id: text('id').primaryKey(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id),
+  inputHash: text('input_hash').notNull(),
+  planId: text('plan_id').references(() => tastingPlans.id),
+  wasCacheHit: integer('was_cache_hit', { mode: 'boolean' })
+    .notNull()
+    .default(false),
+  createdAt: text('created_at')
     .notNull()
     .default(sql`(datetime('now'))`),
 });

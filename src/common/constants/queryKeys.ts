@@ -12,4 +12,7 @@ export const queryKeys = {
     all: ['corkage'] as const,
     byCity: (city: string) => ['corkage', city] as const,
   },
+  generation: {
+    status: ['generation', 'status'] as const,
+  },
 };

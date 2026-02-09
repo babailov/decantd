@@ -1,11 +1,13 @@
 'use client';
 
 import { motion } from 'motion/react';
+import { useEffect } from 'react';
 
 import { Button } from '@/common/components/Button';
 import { Slider } from '@/common/components/Slider';
-import { BUDGET_PRESETS } from '@/common/constants/wine.const';
+import { UpgradeCTA } from '@/common/components/UpgradeCTA';
 import { cn } from '@/common/functions/cn';
+import { useTierConfig } from '@/common/hooks/useTierConfig';
 import { useTastingStore } from '@/common/stores/useTastingStore';
 
 export function BudgetStep() {
@@ -14,6 +16,15 @@ export function BudgetStep() {
   const setBudgetRange = useTastingStore((s) => s.setBudgetRange);
   const nextStep = useTastingStore((s) => s.nextStep);
   const prevStep = useTastingStore((s) => s.prevStep);
+  const tierConfig = useTierConfig();
+
+  // Auto-select single preset for anonymous users
+  useEffect(() => {
+    if (tierConfig.budgetPresets.length === 1) {
+      const preset = tierConfig.budgetPresets[0];
+      setBudgetRange(preset.min, preset.max);
+    }
+  }, [tierConfig.budgetPresets, setBudgetRange]);
 
   return (
     <div>
@@ -26,7 +37,7 @@ export function BudgetStep() {
 
       {/* Quick presets */}
       <div className="flex gap-2 mb-l">
-        {BUDGET_PRESETS.map((preset, i) => (
+        {tierConfig.budgetPresets.map((preset, i) => (
           <motion.button
             key={preset.label}
             animate={{ opacity: 1, y: 0 }}
@@ -45,24 +56,30 @@ export function BudgetStep() {
         ))}
       </div>
 
-      {/* Dual-thumb slider */}
-      <div className="px-xs">
-        <Slider
-          max={200}
-          min={5}
-          step={5}
-          value={[budgetMin, budgetMax]}
-          onValueChange={([min, max]) => setBudgetRange(min, max)}
-        />
-        <div className="flex justify-between mt-xs">
-          <span className="text-body-m font-semibold text-primary">
-            ${budgetMin}
-          </span>
-          <span className="text-body-m font-semibold text-primary">
-            ${budgetMax}
-          </span>
+      {/* Dual-thumb slider — only for users with custom budget access */}
+      {tierConfig.allowCustomBudget && (
+        <div className="px-xs">
+          <Slider
+            max={200}
+            min={5}
+            step={5}
+            value={[budgetMin, budgetMax]}
+            onValueChange={([min, max]) => setBudgetRange(min, max)}
+          />
+          <div className="flex justify-between mt-xs">
+            <span className="text-body-m font-semibold text-primary">
+              ${budgetMin}
+            </span>
+            <span className="text-body-m font-semibold text-primary">
+              ${budgetMax}
+            </span>
+          </div>
         </div>
-      </div>
+      )}
+
+      {!tierConfig.allowCustomBudget && (
+        <UpgradeCTA message="Sign up for more budget options." />
+      )}
 
       <div className="flex gap-s mt-l">
         <Button className="flex-1" variant="ghost" onClick={prevStep}>

@@ -1,9 +1,9 @@
 import { getCloudflareContext } from '@opennextjs/cloudflare';
-import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { createDbClient } from '@/common/db/client';
-import { tastingPlanWines, tastingPlans } from '@/common/db/schema';
+
+import { fetchPlanById } from '@/server/plans/fetch-plan';
 
 export async function GET(
   _request: NextRequest,
@@ -24,10 +24,7 @@ export async function GET(
     }
 
     const db = createDbClient(d1);
-
-    const plan = await db.query.tastingPlans.findFirst({
-      where: eq(tastingPlans.id, id),
-    });
+    const plan = await fetchPlanById(db, id);
 
     if (!plan) {
       return NextResponse.json(
@@ -36,56 +33,7 @@ export async function GET(
       );
     }
 
-    const wines = await db.query.tastingPlanWines.findMany({
-      where: eq(tastingPlanWines.planId, id),
-      orderBy: (wines, { asc }) => [asc(wines.tastingOrder)],
-    });
-
-    const wineResponses = wines.map((wine) => ({
-      id: wine.id,
-      varietal: wine.varietal,
-      region: wine.region,
-      subRegion: wine.subRegion,
-      yearRange: wine.yearRange,
-      wineType: wine.wineType as 'red' | 'white' | 'rose' | 'sparkling',
-      description: wine.description,
-      pairingRationale: wine.pairingRationale,
-      flavorNotes: wine.flavorNotes,
-      flavorProfile: {
-        acidity: wine.acidity,
-        tannin: wine.tannin,
-        sweetness: wine.sweetness,
-        alcohol: wine.alcohol,
-        body: wine.body,
-      },
-      estimatedPriceMin: wine.estimatedPriceMin,
-      estimatedPriceMax: wine.estimatedPriceMax,
-      tastingOrder: wine.tastingOrder,
-    }));
-
-    const generatedPlan = plan.generatedPlan as {
-      tastingTips?: string[];
-      totalEstimatedCostMin?: number;
-      totalEstimatedCostMax?: number;
-    };
-
-    return NextResponse.json({
-      id: plan.id,
-      title: plan.title,
-      description: plan.description,
-      occasion: plan.occasion,
-      foodPairing: plan.foodPairing,
-      regionPreferences: plan.regionPreferences,
-      budgetMin: plan.budgetMin,
-      budgetMax: plan.budgetMax,
-      budgetCurrency: plan.budgetCurrency,
-      wineCount: plan.wineCount,
-      wines: wineResponses,
-      tastingTips: generatedPlan?.tastingTips || [],
-      totalEstimatedCostMin: generatedPlan?.totalEstimatedCostMin || 0,
-      totalEstimatedCostMax: generatedPlan?.totalEstimatedCostMax || 0,
-      createdAt: plan.createdAt,
-    });
+    return NextResponse.json(plan);
   } catch (err) {
     console.error('Get plan error:', err);
     return NextResponse.json(

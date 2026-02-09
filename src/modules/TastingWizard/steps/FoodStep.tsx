@@ -4,7 +4,9 @@ import { motion } from 'motion/react';
 
 import { Button } from '@/common/components/Button';
 import { Input } from '@/common/components/Input';
+import { UpgradeCTA } from '@/common/components/UpgradeCTA';
 import { cn } from '@/common/functions/cn';
+import { useTierConfig } from '@/common/hooks/useTierConfig';
 import { useTastingStore } from '@/common/stores/useTastingStore';
 
 const FOOD_SUGGESTIONS = [
@@ -26,6 +28,12 @@ export function FoodStep() {
   const setFoodPairing = useTastingStore((s) => s.setFoodPairing);
   const nextStep = useTastingStore((s) => s.nextStep);
   const prevStep = useTastingStore((s) => s.prevStep);
+  const tierConfig = useTierConfig();
+
+  const visibleSuggestions =
+    tierConfig.foodOptions.length > 0
+      ? FOOD_SUGGESTIONS.filter((s) => tierConfig.foodOptions.includes(s))
+      : FOOD_SUGGESTIONS;
 
   return (
     <div>
@@ -36,15 +44,17 @@ export function FoodStep() {
         We&apos;ll pick wines that pair beautifully with your food.
       </p>
 
-      <Input
-        id="food-pairing"
-        placeholder="E.g., grilled salmon with herbs..."
-        value={foodPairing}
-        onChange={(e) => setFoodPairing(e.target.value)}
-      />
+      {tierConfig.allowCustomFoodText && (
+        <Input
+          id="food-pairing"
+          placeholder="E.g., grilled salmon with herbs..."
+          value={foodPairing}
+          onChange={(e) => setFoodPairing(e.target.value)}
+        />
+      )}
 
       <div className="flex flex-wrap gap-2 mt-m">
-        {FOOD_SUGGESTIONS.map((suggestion, i) => (
+        {visibleSuggestions.map((suggestion, i) => (
           <motion.button
             key={suggestion}
             animate={{ opacity: 1, scale: 1 }}
@@ -62,6 +72,10 @@ export function FoodStep() {
           </motion.button>
         ))}
       </div>
+
+      {!tierConfig.allowCustomFoodText && (
+        <UpgradeCTA message="Sign up for custom food pairings and all 11 options." />
+      )}
 
       <div className="flex gap-s mt-l">
         <Button className="flex-1" variant="ghost" onClick={prevStep}>

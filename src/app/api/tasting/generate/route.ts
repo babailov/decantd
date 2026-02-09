@@ -4,11 +4,15 @@ import { z } from 'zod';
 
 import { isDevEnvironment } from '@/common/constants/environment';
 import { createDbClient } from '@/common/db/client';
-import { tastingPlanWines, tastingPlans } from '@/common/db/schema';
+import { generationLogs, tastingPlanWines, tastingPlans } from '@/common/db/schema';
 import { TastingPlanInput } from '@/common/types/tasting';
 
 import { generatePlan } from '@/server/ai/generate-plan';
 import { getUserFromRequest } from '@/server/auth/session';
+import { computeInputHash, getCachedPlan, setCachedPlan } from '@/server/cache/plan-cache';
+import { fetchPlanById } from '@/server/plans/fetch-plan';
+import { canGenerate, resolveUserTier, getTierConfig } from '@/server/tier/resolve-tier';
+import { validateInputForTier } from '@/server/tier/validate-input';
 
 const inputSchema = z.object({
   occasion: z.enum(['dinner_party', 'date_night', 'casual', 'celebration', 'educational', 'business']),
@@ -22,21 +26,21 @@ const inputSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
+    // 1. Parse + validate input
     const body = await request.json();
     const input = inputSchema.parse(body) as TastingPlanInput;
 
-    // Get API key — dual-environment pattern
+    // 2. Get API key + DB (dual-env pattern)
     let apiKey: string;
     let d1: D1Database | null = null;
 
     if (isDevEnvironment) {
       apiKey = process.env.ANTHROPIC_API_KEY || '';
-      // In local dev, try to get D1 from Cloudflare context (wrangler proxy)
       try {
         const ctx = await getCloudflareContext();
         d1 = ctx.env.DB;
       } catch {
-        // D1 not available locally, will skip DB storage
+        // D1 not available locally
       }
     } else {
       const { env } = await getCloudflareContext();
@@ -51,10 +55,74 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate the plan via Claude
+    // 3. Resolve user + tier
+    let user = null;
+    const db = d1 ? createDbClient(d1) : null;
+
+    if (db) {
+      try {
+        user = await getUserFromRequest(request, db);
+      } catch {
+        // Not authenticated
+      }
+    }
+
+    const tier = resolveUserTier(user);
+    const tierConfig = getTierConfig(tier);
+
+    // 4. Server-side validate input against tier
+    const validation = validateInputForTier(input, tier);
+    if (!validation.valid) {
+      return NextResponse.json(
+        { message: validation.error },
+        { status: 403 },
+      );
+    }
+
+    // 5. Compute input hash
+    const inputHash = await computeInputHash(input);
+
+    // 6. Check cache
+    if (db) {
+      const cached = await getCachedPlan(db, inputHash);
+      if (cached) {
+        const cachedPlanData = await fetchPlanById(db, cached.planId);
+        if (cachedPlanData) {
+          // Log cache hit for authenticated users
+          if (user) {
+            await db.insert(generationLogs).values({
+              id: crypto.randomUUID(),
+              userId: user.id,
+              inputHash,
+              planId: cached.planId,
+              wasCacheHit: true,
+            } as typeof generationLogs.$inferInsert);
+          }
+
+          return NextResponse.json({ ...cachedPlanData, cached: true });
+        }
+      }
+    }
+
+    // 7. Rate limit check (only for authenticated free users)
+    if (db && user) {
+      const rateCheck = await canGenerate(db, user);
+      if (!rateCheck.allowed) {
+        return NextResponse.json(
+          {
+            message: rateCheck.reason,
+            remaining: 0,
+            limit: tierConfig.dailyGenerationLimit,
+          },
+          { status: 429 },
+        );
+      }
+    }
+
+    // 8. Generate via AI
     const generatedPlan = await generatePlan(input, apiKey);
 
-    // Create unique IDs
+    // 9. Store plan in D1
     const planId = crypto.randomUUID();
     const now = new Date().toISOString();
 
@@ -70,22 +138,10 @@ export async function POST(request: NextRequest) {
       tastingOrder: wine.tastingOrder || i + 1,
     }));
 
-    // Store in D1 if available
-    if (d1) {
-      const db = createDbClient(d1);
-
-      // Check if user is authenticated
-      let userId: string | null = null;
-      try {
-        const user = await getUserFromRequest(request, db);
-        userId = user?.id || null;
-      } catch {
-        // Not authenticated — that's fine
-      }
-
+    if (db) {
       const planValues = {
         id: planId,
-        userId,
+        userId: user?.id || null,
         occasion: input.occasion,
         foodPairing: input.foodPairing,
         regionPreferences: input.regionPreferences,
@@ -126,9 +182,23 @@ export async function POST(request: NextRequest) {
         };
         await db.insert(tastingPlanWines).values(wineValues as typeof tastingPlanWines.$inferInsert);
       }
+
+      // 10. Store in cache
+      await setCachedPlan(db, input, inputHash, planId, tierConfig.cacheTtlHours);
+
+      // 11. Log generation
+      if (user) {
+        await db.insert(generationLogs).values({
+          id: crypto.randomUUID(),
+          userId: user.id,
+          inputHash,
+          planId,
+          wasCacheHit: false,
+        } as typeof generationLogs.$inferInsert);
+      }
     }
 
-    // Build the full response
+    // 12. Return plan response
     const plan = {
       id: planId,
       title: generatedPlan.title,
