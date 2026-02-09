@@ -47,7 +47,7 @@ name = "decantd-dev"
 [[env.development.d1_databases]]
 binding = "DB"
 database_name = "decantd-db-dev"
-database_id = "development-placeholder"
+database_id = "b0031528-332f-404f-9f8c-0b3d7de8b37d"
 
 [env.development.vars]
 NEXT_PUBLIC_ENV = "development"
