@@ -245,8 +245,16 @@ export function AuthDialog({ open, onOpenChange, defaultMode = 'signup' }: AuthD
     </>
   );
 
+  const handleOpenChange = (isOpen: boolean) => {
+    if (!isOpen) {
+      resetForm();
+      setMode(defaultMode);
+    }
+    onOpenChange(isOpen);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent>
         {mode === 'forgot' ? renderForgotMode() : renderAuthMode()}
       </DialogContent>
