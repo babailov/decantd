@@ -3,7 +3,6 @@
 import { useAuthStore } from '@/common/stores/useAuthStore';
 
 import { HomeView } from '@/modules/Home';
-import { GuestPlansList } from '@/modules/Landing/GuestPlansList';
 import { LandingHero } from '@/modules/Landing/LandingHero';
 
 export default function HomePage() {
@@ -15,10 +14,5 @@ export default function HomePage() {
     return <HomeView />;
   }
 
-  return (
-    <>
-      <LandingHero />
-      <GuestPlansList />
-    </>
-  );
+  return <LandingHero />;
 }
