@@ -37,7 +37,7 @@ export async function sendEmail(input: SendEmailInput): Promise<boolean> {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'Decantd <noreply@decantd.app>',
+        from: 'Decantd <noreply@updates.decantd.app>',
         to: input.to,
         subject: input.subject,
         html: input.html,
