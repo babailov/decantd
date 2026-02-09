@@ -47,3 +47,60 @@ export async function getMe(): Promise<{ user: User }> {
 export async function logout(): Promise<void> {
   await fetch('/api/auth/logout', { method: 'POST' });
 }
+
+export async function changePassword(input: {
+  currentPassword: string;
+  newPassword: string;
+}): Promise<{ success: boolean }> {
+  const response = await fetch('/api/auth/change-password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(input),
+  });
+
+  if (!response.ok) {
+    const error = (await response.json().catch(() => ({ message: 'Failed to change password' }))) as {
+      message?: string;
+    };
+    throw new Error(error.message || 'Failed to change password');
+  }
+
+  return response.json();
+}
+
+export async function forgotPassword(input: { email: string }): Promise<{ success: boolean }> {
+  const response = await fetch('/api/auth/forgot-password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(input),
+  });
+
+  if (!response.ok) {
+    const error = (await response.json().catch(() => ({ message: 'Failed to send reset email' }))) as {
+      message?: string;
+    };
+    throw new Error(error.message || 'Failed to send reset email');
+  }
+
+  return response.json();
+}
+
+export async function resetPassword(input: {
+  token: string;
+  newPassword: string;
+}): Promise<{ success: boolean }> {
+  const response = await fetch('/api/auth/reset-password', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(input),
+  });
+
+  if (!response.ok) {
+    const error = (await response.json().catch(() => ({ message: 'Failed to reset password' }))) as {
+      message?: string;
+    };
+    throw new Error(error.message || 'Failed to reset password');
+  }
+
+  return response.json();
+}

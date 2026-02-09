@@ -1,10 +1,10 @@
 'use client';
 
 import { format } from 'date-fns';
-import { Calendar, LogOut, Wine } from 'lucide-react';
+import { Calendar, KeyRound, LogOut, Wine } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/common/components/Button';
@@ -15,11 +15,13 @@ import { useAuthStore } from '@/common/stores/useAuthStore';
 
 import { PalateProfileCard } from '@/modules/PalateProfile';
 
+import { ChangePasswordDialog } from './ChangePasswordDialog';
 import { UserPlansList } from './UserPlansList';
 
 export function ProfileView() {
   const { user, isAuthenticated, clearAuth, isLoading } = useAuthStore();
   const router = useRouter();
+  const [changePasswordOpen, setChangePasswordOpen] = useState(false);
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated()) {
@@ -96,12 +98,26 @@ export function ProfileView() {
           className="w-full"
           size="md"
           variant="ghost"
+          onClick={() => setChangePasswordOpen(true)}
+        >
+          <KeyRound className="h-4 w-4 mr-xs" />
+          Change Password
+        </Button>
+        <Button
+          className="w-full"
+          size="md"
+          variant="ghost"
           onClick={handleLogout}
         >
           <LogOut className="h-4 w-4 mr-xs" />
           Sign Out
         </Button>
       </div>
+
+      <ChangePasswordDialog
+        open={changePasswordOpen}
+        onOpenChange={setChangePasswordOpen}
+      />
     </div>
   );
 }

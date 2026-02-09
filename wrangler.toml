@@ -16,6 +16,7 @@ database_id = "b0031528-332f-404f-9f8c-0b3d7de8b37d"
 
 [vars]
 NEXT_PUBLIC_ENV = "development"
+RESEND_API_KEY = ""
 
 [env.production]
 name = "decantd-prod"
@@ -28,6 +29,7 @@ database_id = "54b3a0a8-d6df-4ff5-9218-eceeb3568cdf"
 [env.production.vars]
 NEXT_PUBLIC_ENV = "production"
 NODE_ENV = "production"
+RESEND_API_KEY = ""
 
 [env.staging]
 name = "decantd-staging"
@@ -40,6 +42,7 @@ database_id = "a99fee55-5eff-495d-a545-e3f39db1b93f"
 [env.staging.vars]
 NEXT_PUBLIC_ENV = "staging"
 NODE_ENV = "production"
+RESEND_API_KEY = ""
 
 [env.development]
 name = "decantd-dev"
@@ -52,6 +55,7 @@ database_id = "development-placeholder"
 [env.development.vars]
 NEXT_PUBLIC_ENV = "development"
 NODE_ENV = "production"
+RESEND_API_KEY = ""
 
 [env.integration]
 name = "decantd-integration"
@@ -64,3 +68,4 @@ database_id = "b0031528-332f-404f-9f8c-0b3d7de8b37d"
 [env.integration.vars]
 NEXT_PUBLIC_ENV = "integration"
 NODE_ENV = "production"
+RESEND_API_KEY = ""
