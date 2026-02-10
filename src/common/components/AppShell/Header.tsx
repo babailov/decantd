@@ -1,29 +1,18 @@
 'use client';
 
-import { LogIn, LogOut, Wine } from 'lucide-react';
+import { LogIn, Wine } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { AuthDialog } from '@/common/components/AuthDialog';
+import { ProfileDrawer } from '@/common/components/ProfileDrawer';
 import { cn } from '@/common/functions/cn';
-import { logout } from '@/common/services/auth-api';
 import { useAuthStore } from '@/common/stores/useAuthStore';
 
 export function Header() {
-  const { isAuthenticated, clearAuth } = useAuthStore();
-  const router = useRouter();
+  const { user, isAuthenticated } = useAuthStore();
   const [authOpen, setAuthOpen] = useState(false);
-
-  const handleLogout = async () => {
-    try {
-      await logout();
-    } catch {
-      // Always clear auth even if the API call fails
-    }
-    clearAuth();
-    router.push('/');
-  };
+  const [profileOpen, setProfileOpen] = useState(false);
 
   return (
     <>
@@ -41,15 +30,16 @@ export function Header() {
           </span>
         </Link>
 
-        {isAuthenticated() ? (
+        {isAuthenticated() && user ? (
           <button
-            className="flex items-center gap-1.5 text-text-secondary hover:text-primary transition-colors"
-            onClick={handleLogout}
+            className={cn(
+              'w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center',
+              'text-primary font-display text-body-s font-bold',
+              'hover:bg-primary/20 transition-colors',
+            )}
+            onClick={() => setProfileOpen(true)}
           >
-            <LogOut className="h-4 w-4" />
-            <span className="text-body-xs font-medium hidden sm:inline">
-              Sign Out
-            </span>
+            {user.displayName.charAt(0).toUpperCase()}
           </button>
         ) : (
           <button
@@ -61,6 +51,8 @@ export function Header() {
           </button>
         )}
       </header>
+
+      <ProfileDrawer open={profileOpen} onOpenChange={setProfileOpen} />
 
       <AuthDialog
         defaultMode="login"

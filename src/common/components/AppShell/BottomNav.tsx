@@ -5,7 +5,6 @@ import {
   Compass,
   Home,
   Plus,
-  User,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -23,7 +22,6 @@ export function BottomNav() {
     { href: '/explore', icon: Compass, label: 'Explore', enabled: true },
     { href: '/tasting/new', icon: Plus, label: 'New', enabled: true, primary: true },
     { href: '/journal', icon: BookOpen, label: 'Journal', enabled: loggedIn },
-    { href: '/profile', icon: User, label: 'Profile', enabled: loggedIn },
   ];
 
   return (

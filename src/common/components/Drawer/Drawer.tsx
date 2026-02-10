@@ -5,7 +5,12 @@ import { Drawer as DrawerPrimitive } from 'vaul';
 
 import { cn } from '@/common/functions/cn';
 
-const Drawer = DrawerPrimitive.Root;
+const Drawer = ({
+  direction,
+  ...props
+}: ComponentProps<typeof DrawerPrimitive.Root> & {
+  direction?: 'bottom' | 'right' | 'left' | 'top';
+}) => <DrawerPrimitive.Root direction={direction} {...props} />;
 const DrawerTrigger = DrawerPrimitive.Trigger;
 const DrawerClose = DrawerPrimitive.Close;
 const DrawerPortal = DrawerPrimitive.Portal;
@@ -28,8 +33,9 @@ function DrawerOverlay({
 function DrawerContent({
   className,
   children,
+  hideHandle,
   ...props
-}: ComponentProps<typeof DrawerPrimitive.Content>) {
+}: ComponentProps<typeof DrawerPrimitive.Content> & { hideHandle?: boolean }) {
   return (
     <DrawerPortal>
       <DrawerOverlay />
@@ -40,7 +46,9 @@ function DrawerContent({
         )}
         {...props}
       >
-        <div className="mx-auto mt-3 mb-2 h-1.5 w-12 rounded-full bg-border" />
+        {!hideHandle && (
+          <div className="mx-auto mt-3 mb-2 h-1.5 w-12 rounded-full bg-border" />
+        )}
         {children}
       </DrawerPrimitive.Content>
     </DrawerPortal>
