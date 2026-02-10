@@ -4,7 +4,6 @@ import {
   BookOpen,
   Compass,
   Home,
-  Plus,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -20,7 +19,6 @@ export function BottomNav() {
   const navItems = [
     { href: '/', icon: Home, label: 'Home', enabled: true },
     { href: '/explore', icon: Compass, label: 'Explore', enabled: true },
-    { href: '/tasting/new', icon: Plus, label: 'New', enabled: true, primary: true },
     { href: '/journal', icon: BookOpen, label: 'Journal', enabled: loggedIn },
   ];
 
@@ -39,23 +37,6 @@ export function BottomNav() {
           ? pathname === '/'
           : pathname.startsWith(item.href);
         const Icon = item.icon;
-
-        if (item.primary) {
-          return (
-            <Link
-              key={item.href}
-              className={cn(
-                'flex items-center justify-center',
-                'w-12 h-12 rounded-full',
-                'bg-primary text-text-on-primary shadow-lg',
-                'active:scale-95 transition-transform',
-              )}
-              href={item.href}
-            >
-              <Icon className="h-6 w-6" />
-            </Link>
-          );
-        }
 
         if (!item.enabled) {
           return (
