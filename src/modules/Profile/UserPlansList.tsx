@@ -32,7 +32,7 @@ export function UserPlansList() {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col gap-m">
+      <div className="flex flex-col gap-s">
         {[1, 2, 3].map((i) => (
           <div
             key={i}
@@ -66,7 +66,7 @@ export function UserPlansList() {
   }
 
   return (
-    <div className="flex flex-col gap-m">
+    <div className="flex flex-col gap-s">
       {data.plans.map((plan) => {
         const occasion = OCCASIONS.find((o) => o.value === plan.occasion);
         return (

@@ -1,6 +1,6 @@
 'use client';
 
-import { LogIn, LogOut, User, Wine } from 'lucide-react';
+import { LogIn, LogOut, Wine } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
@@ -35,26 +35,15 @@ export function Header() {
         </Link>
 
         {isAuthenticated() ? (
-          <div className="flex items-center gap-s">
-            <Link
-              className="flex items-center gap-1.5 text-text-secondary hover:text-primary transition-colors"
-              href="/profile"
-            >
-              <User className="h-5 w-5" />
-              <span className="text-body-s font-medium hidden sm:inline">
-                {user?.displayName}
-              </span>
-            </Link>
-            <button
-              className="flex items-center gap-1.5 text-text-secondary hover:text-primary transition-colors"
-              onClick={handleLogout}
-            >
-              <LogOut className="h-4 w-4" />
-              <span className="text-body-xs font-medium hidden sm:inline">
-                Sign Out
-              </span>
-            </button>
-          </div>
+          <button
+            className="flex items-center gap-1.5 text-text-secondary hover:text-primary transition-colors"
+            onClick={handleLogout}
+          >
+            <LogOut className="h-4 w-4" />
+            <span className="text-body-xs font-medium hidden sm:inline">
+              Sign Out
+            </span>
+          </button>
         ) : (
           <button
             className="flex items-center gap-1.5 text-text-secondary hover:text-primary transition-colors"
