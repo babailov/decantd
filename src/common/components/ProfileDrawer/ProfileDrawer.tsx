@@ -1,13 +1,13 @@
 'use client';
 
 import { format } from 'date-fns';
-import { Calendar, KeyRound, LogOut, Wine } from 'lucide-react';
-import Link from 'next/link';
+import { Calendar, KeyRound, LogOut } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Drawer as DrawerPrimitive } from 'vaul';
 
 import { Button } from '@/common/components/Button';
+
 import { Card } from '@/common/components/Card';
 import { cn } from '@/common/functions/cn';
 import { logout } from '@/common/services/auth-api';
@@ -103,14 +103,6 @@ export function ProfileDrawer({ open, onOpenChange }: ProfileDrawerProps) {
 
               {/* Actions */}
               <div className="px-m pb-m flex flex-col gap-xs mt-auto">
-                <DrawerPrimitive.Close asChild>
-                  <Link href="/tasting/new">
-                    <Button className="w-full" size="lg" variant="primary">
-                      <Wine className="h-5 w-5 mr-xs" />
-                      Create New Plan
-                    </Button>
-                  </Link>
-                </DrawerPrimitive.Close>
                 <Button
                   className="w-full"
                   size="md"
