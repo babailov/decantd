@@ -5,10 +5,10 @@ export const WINE_TYPE_OPTIONS: {
   label: string;
   image: string;
 }[] = [
-  { value: 'red', label: 'Red', image: '/images/explore/glass-bordeaux.webp' },
-  { value: 'white', label: 'White', image: '/images/explore/glass-white.webp' },
-  { value: 'rose', label: 'Rosé', image: '/images/explore/glass-universal.webp' },
-  { value: 'sparkling', label: 'Sparkling', image: '/images/explore/glass-champagne.webp' },
+  { value: 'red', label: 'Red', image: '/images/explore/bottle-red.webp' },
+  { value: 'white', label: 'White', image: '/images/explore/bottle-white.webp' },
+  { value: 'rose', label: 'Rosé', image: '/images/explore/bottle-rose.webp' },
+  { value: 'sparkling', label: 'Sparkling', image: '/images/explore/bottle-sparkling.webp' },
 ];
 
 export const COLOR_DEPTH_OPTIONS = {
