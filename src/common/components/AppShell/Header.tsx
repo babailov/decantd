@@ -1,16 +1,22 @@
 'use client';
 
-import { LogIn, User, Wine } from 'lucide-react';
+import { LogIn, LogOut, User, Wine } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
 import { AuthDialog } from '@/common/components/AuthDialog';
 import { cn } from '@/common/functions/cn';
+import { logout } from '@/common/services/auth-api';
 import { useAuthStore } from '@/common/stores/useAuthStore';
 
 export function Header() {
-  const { user, isAuthenticated } = useAuthStore();
+  const { user, isAuthenticated, clearAuth } = useAuthStore();
   const [authOpen, setAuthOpen] = useState(false);
+
+  const handleLogout = async () => {
+    await logout();
+    clearAuth();
+  };
 
   return (
     <>
@@ -29,15 +35,26 @@ export function Header() {
         </Link>
 
         {isAuthenticated() ? (
-          <Link
-            className="flex items-center gap-1.5 text-text-secondary hover:text-primary transition-colors"
-            href="/profile"
-          >
-            <User className="h-5 w-5" />
-            <span className="text-body-s font-medium hidden sm:inline">
-              {user?.displayName}
-            </span>
-          </Link>
+          <div className="flex items-center gap-s">
+            <Link
+              className="flex items-center gap-1.5 text-text-secondary hover:text-primary transition-colors"
+              href="/profile"
+            >
+              <User className="h-5 w-5" />
+              <span className="text-body-s font-medium hidden sm:inline">
+                {user?.displayName}
+              </span>
+            </Link>
+            <button
+              className="flex items-center gap-1.5 text-text-secondary hover:text-primary transition-colors"
+              onClick={handleLogout}
+            >
+              <LogOut className="h-4 w-4" />
+              <span className="text-body-xs font-medium hidden sm:inline">
+                Sign Out
+              </span>
+            </button>
+          </div>
         ) : (
           <button
             className="flex items-center gap-1.5 text-text-secondary hover:text-primary transition-colors"
