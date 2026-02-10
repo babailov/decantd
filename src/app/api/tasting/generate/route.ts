@@ -2,7 +2,6 @@ import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 
-import { isDevEnvironment } from '@/common/constants/environment';
 import { createDbClient } from '@/common/db/client';
 import { generationLogs, tastingPlanWines, tastingPlans } from '@/common/db/schema';
 import { TastingPlanInput } from '@/common/types/tasting';
@@ -30,22 +29,17 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const input = inputSchema.parse(body) as TastingPlanInput;
 
-    // 2. Get API key + DB (dual-env pattern)
-    let apiKey: string;
+    // 2. Get API key + DB
+    let apiKey = '';
     let d1: D1Database | null = null;
 
-    if (isDevEnvironment) {
+    try {
+      const ctx = await getCloudflareContext();
+      apiKey = ctx.env.ANTHROPIC_API_KEY;
+      d1 = ctx.env.DB;
+    } catch {
+      // Cloudflare context not available (local next dev without wrangler)
       apiKey = process.env.ANTHROPIC_API_KEY || '';
-      try {
-        const ctx = await getCloudflareContext();
-        d1 = ctx.env.DB;
-      } catch {
-        // D1 not available locally
-      }
-    } else {
-      const { env } = await getCloudflareContext();
-      apiKey = env.ANTHROPIC_API_KEY;
-      d1 = env.DB;
     }
 
     if (!apiKey) {
