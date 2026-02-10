@@ -32,6 +32,7 @@ export function GlasswareCard({ glass, index }: GlasswareCardProps) {
                 className="object-cover"
                 height={80}
                 src={glass.image!}
+                unoptimized
                 width={64}
                 onError={() => setImgError(true)}
               />
