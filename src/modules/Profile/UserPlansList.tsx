@@ -32,7 +32,7 @@ export function UserPlansList() {
 
   if (isLoading) {
     return (
-      <div className="space-y-s">
+      <div className="flex flex-col gap-m">
         {[1, 2, 3].map((i) => (
           <div
             key={i}
@@ -66,14 +66,14 @@ export function UserPlansList() {
   }
 
   return (
-    <div className="space-y-s">
+    <div className="flex flex-col gap-m">
       {data.plans.map((plan) => {
         const occasion = OCCASIONS.find((o) => o.value === plan.occasion);
         return (
           <Link key={plan.id} href={`/tasting/${plan.id}`}>
             <Card
               className={cn(
-                'flex items-center gap-s hover:bg-surface transition-colors cursor-pointer',
+                'flex items-center gap-s p-s hover:bg-surface transition-colors cursor-pointer',
               )}
               variant="outlined"
             >
