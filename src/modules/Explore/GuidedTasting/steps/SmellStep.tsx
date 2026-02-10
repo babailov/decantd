@@ -147,7 +147,11 @@ export function SmellStep() {
             <Button className="flex-1" variant="ghost" onClick={prevStep}>
               Back
             </Button>
-            <Button className="flex-1" onClick={nextStep}>
+            <Button
+              className="flex-1"
+              disabled={selectedAromas.length === 0}
+              onClick={nextStep}
+            >
               Continue
             </Button>
           </>

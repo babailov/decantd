@@ -1,16 +1,13 @@
 'use client';
 
 import { format } from 'date-fns';
-import { Calendar, KeyRound, LogOut, Wine } from 'lucide-react';
+import { Calendar, KeyRound, Wine } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { toast } from 'sonner';
-
 import { Button } from '@/common/components/Button';
 import { Card } from '@/common/components/Card';
 import { cn } from '@/common/functions/cn';
-import { logout } from '@/common/services/auth-api';
 import { useAuthStore } from '@/common/stores/useAuthStore';
 
 import { PalateProfileCard } from '@/modules/PalateProfile';
@@ -18,7 +15,7 @@ import { PalateProfileCard } from '@/modules/PalateProfile';
 import { ChangePasswordDialog } from './ChangePasswordDialog';
 
 export function ProfileView() {
-  const { user, isAuthenticated, clearAuth, isLoading } = useAuthStore();
+  const { user, isAuthenticated, isLoading } = useAuthStore();
   const router = useRouter();
   const [changePasswordOpen, setChangePasswordOpen] = useState(false);
 
@@ -35,13 +32,6 @@ export function ProfileView() {
       </div>
     );
   }
-
-  const handleLogout = async () => {
-    await logout();
-    clearAuth();
-    toast.success('Signed out');
-    router.push('/');
-  };
 
   return (
     <div className="px-s py-m max-w-lg mx-auto">
@@ -93,15 +83,6 @@ export function ProfileView() {
         >
           <KeyRound className="h-4 w-4 mr-xs" />
           Change Password
-        </Button>
-        <Button
-          className="w-full"
-          size="md"
-          variant="ghost"
-          onClick={handleLogout}
-        >
-          <LogOut className="h-4 w-4 mr-xs" />
-          Sign Out
         </Button>
       </div>
 

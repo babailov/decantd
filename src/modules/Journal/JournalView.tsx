@@ -2,7 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
-import { BookOpen, ChevronRight, GlassWater, Star, Wine } from 'lucide-react';
+import { BookOpen, ChevronRight, FileText, GlassWater, Star, Wine } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
@@ -42,6 +42,24 @@ const WINE_TYPE_LABELS: Record<string, string> = {
   rose: 'Rosé',
   sparkling: 'Sparkling',
 };
+
+function getTastingTitle(tasting: SavedGuidedTasting): string {
+  if (tasting.wineName) {
+    return tasting.year ? `${tasting.wineName} ${tasting.year}` : tasting.wineName;
+  }
+
+  const typeLabel = WINE_TYPE_LABELS[tasting.wineType] ?? 'Wine';
+
+  // Derive a descriptor from the tasting's dominant characteristic
+  if (tasting.sweetness >= 4) return `Sweet ${typeLabel} Wine`;
+  if (tasting.acidity >= 4) return `Crisp ${typeLabel} Wine`;
+  if (tasting.tannin >= 4) return `Bold ${typeLabel} Wine`;
+  if (tasting.body >= 4) return `Full-Bodied ${typeLabel} Wine`;
+  if (tasting.body <= 1) return `Light ${typeLabel} Wine`;
+  if (tasting.selectedAromas.length > 0) return `Aromatic ${typeLabel} Wine`;
+
+  return `Unnamed ${typeLabel} Wine`;
+}
 
 function StarRating({ rating }: { rating: number }) {
   return (
@@ -108,12 +126,12 @@ function GuidedTastingCard({ tasting }: { tasting: SavedGuidedTasting }) {
       >
         <div className="flex-1 min-w-0">
           <p className="font-display text-body-l text-primary font-medium truncate">
-            {tasting.wineName || 'Unnamed Wine'}
+            {getTastingTitle(tasting)}
           </p>
           {tasting.varietal && (
             <p className="text-body-s text-text-secondary truncate">
               {tasting.varietal}
-              {tasting.year ? ` · ${tasting.year}` : ''}
+              {tasting.year && !tasting.wineName ? ` · ${tasting.year}` : ''}
             </p>
           )}
           <div className="flex items-center gap-xs mt-1">
@@ -127,6 +145,30 @@ function GuidedTastingCard({ tasting }: { tasting: SavedGuidedTasting }) {
               {tasting.notes}
             </p>
           )}
+          <p className="text-body-xs text-text-muted mt-1">
+            {format(new Date(tasting.createdAt), 'MMM d, yyyy')}
+          </p>
+        </div>
+        <ChevronRight className="h-5 w-5 text-text-muted flex-shrink-0" />
+      </Card>
+    </Link>
+  );
+}
+
+function TastingNoteCard({ tasting }: { tasting: SavedGuidedTasting }) {
+  return (
+    <Link href={`/explore/tasting-guide?id=${tasting.id}`}>
+      <Card
+        className="flex items-center gap-s p-s hover:bg-surface transition-colors cursor-pointer"
+        variant="outlined"
+      >
+        <div className="flex-1 min-w-0">
+          <p className="font-display text-body-l text-primary font-medium truncate">
+            {getTastingTitle(tasting)}
+          </p>
+          <p className="text-body-s text-text-muted mt-xs line-clamp-2">
+            {tasting.notes}
+          </p>
           <p className="text-body-xs text-text-muted mt-1">
             {format(new Date(tasting.createdAt), 'MMM d, yyyy')}
           </p>
@@ -172,6 +214,10 @@ export function JournalView() {
     items.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     return items;
   }, [ratingsData]);
+
+  const tastingsWithNotes = useMemo(() => {
+    return guidedTastings.filter((t) => t.notes.trim().length > 0);
+  }, [guidedTastings]);
 
   if (isLoading || ratingsLoading || guidedLoading) {
     return (
@@ -244,12 +290,29 @@ export function JournalView() {
           </section>
         )}
 
-        {/* My Tasting Plans */}
+        {/* My Tasting Notes */}
+        {tastingsWithNotes.length > 0 && (
+          <section>
+            <div className="flex items-center gap-xs mb-s">
+              <FileText className="h-5 w-5 text-primary" />
+              <h2 className="font-display text-heading-s text-text-primary">
+                My Tasting Notes
+              </h2>
+            </div>
+            <div className="flex flex-col gap-m">
+              {tastingsWithNotes.map((tasting) => (
+                <TastingNoteCard key={tasting.id} tasting={tasting} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* My Pairings */}
         <section>
           <div className="flex items-center gap-xs mb-s">
             <BookOpen className="h-5 w-5 text-primary" />
             <h2 className="font-display text-heading-s text-text-primary">
-              My Tasting Plans
+              My Pairings
             </h2>
           </div>
           <UserPlansList />

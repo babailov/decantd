@@ -418,7 +418,11 @@ export function ThinkStep() {
             <Button className="flex-1" variant="ghost" onClick={prevStep}>
               Back
             </Button>
-            <Button className="flex-1" onClick={handleComplete}>
+            <Button
+              className="flex-1"
+              disabled={balance === 0 || complexity === 0 || !finishLength}
+              onClick={handleComplete}
+            >
               Complete Tasting
             </Button>
           </>
