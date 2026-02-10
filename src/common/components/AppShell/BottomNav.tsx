@@ -48,7 +48,7 @@ export function BottomNav() {
               key={item.href}
               className={cn(
                 'flex items-center justify-center',
-                'w-12 h-12 -mt-4 rounded-full',
+                'w-12 h-12 rounded-full',
                 'bg-primary text-text-on-primary shadow-lg',
                 'active:scale-95 transition-transform',
               )}
