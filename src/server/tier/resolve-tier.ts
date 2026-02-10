@@ -28,7 +28,6 @@ export async function getDailyGenerationCount(
     .where(
       and(
         eq(generationLogs.userId, userId),
-        eq(generationLogs.wasCacheHit, false),
         gte(generationLogs.createdAt, todayStart.toISOString()),
       ),
     );
@@ -58,7 +57,7 @@ export async function canGenerate(
     return {
       allowed: false,
       remaining: 0,
-      reason: `Daily limit of ${config.dailyGenerationLimit} AI generations reached. Try again tomorrow or upgrade for unlimited.`,
+      reason: `Daily limit of ${config.dailyGenerationLimit} tastings reached. Try again tomorrow or upgrade for unlimited.`,
     };
   }
 

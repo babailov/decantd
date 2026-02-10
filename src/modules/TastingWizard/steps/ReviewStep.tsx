@@ -138,14 +138,14 @@ export function ReviewStep() {
       {/* Generation status for free users */}
       {tier === 'free' && genStatus && genStatus.dailyLimit !== null && (
         <p className="text-body-xs text-text-muted text-center mt-s">
-          {genStatus.remaining} of {genStatus.dailyLimit} AI generations remaining today
+          {genStatus.remaining} of {genStatus.dailyLimit} tastings remaining today
         </p>
       )}
 
       {/* Rate limit reached */}
       {rateLimited && (
         <UpgradeCTA
-          message="You've used all your AI generations for today. Upgrade for unlimited plans, or try again tomorrow."
+          message="You've used all your tastings for today. Upgrade for unlimited plans, or try again tomorrow."
           variant="card"
         />
       )}
@@ -153,7 +153,7 @@ export function ReviewStep() {
       {/* Anonymous CTA */}
       {tier === 'anonymous' && (
         <UpgradeCTA
-          message="Sign up for personalized plans with custom options and 10 daily AI generations."
+          message="Sign up for personalized plans with custom options and 10 daily tastings."
           variant="card"
         />
       )}
