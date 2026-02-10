@@ -35,10 +35,6 @@ interface JournalEntry {
   } | null;
 }
 
-type UnifiedEntry =
-  | { type: 'rating'; data: JournalEntry; date: string }
-  | { type: 'guided'; data: SavedGuidedTasting; date: string };
-
 const WINE_TYPE_LABELS: Record<string, string> = {
   red: 'Red',
   white: 'White',
@@ -177,19 +173,19 @@ export function JournalView() {
 
   const { data: guidedData, isLoading: guidedLoading } = useGuidedTastingsList();
 
-  const entries = useMemo<UnifiedEntry[]>(() => {
-    const result: UnifiedEntry[] = [];
+  const guidedTastings = useMemo(() => {
+    const items = [...(guidedData?.tastings ?? [])];
+    items.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    return items;
+  }, [guidedData]);
 
-    for (const r of ratingsData?.ratings ?? []) {
-      result.push({ type: 'rating', data: r, date: r.createdAt });
-    }
-    for (const g of guidedData?.tastings ?? []) {
-      result.push({ type: 'guided', data: g, date: g.createdAt });
-    }
+  const ratings = useMemo(() => {
+    const items = [...(ratingsData?.ratings ?? [])];
+    items.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    return items;
+  }, [ratingsData]);
 
-    result.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-    return result;
-  }, [ratingsData, guidedData]);
+  const isEmpty = guidedTastings.length === 0 && ratings.length === 0;
 
   if (isLoading || ratingsLoading || guidedLoading) {
     return (
@@ -218,7 +214,7 @@ export function JournalView() {
         </h1>
       </div>
 
-      {entries.length === 0 ? (
+      {isEmpty ? (
         <Card className="text-center py-l">
           <Wine className="h-8 w-8 text-text-muted mx-auto mb-xs" />
           <p className="text-body-m text-text-secondary">No tastings yet</p>
@@ -239,13 +235,39 @@ export function JournalView() {
           </div>
         </Card>
       ) : (
-        <div className="space-y-xs">
-          {entries.map((entry) =>
-            entry.type === 'rating' ? (
-              <RatingCard key={`r-${entry.data.id}`} entry={entry.data} />
-            ) : (
-              <GuidedTastingCard key={`g-${entry.data.id}`} tasting={entry.data} />
-            ),
+        <div className="space-y-l">
+          {/* Guided Tastings */}
+          {guidedTastings.length > 0 && (
+            <section>
+              <div className="flex items-center gap-xs mb-s">
+                <GlassWater className="h-5 w-5 text-primary" />
+                <h2 className="font-display text-heading-s text-text-primary">
+                  Guided Tastings
+                </h2>
+              </div>
+              <div className="space-y-s">
+                {guidedTastings.map((tasting) => (
+                  <GuidedTastingCard key={tasting.id} tasting={tasting} />
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Recommended Pairings / Flights */}
+          {ratings.length > 0 && (
+            <section>
+              <div className="flex items-center gap-xs mb-s">
+                <Wine className="h-5 w-5 text-primary" />
+                <h2 className="font-display text-heading-s text-text-primary">
+                  Recommended Pairings
+                </h2>
+              </div>
+              <div className="space-y-s">
+                {ratings.map((entry) => (
+                  <RatingCard key={entry.id} entry={entry} />
+                ))}
+              </div>
+            </section>
           )}
         </div>
       )}
