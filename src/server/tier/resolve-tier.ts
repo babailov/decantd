@@ -21,6 +21,8 @@ export async function getDailyGenerationCount(
 ): Promise<number> {
   const todayStart = new Date();
   todayStart.setUTCHours(0, 0, 0, 0);
+  // Format as SQLite datetime (space-separated, no T/Z) to match DB values
+  const todayStartStr = todayStart.toISOString().replace('T', ' ').replace('Z', '');
 
   const result = await db
     .select({ count: sql<number>`count(*)` })
@@ -28,7 +30,7 @@ export async function getDailyGenerationCount(
     .where(
       and(
         eq(generationLogs.userId, userId),
-        gte(generationLogs.createdAt, todayStart.toISOString()),
+        gte(generationLogs.createdAt, todayStartStr),
       ),
     );
 
