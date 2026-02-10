@@ -1,0 +1,142 @@
+import type { GlasswareRecommendation, ServingTemperature } from '@/common/types/explore';
+
+export const SERVING_TEMPERATURES: ServingTemperature[] = [
+  {
+    wineType: 'Sparkling',
+    label: 'Champagne, Prosecco, Cava',
+    tempMinF: 40,
+    tempMaxF: 45,
+    tempMinC: 4,
+    tempMaxC: 7,
+    tip: 'Chill for 3+ hours in the fridge or 30 min in an ice bucket. Too warm and you lose the bubbles; too cold and you mute the flavors.',
+    color: '#FFD700',
+  },
+  {
+    wineType: 'Light White',
+    label: 'Sauvignon Blanc, Pinot Grigio, Riesling',
+    tempMinF: 44,
+    tempMaxF: 50,
+    tempMinC: 7,
+    tempMaxC: 10,
+    tip: 'Straight from the fridge is perfect. These wines shine with crisp acidity at cooler temperatures.',
+    color: '#F0E68C',
+  },
+  {
+    wineType: 'Full White',
+    label: 'Oaked Chardonnay, Viognier, White Burgundy',
+    tempMinF: 50,
+    tempMaxF: 55,
+    tempMinC: 10,
+    tempMaxC: 13,
+    tip: 'Pull from the fridge 15-20 minutes before serving. Slightly warmer temp lets the oak and body come through.',
+    color: '#DAA520',
+  },
+  {
+    wineType: 'Rosé',
+    label: 'Provence, Grenache, White Zinfandel',
+    tempMinF: 46,
+    tempMaxF: 52,
+    tempMinC: 8,
+    tempMaxC: 11,
+    tip: 'Well chilled but not ice-cold. Rosé loses its delicate aromatics if served too cold.',
+    color: '#DB7093',
+  },
+  {
+    wineType: 'Light Red',
+    label: 'Pinot Noir, Gamay, Barbera',
+    tempMinF: 55,
+    tempMaxF: 60,
+    tempMinC: 13,
+    tempMaxC: 16,
+    tip: 'Slightly below room temp. 15 minutes in the fridge if your room is warm. Lighter reds taste better slightly cool.',
+    color: '#CD5C5C',
+  },
+  {
+    wineType: 'Full Red',
+    label: 'Cabernet Sauvignon, Syrah, Malbec',
+    tempMinF: 60,
+    tempMaxF: 65,
+    tempMinC: 16,
+    tempMaxC: 18,
+    tip: '"Room temperature" was coined in European castles — cooler than your living room! If it\'s over 68°F, a brief chill helps.',
+    color: '#722F37',
+  },
+  {
+    wineType: 'Dessert Wine',
+    label: 'Port, Sauternes, Ice Wine',
+    tempMinF: 55,
+    tempMaxF: 60,
+    tempMinC: 13,
+    tempMaxC: 16,
+    tip: 'Slightly cool to balance the sweetness. Tawny Port can go a bit cooler; Vintage Port a bit warmer.',
+    color: '#8B4513',
+  },
+];
+
+export const GLASSWARE_RECOMMENDATIONS: GlasswareRecommendation[] = [
+  {
+    id: 'red-bordeaux',
+    name: 'Bordeaux Glass',
+    description: 'Tall with a broad bowl that tapers to a slightly narrower rim. The large surface area helps bold reds breathe.',
+    bestFor: ['Cabernet Sauvignon', 'Merlot', 'Malbec', 'Bordeaux blends'],
+    whyItMatters: 'The wide bowl directs wine to the back of the palate, softening tannins and highlighting fruit.',
+  },
+  {
+    id: 'red-burgundy',
+    name: 'Burgundy Glass',
+    description: 'Wider, rounder bowl than Bordeaux — almost balloon-shaped. Captures delicate aromatics.',
+    bestFor: ['Pinot Noir', 'Nebbiolo', 'Gamay', 'Burgundy'],
+    whyItMatters: 'The large bowl surface area helps lighter reds release their subtle, complex aromas.',
+  },
+  {
+    id: 'white-standard',
+    name: 'White Wine Glass',
+    description: 'Smaller bowl with a U-shape. Keeps wine cooler and preserves floral aromas.',
+    bestFor: ['Sauvignon Blanc', 'Pinot Grigio', 'Riesling', 'Chenin Blanc'],
+    whyItMatters: 'Smaller opening concentrates delicate aromas. Less surface area maintains cooler serving temperature.',
+  },
+  {
+    id: 'white-chardonnay',
+    name: 'Chardonnay Glass',
+    description: 'Wider than standard white, narrower than Burgundy. Balances richness and freshness.',
+    bestFor: ['Oaked Chardonnay', 'Viognier', 'White Burgundy'],
+    whyItMatters: 'The wider bowl lets oaked whites breathe while the rim directs wine across the full palate.',
+  },
+  {
+    id: 'sparkling-flute',
+    name: 'Champagne Flute',
+    description: 'Tall and narrow to preserve carbonation and create an elegant stream of bubbles.',
+    bestFor: ['Champagne', 'Prosecco', 'Cava', 'sparkling wine'],
+    whyItMatters: 'The narrow shape preserves bubbles longer. For vintage Champagne, a wider tulip glass is even better.',
+  },
+  {
+    id: 'universal',
+    name: 'Universal Glass',
+    description: 'A versatile all-purpose shape — slightly tapered egg shape. Works for most wines.',
+    bestFor: ['Any wine', 'Tastings', 'Everyday drinking'],
+    whyItMatters: 'If you only buy one type, this is it. The shape works well enough for reds, whites, and rosés.',
+  },
+];
+
+export const DECANTING_ADVICE = [
+  {
+    title: 'Young, bold reds',
+    wines: 'Cabernet Sauvignon, Syrah, Barolo, Malbec',
+    advice: 'Decant 1-2 hours before serving. Young tannic wines benefit most from aeration — it softens tannins and opens up fruit.',
+  },
+  {
+    title: 'Aged reds (10+ years)',
+    wines: 'Mature Bordeaux, aged Barolo, old Burgundy',
+    advice: 'Decant gently just 15-30 minutes before serving. The goal is to separate from sediment, not aerate. Too much air can break down fragile aged wines.',
+  },
+  {
+    title: 'Light reds',
+    wines: 'Pinot Noir, Gamay, Barbera',
+    advice: 'Usually no decanting needed. A simple swirl in the glass provides enough aeration. Over-decanting can strip delicate aromatics.',
+  },
+  {
+    title: 'White wines',
+    wines: 'Most whites, rosés, sparkling',
+    advice: 'Skip the decanter. Exception: very rich, oaked whites (like aged White Burgundy) can benefit from 15-20 minutes of breathing.',
+  },
+];

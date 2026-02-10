@@ -20,7 +20,7 @@ export function BottomNav() {
 
   const navItems = [
     { href: '/', icon: Home, label: 'Home', enabled: true },
-    { href: '/corkage', icon: Compass, label: 'Explore', enabled: true },
+    { href: '/explore', icon: Compass, label: 'Explore', enabled: true },
     { href: '/tasting/new', icon: Plus, label: 'New', enabled: true, primary: true },
     { href: '/journal', icon: BookOpen, label: 'Journal', enabled: loggedIn },
     { href: '/profile', icon: User, label: 'Profile', enabled: loggedIn },
@@ -37,7 +37,9 @@ export function BottomNav() {
       )}
     >
       {navItems.map((item) => {
-        const isActive = pathname === item.href;
+        const isActive = item.href === '/'
+          ? pathname === '/'
+          : pathname.startsWith(item.href);
         const Icon = item.icon;
 
         if (item.primary) {
