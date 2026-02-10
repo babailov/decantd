@@ -2,16 +2,18 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
-import { BookOpen, ChevronRight, Star, Wine } from 'lucide-react';
+import { BookOpen, ChevronRight, GlassWater, Star, Wine } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { Badge } from '@/common/components/Badge';
 import { Card } from '@/common/components/Card';
 import { queryKeys } from '@/common/constants/queryKeys';
 import { cn } from '@/common/functions/cn';
+import { useGuidedTastingsList } from '@/common/hooks/services/useGuidedTastings';
 import { useAuthStore } from '@/common/stores/useAuthStore';
+import type { SavedGuidedTasting } from '@/common/types/explore';
 
 interface JournalEntry {
   id: string;
@@ -33,6 +35,17 @@ interface JournalEntry {
   } | null;
 }
 
+type UnifiedEntry =
+  | { type: 'rating'; data: JournalEntry; date: string }
+  | { type: 'guided'; data: SavedGuidedTasting; date: string };
+
+const WINE_TYPE_LABELS: Record<string, string> = {
+  red: 'Red',
+  white: 'White',
+  rose: 'Rosé',
+  sparkling: 'Sparkling',
+};
+
 function StarRating({ rating }: { rating: number }) {
   return (
     <div className="flex gap-0.5">
@@ -49,6 +62,97 @@ function StarRating({ rating }: { rating: number }) {
   );
 }
 
+function RatingCard({ entry }: { entry: JournalEntry }) {
+  return (
+    <Link href={`/tasting/${entry.planId}`}>
+      <Card
+        className="hover:bg-surface transition-colors cursor-pointer"
+        variant="outlined"
+      >
+        <div className="flex items-start gap-s">
+          <div className="flex-1 min-w-0">
+            <p className="font-display text-body-l text-primary font-medium truncate">
+              {entry.wine?.varietal ?? 'Unknown wine'}
+            </p>
+            {entry.wine && (
+              <p className="text-body-s text-text-secondary truncate">
+                {entry.wine.region}
+              </p>
+            )}
+            <div className="flex items-center gap-xs mt-1">
+              <StarRating rating={entry.rating} />
+              {entry.wine && (
+                <Badge variant={entry.wine.wineType as 'red' | 'white' | 'rose' | 'sparkling'}>
+                  {WINE_TYPE_LABELS[entry.wine.wineType] ?? entry.wine.wineType}
+                </Badge>
+              )}
+            </div>
+            {entry.tastingNotes && (
+              <p className="text-body-s text-text-muted mt-xs line-clamp-2">
+                {entry.tastingNotes}
+              </p>
+            )}
+            <div className="flex items-center gap-xs mt-xs text-body-xs text-text-muted">
+              {entry.plan && (
+                <span className="truncate">{entry.plan.title}</span>
+              )}
+              <span>&middot;</span>
+              <span className="shrink-0">
+                {format(new Date(entry.createdAt), 'MMM d, yyyy')}
+              </span>
+            </div>
+          </div>
+          <ChevronRight className="h-5 w-5 text-text-muted flex-shrink-0 mt-1" />
+        </div>
+      </Card>
+    </Link>
+  );
+}
+
+function GuidedTastingCard({ tasting }: { tasting: SavedGuidedTasting }) {
+  return (
+    <Link href={`/explore/tasting-guide?id=${tasting.id}`}>
+      <Card
+        className="hover:bg-surface transition-colors cursor-pointer"
+        variant="outlined"
+      >
+        <div className="flex items-start gap-s">
+          <div className="flex-1 min-w-0">
+            <p className="font-display text-body-l text-primary font-medium truncate">
+              {tasting.wineName || 'Unnamed Wine'}
+            </p>
+            {tasting.varietal && (
+              <p className="text-body-s text-text-secondary truncate">
+                {tasting.varietal}
+                {tasting.year ? ` · ${tasting.year}` : ''}
+              </p>
+            )}
+            <div className="flex items-center gap-xs mt-1">
+              {tasting.balance > 0 && <StarRating rating={tasting.balance} />}
+              <Badge variant={tasting.wineType as 'red' | 'white' | 'rose' | 'sparkling'}>
+                {WINE_TYPE_LABELS[tasting.wineType] ?? tasting.wineType}
+              </Badge>
+              <Badge variant="default">
+                <GlassWater className="h-3 w-3 mr-0.5" />
+                Guided
+              </Badge>
+            </div>
+            {tasting.notes && (
+              <p className="text-body-s text-text-muted mt-xs line-clamp-2">
+                {tasting.notes}
+              </p>
+            )}
+            <p className="text-body-xs text-text-muted mt-xs">
+              {format(new Date(tasting.createdAt), 'MMM d, yyyy')}
+            </p>
+          </div>
+          <ChevronRight className="h-5 w-5 text-text-muted flex-shrink-0 mt-1" />
+        </div>
+      </Card>
+    </Link>
+  );
+}
+
 export function JournalView() {
   const { isAuthenticated, isLoading } = useAuthStore();
   const router = useRouter();
@@ -59,17 +163,35 @@ export function JournalView() {
     }
   }, [isLoading, isAuthenticated, router]);
 
-  const { data, isLoading: ratingsLoading } = useQuery({
+  const isAuthed = !isLoading && isAuthenticated();
+
+  const { data: ratingsData, isLoading: ratingsLoading } = useQuery({
     queryKey: queryKeys.user.ratings,
     queryFn: async (): Promise<{ ratings: JournalEntry[] }> => {
       const res = await fetch('/api/ratings/user');
       if (!res.ok) throw new Error('Failed to fetch ratings');
       return res.json();
     },
-    enabled: !isLoading && isAuthenticated(),
+    enabled: isAuthed,
   });
 
-  if (isLoading || ratingsLoading) {
+  const { data: guidedData, isLoading: guidedLoading } = useGuidedTastingsList();
+
+  const entries = useMemo<UnifiedEntry[]>(() => {
+    const result: UnifiedEntry[] = [];
+
+    for (const r of ratingsData?.ratings ?? []) {
+      result.push({ type: 'rating', data: r, date: r.createdAt });
+    }
+    for (const g of guidedData?.tastings ?? []) {
+      result.push({ type: 'guided', data: g, date: g.createdAt });
+    }
+
+    result.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    return result;
+  }, [ratingsData, guidedData]);
+
+  if (isLoading || ratingsLoading || guidedLoading) {
     return (
       <div className="px-s py-m max-w-lg mx-auto">
         <h1 className="font-display text-heading-m text-primary mb-m">
@@ -87,8 +209,6 @@ export function JournalView() {
     );
   }
 
-  const ratings = data?.ratings ?? [];
-
   return (
     <div className="px-s py-m max-w-lg mx-auto">
       <div className="flex items-center gap-xs mb-m">
@@ -98,63 +218,35 @@ export function JournalView() {
         </h1>
       </div>
 
-      {ratings.length === 0 ? (
+      {entries.length === 0 ? (
         <Card className="text-center py-l">
           <Wine className="h-8 w-8 text-text-muted mx-auto mb-xs" />
           <p className="text-body-m text-text-secondary">No tastings yet</p>
           <p className="text-body-s text-text-muted mt-1">
-            Rate wines in your plans to build your journal.
+            Rate wines in your plans or complete a guided tasting to build your journal.
           </p>
-          <Link className="inline-block mt-s" href="/tasting/new">
-            <span className="text-body-s text-accent font-medium">
-              Create a tasting plan
-            </span>
-          </Link>
+          <div className="flex flex-col items-center gap-xs mt-s">
+            <Link href="/tasting/new">
+              <span className="text-body-s text-accent font-medium">
+                Create a tasting plan
+              </span>
+            </Link>
+            <Link href="/explore/tasting-guide">
+              <span className="text-body-s text-accent font-medium">
+                Start a guided tasting
+              </span>
+            </Link>
+          </div>
         </Card>
       ) : (
         <div className="space-y-xs">
-          {ratings.map((entry) => (
-            <Link key={entry.id} href={`/tasting/${entry.planId}`}>
-              <Card
-                className="hover:bg-surface transition-colors cursor-pointer"
-                variant="outlined"
-              >
-                <div className="flex items-start gap-s">
-                  <div className="flex-1 min-w-0">
-                    <p className="font-display text-body-l text-primary font-medium truncate">
-                      {entry.wine?.varietal ?? 'Unknown wine'}
-                    </p>
-                    {entry.wine && (
-                      <p className="text-body-s text-text-secondary truncate">
-                        {entry.wine.region}
-                      </p>
-                    )}
-                    <div className="flex items-center gap-xs mt-1">
-                      <StarRating rating={entry.rating} />
-                      {entry.wine && (
-                        <Badge variant="default">{entry.wine.wineType}</Badge>
-                      )}
-                    </div>
-                    {entry.tastingNotes && (
-                      <p className="text-body-s text-text-muted mt-xs line-clamp-2">
-                        {entry.tastingNotes}
-                      </p>
-                    )}
-                    <div className="flex items-center gap-xs mt-xs text-body-xs text-text-muted">
-                      {entry.plan && (
-                        <span className="truncate">{entry.plan.title}</span>
-                      )}
-                      <span>&middot;</span>
-                      <span className="shrink-0">
-                        {format(new Date(entry.createdAt), 'MMM d, yyyy')}
-                      </span>
-                    </div>
-                  </div>
-                  <ChevronRight className="h-5 w-5 text-text-muted flex-shrink-0 mt-1" />
-                </div>
-              </Card>
-            </Link>
-          ))}
+          {entries.map((entry) =>
+            entry.type === 'rating' ? (
+              <RatingCard key={`r-${entry.data.id}`} entry={entry.data} />
+            ) : (
+              <GuidedTastingCard key={`g-${entry.data.id}`} tasting={entry.data} />
+            ),
+          )}
         </div>
       )}
     </div>
