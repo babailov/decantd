@@ -73,4 +73,5 @@ export interface GlasswareRecommendation {
   description: string;
   bestFor: string[];
   whyItMatters: string;
+  image?: string;
 }

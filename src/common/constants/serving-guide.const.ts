@@ -80,6 +80,7 @@ export const GLASSWARE_RECOMMENDATIONS: GlasswareRecommendation[] = [
     description: 'Tall with a broad bowl that tapers to a slightly narrower rim. The large surface area helps bold reds breathe.',
     bestFor: ['Cabernet Sauvignon', 'Merlot', 'Malbec', 'Bordeaux blends'],
     whyItMatters: 'The wide bowl directs wine to the back of the palate, softening tannins and highlighting fruit.',
+    image: '/images/explore/glass-bordeaux.webp',
   },
   {
     id: 'red-burgundy',
@@ -87,6 +88,7 @@ export const GLASSWARE_RECOMMENDATIONS: GlasswareRecommendation[] = [
     description: 'Wider, rounder bowl than Bordeaux — almost balloon-shaped. Captures delicate aromatics.',
     bestFor: ['Pinot Noir', 'Nebbiolo', 'Gamay', 'Burgundy'],
     whyItMatters: 'The large bowl surface area helps lighter reds release their subtle, complex aromas.',
+    image: '/images/explore/glass-burgundy.webp',
   },
   {
     id: 'white-standard',
@@ -94,6 +96,7 @@ export const GLASSWARE_RECOMMENDATIONS: GlasswareRecommendation[] = [
     description: 'Smaller bowl with a U-shape. Keeps wine cooler and preserves floral aromas.',
     bestFor: ['Sauvignon Blanc', 'Pinot Grigio', 'Riesling', 'Chenin Blanc'],
     whyItMatters: 'Smaller opening concentrates delicate aromas. Less surface area maintains cooler serving temperature.',
+    image: '/images/explore/glass-white.webp',
   },
   {
     id: 'white-chardonnay',
@@ -101,6 +104,7 @@ export const GLASSWARE_RECOMMENDATIONS: GlasswareRecommendation[] = [
     description: 'Wider than standard white, narrower than Burgundy. Balances richness and freshness.',
     bestFor: ['Oaked Chardonnay', 'Viognier', 'White Burgundy'],
     whyItMatters: 'The wider bowl lets oaked whites breathe while the rim directs wine across the full palate.',
+    image: '/images/explore/glass-chardonnay.webp',
   },
   {
     id: 'sparkling-flute',
@@ -108,6 +112,7 @@ export const GLASSWARE_RECOMMENDATIONS: GlasswareRecommendation[] = [
     description: 'Tall and narrow to preserve carbonation and create an elegant stream of bubbles.',
     bestFor: ['Champagne', 'Prosecco', 'Cava', 'sparkling wine'],
     whyItMatters: 'The narrow shape preserves bubbles longer. For vintage Champagne, a wider tulip glass is even better.',
+    image: '/images/explore/glass-champagne.webp',
   },
   {
     id: 'universal',
@@ -115,6 +120,7 @@ export const GLASSWARE_RECOMMENDATIONS: GlasswareRecommendation[] = [
     description: 'A versatile all-purpose shape — slightly tapered egg shape. Works for most wines.',
     bestFor: ['Any wine', 'Tastings', 'Everyday drinking'],
     whyItMatters: 'If you only buy one type, this is it. The shape works well enough for reds, whites, and rosés.',
+    image: '/images/explore/glass-universal.webp',
   },
 ];
 
