@@ -29,24 +29,17 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const input = inputSchema.parse(body) as TastingPlanInput;
 
-    // 2. Get API key + DB
+    // 2. Get DB + API key
     let apiKey = '';
     let d1: D1Database | null = null;
 
     try {
       const ctx = await getCloudflareContext();
-      apiKey = ctx.env.ANTHROPIC_API_KEY;
+      apiKey = ctx.env.ANTHROPIC_API_KEY || '';
       d1 = ctx.env.DB;
     } catch {
       // Cloudflare context not available (local next dev without wrangler)
       apiKey = process.env.ANTHROPIC_API_KEY || '';
-    }
-
-    if (!apiKey) {
-      return NextResponse.json(
-        { message: 'API key not configured' },
-        { status: 500 },
-      );
     }
 
     // 3. Resolve user + tier
@@ -76,7 +69,7 @@ export async function POST(request: NextRequest) {
     // 5. Compute input hash
     const inputHash = await computeInputHash(input);
 
-    // 6. Check cache
+    // 6. Check cache (anonymous users are served exclusively from cache)
     if (db) {
       const cached = await getCachedPlan(db, inputHash);
       if (cached) {
@@ -98,7 +91,23 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 7. Rate limit check (only for authenticated free users)
+    // 7. Anonymous users must not trigger live AI generation
+    if (tier === 'anonymous') {
+      return NextResponse.json(
+        { message: 'This tasting plan is being prepared. Please try again in a few minutes, or sign up for instant custom plans.' },
+        { status: 503 },
+      );
+    }
+
+    // 8. API key required from here on (authenticated AI generation)
+    if (!apiKey) {
+      return NextResponse.json(
+        { message: 'API key not configured' },
+        { status: 500 },
+      );
+    }
+
+    // 9. Rate limit check (only for authenticated free users)
     if (db && user) {
       const rateCheck = await canGenerate(db, user);
       if (!rateCheck.allowed) {
@@ -113,10 +122,10 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 8. Generate via AI
+    // 10. Generate via AI
     const generatedPlan = await generatePlan(input, apiKey);
 
-    // 9. Store plan in D1
+    // 11. Store plan in D1
     const planId = crypto.randomUUID();
     const now = new Date().toISOString();
 
@@ -177,10 +186,10 @@ export async function POST(request: NextRequest) {
         await db.insert(tastingPlanWines).values(wineValues as typeof tastingPlanWines.$inferInsert);
       }
 
-      // 10. Store in cache
+      // 12. Store in cache
       await setCachedPlan(db, input, inputHash, planId, tierConfig.cacheTtlHours);
 
-      // 11. Log generation
+      // 13. Log generation
       if (user) {
         await db.insert(generationLogs).values({
           id: crypto.randomUUID(),
@@ -192,7 +201,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 12. Return plan response
+    // 14. Return plan response
     const plan = {
       id: planId,
       title: generatedPlan.title,
