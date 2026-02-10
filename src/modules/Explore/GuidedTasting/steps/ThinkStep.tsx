@@ -1,16 +1,25 @@
 'use client';
 
-import { PartyPopper, Star, ThumbsDown, ThumbsUp } from 'lucide-react';
+import { Check, PartyPopper, Star, ThumbsDown, ThumbsUp } from 'lucide-react';
 import { motion } from 'motion/react';
 import Link from 'next/link';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
+import { AuthDialog } from '@/common/components/AuthDialog';
 import { Button } from '@/common/components/Button';
 import { FlavorRadar } from '@/common/components/FlavorRadar';
+import { Input } from '@/common/components/Input';
 import { findAromaById } from '@/common/constants/aroma-wheel.const';
 import { FINISH_LENGTH_OPTIONS } from '@/common/constants/tasting-guide.const';
 import { cn } from '@/common/functions/cn';
+import {
+  useSaveGuidedTasting,
+  useUpdateGuidedTasting,
+} from '@/common/hooks/services/useGuidedTastings';
+import { useAuthStore } from '@/common/stores/useAuthStore';
 import { useGuidedTastingStore } from '@/common/stores/useGuidedTastingStore';
+import type { WineTypeContext } from '@/common/types/explore';
 
 export function ThinkStep() {
   const balance = useGuidedTastingStore((s) => s.balance);
@@ -34,8 +43,26 @@ export function ThinkStep() {
   const sweetness = useGuidedTastingStore((s) => s.sweetness);
   const alcohol = useGuidedTastingStore((s) => s.alcohol);
   const body = useGuidedTastingStore((s) => s.body);
+  const colorDepth = useGuidedTastingStore((s) => s.colorDepth);
+  const clarity = useGuidedTastingStore((s) => s.clarity);
+  const viscosityNoted = useGuidedTastingStore((s) => s.viscosityNoted);
+
+  // Wine identity
+  const wineName = useGuidedTastingStore((s) => s.wineName);
+  const setWineName = useGuidedTastingStore((s) => s.setWineName);
+  const varietal = useGuidedTastingStore((s) => s.varietal);
+  const setVarietal = useGuidedTastingStore((s) => s.setVarietal);
+  const year = useGuidedTastingStore((s) => s.year);
+  const setYear = useGuidedTastingStore((s) => s.setYear);
+  const savedTastingId = useGuidedTastingStore((s) => s.savedTastingId);
+  const setSavedTastingId = useGuidedTastingStore((s) => s.setSavedTastingId);
+
+  const { isAuthenticated } = useAuthStore();
+  const saveMutation = useSaveGuidedTasting();
+  const updateMutation = useUpdateGuidedTasting();
 
   const [completed, setCompleted] = useState(false);
+  const [authOpen, setAuthOpen] = useState(false);
 
   const handleComplete = () => {
     setCompleted(true);
@@ -44,6 +71,56 @@ export function ThinkStep() {
   const handleNewTasting = () => {
     resetSession();
     setCompleted(false);
+  };
+
+  const buildTastingData = () => ({
+    wineName: wineName || undefined,
+    varietal: varietal || undefined,
+    year: year ? parseInt(year, 10) : undefined,
+    wineType: wineType as WineTypeContext,
+    colorDepth,
+    clarity,
+    viscosityNoted,
+    selectedAromas,
+    acidity,
+    tannin,
+    sweetness,
+    alcohol,
+    body,
+    balance,
+    complexity,
+    finishLength,
+    wouldDrinkAgain,
+    notes,
+    isComplete: true,
+  });
+
+  const handleSave = async () => {
+    if (!isAuthenticated()) {
+      setAuthOpen(true);
+      return;
+    }
+
+    try {
+      const data = buildTastingData();
+      const result = await saveMutation.mutateAsync(data);
+      setSavedTastingId(result.id);
+      toast.success('Tasting saved!');
+    } catch {
+      toast.error('Failed to save tasting');
+    }
+  };
+
+  const handleUpdate = async () => {
+    if (!savedTastingId) return;
+
+    try {
+      const data = buildTastingData();
+      await updateMutation.mutateAsync({ id: savedTastingId, data });
+      toast.success('Tasting updated!');
+    } catch {
+      toast.error('Failed to update tasting');
+    }
   };
 
   if (completed) {
@@ -67,6 +144,43 @@ export function ThinkStep() {
         <p className="text-body-m text-text-secondary mb-l">
           Nice work! The more you taste mindfully, the faster your palate develops.
         </p>
+
+        {/* Wine identity fields (editable on completion) */}
+        <div className="text-left p-m rounded-xl border border-border bg-surface-elevated mb-m">
+          <h3 className="text-body-s font-medium text-text-primary mb-s">
+            Wine Details
+          </h3>
+          <div className="flex flex-col gap-xs">
+            <Input
+              id="wine-name-complete"
+              label="Wine Name"
+              placeholder="e.g. Château Margaux"
+              value={wineName}
+              onChange={(e) => setWineName(e.target.value)}
+            />
+            <div className="flex gap-xs">
+              <div className="flex-1">
+                <Input
+                  id="varietal-complete"
+                  label="Varietal"
+                  placeholder="e.g. Cabernet Sauvignon"
+                  value={varietal}
+                  onChange={(e) => setVarietal(e.target.value)}
+                />
+              </div>
+              <div className="w-24">
+                <Input
+                  id="year-complete"
+                  label="Year"
+                  placeholder="e.g. 2019"
+                  type="number"
+                  value={year}
+                  onChange={(e) => setYear(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
 
         {/* Summary card */}
         <div className="text-left p-m rounded-xl border border-border bg-surface-elevated mb-m">
@@ -104,8 +218,31 @@ export function ThinkStep() {
           )}
         </div>
 
+        {/* Save / Update button */}
         <div className="flex flex-col gap-xs">
-          <Button className="w-full" onClick={handleNewTasting}>
+          {savedTastingId ? (
+            <Button
+              className="w-full"
+              disabled={updateMutation.isPending}
+              onClick={handleUpdate}
+            >
+              {updateMutation.isPending ? 'Updating...' : (
+                <>
+                  <Check className="w-4 h-4 mr-1" />
+                  Update Tasting
+                </>
+              )}
+            </Button>
+          ) : (
+            <Button
+              className="w-full"
+              disabled={saveMutation.isPending}
+              onClick={handleSave}
+            >
+              {saveMutation.isPending ? 'Saving...' : 'Save Tasting'}
+            </Button>
+          )}
+          <Button className="w-full" variant="ghost" onClick={handleNewTasting}>
             Start New Tasting
           </Button>
           <Link href="/explore">
@@ -114,6 +251,8 @@ export function ThinkStep() {
             </Button>
           </Link>
         </div>
+
+        <AuthDialog open={authOpen} onOpenChange={setAuthOpen} />
       </motion.div>
     );
   }

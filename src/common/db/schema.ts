@@ -161,6 +161,59 @@ export const generationLogs = sqliteTable('generation_logs', {
     .default(sql`(datetime('now'))`),
 });
 
+// ── Guided Tastings ─────────────────────────────────
+
+export const guidedTastings = sqliteTable('guided_tastings', {
+  id: text('id').primaryKey(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id),
+
+  // Wine identity (all optional)
+  wineName: text('wine_name'),
+  varietal: text('varietal'),
+  year: integer('year'),
+
+  // Look
+  wineType: text('wine_type').notNull(),
+  colorDepth: text('color_depth'),
+  clarity: text('clarity'),
+  viscosityNoted: integer('viscosity_noted', { mode: 'boolean' })
+    .notNull()
+    .default(false),
+
+  // Smell
+  selectedAromas: text('selected_aromas', { mode: 'json' })
+    .notNull()
+    .$type<string[]>()
+    .default([]),
+
+  // Taste (0-5)
+  acidity: real('acidity').notNull().default(3),
+  tannin: real('tannin').notNull().default(3),
+  sweetness: real('sweetness').notNull().default(1),
+  alcohol: real('alcohol').notNull().default(3),
+  body: real('body').notNull().default(3),
+
+  // Think
+  balance: integer('balance').notNull().default(0),
+  complexity: integer('complexity').notNull().default(0),
+  finishLength: text('finish_length'),
+  wouldDrinkAgain: integer('would_drink_again', { mode: 'boolean' }),
+  notes: text('notes').notNull().default(''),
+
+  // Meta
+  isComplete: integer('is_complete', { mode: 'boolean' })
+    .notNull()
+    .default(false),
+  createdAt: text('created_at')
+    .notNull()
+    .default(sql`(datetime('now'))`),
+  updatedAt: text('updated_at')
+    .notNull()
+    .default(sql`(datetime('now'))`),
+});
+
 // ── Corkage Directory ─────────────────────────────────
 
 export const corkageRestaurants = sqliteTable('corkage_restaurants', {

@@ -7,6 +7,7 @@ import type {
   ColorDepth,
   FinishLength,
   GuidedTastingStep,
+  SavedGuidedTasting,
   WineTypeContext,
 } from '@/common/types/explore';
 
@@ -24,6 +25,18 @@ interface GuidedTastingStore {
   nextStep: () => void;
   prevStep: () => void;
   currentStepIndex: () => number;
+
+  // Wine identity
+  wineName: string;
+  setWineName: (name: string) => void;
+  varietal: string;
+  setVarietal: (v: string) => void;
+  year: string;
+  setYear: (y: string) => void;
+
+  // Saved tasting ID (from DB)
+  savedTastingId: string | null;
+  setSavedTastingId: (id: string | null) => void;
 
   // Look
   wineType: WineTypeContext | null;
@@ -60,12 +73,19 @@ interface GuidedTastingStore {
   setBalance: (v: number) => void;
   setComplexity: (v: number) => void;
 
+  // Hydrate from saved tasting
+  hydrateFromSaved: (data: SavedGuidedTasting) => void;
+
   // Reset
   resetSession: () => void;
 }
 
 const initialState = {
   currentStep: 'look' as GuidedTastingStep,
+  wineName: '',
+  varietal: '',
+  year: '',
+  savedTastingId: null as string | null,
   wineType: null as WineTypeContext | null,
   colorDepth: null as ColorDepth | null,
   clarity: null as Clarity | null,
@@ -103,6 +123,11 @@ const useGuidedTastingStore = createWithEqualityFn<GuidedTastingStore>()(
       },
       currentStepIndex: () => GUIDED_STEP_ORDER.indexOf(get().currentStep),
 
+      setWineName: (wineName) => set({ wineName }),
+      setVarietal: (varietal) => set({ varietal }),
+      setYear: (year) => set({ year }),
+      setSavedTastingId: (savedTastingId) => set({ savedTastingId }),
+
       setWineType: (wineType) => set({ wineType }),
       setColorDepth: (colorDepth) => set({ colorDepth }),
       setClarity: (clarity) => set({ clarity }),
@@ -126,12 +151,40 @@ const useGuidedTastingStore = createWithEqualityFn<GuidedTastingStore>()(
       setWouldDrinkAgain: (wouldDrinkAgain) => set({ wouldDrinkAgain }),
       setNotes: (notes) => set({ notes }),
 
+      hydrateFromSaved: (data) =>
+        set({
+          savedTastingId: data.id,
+          wineName: data.wineName ?? '',
+          varietal: data.varietal ?? '',
+          year: data.year ? String(data.year) : '',
+          wineType: data.wineType,
+          colorDepth: data.colorDepth,
+          clarity: data.clarity,
+          viscosityNoted: data.viscosityNoted,
+          selectedAromas: data.selectedAromas,
+          acidity: data.acidity,
+          tannin: data.tannin,
+          sweetness: data.sweetness,
+          alcohol: data.alcohol,
+          body: data.body,
+          balance: data.balance,
+          complexity: data.complexity,
+          finishLength: data.finishLength,
+          wouldDrinkAgain: data.wouldDrinkAgain,
+          notes: data.notes,
+          currentStep: 'think',
+        }),
+
       resetSession: () => set(initialState),
     }),
     {
       name: 'decantd-guided-tasting',
       partialize: (state) => ({
         currentStep: state.currentStep,
+        wineName: state.wineName,
+        varietal: state.varietal,
+        year: state.year,
+        savedTastingId: state.savedTastingId,
         wineType: state.wineType,
         colorDepth: state.colorDepth,
         clarity: state.clarity,

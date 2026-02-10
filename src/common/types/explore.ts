@@ -55,6 +55,33 @@ export interface AromaCategory {
   subcategories: AromaSubcategory[];
 }
 
+// Saved Guided Tasting (from DB)
+export interface SavedGuidedTasting {
+  id: string;
+  userId: string;
+  wineName: string | null;
+  varietal: string | null;
+  year: number | null;
+  wineType: WineTypeContext;
+  colorDepth: ColorDepth | null;
+  clarity: Clarity | null;
+  viscosityNoted: boolean;
+  selectedAromas: string[];
+  acidity: number;
+  tannin: number;
+  sweetness: number;
+  alcohol: number;
+  body: number;
+  balance: number;
+  complexity: number;
+  finishLength: FinishLength | null;
+  wouldDrinkAgain: boolean | null;
+  notes: string;
+  isComplete: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
 // Serving Guide
 export interface ServingTemperature {
   wineType: string;

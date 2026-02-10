@@ -1,8 +1,10 @@
 'use client';
 
 import { AnimatePresence, motion } from 'motion/react';
-import { useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useRef } from 'react';
 
+import { useGuidedTasting } from '@/common/hooks/services/useGuidedTastings';
 import { useGuidedTastingStore } from '@/common/stores/useGuidedTastingStore';
 
 import { GuidedTastingProgress } from './GuidedTastingProgress';
@@ -19,13 +21,29 @@ const stepComponents: Record<string, React.ComponentType> = {
 };
 
 export function GuidedTasting() {
+  const searchParams = useSearchParams();
+  const idParam = searchParams.get('id');
+
   const resetSession = useGuidedTastingStore((s) => s.resetSession);
+  const hydrateFromSaved = useGuidedTastingStore((s) => s.hydrateFromSaved);
+  const savedTastingId = useGuidedTastingStore((s) => s.savedTastingId);
   const currentStep = useGuidedTastingStore((s) => s.currentStep);
   const StepComponent = stepComponents[currentStep];
 
+  const { data: savedTasting } = useGuidedTasting(idParam);
+  const hydratedRef = useRef(false);
+
   useEffect(() => {
-    resetSession();
-  }, [resetSession]);
+    if (idParam && savedTasting && !hydratedRef.current) {
+      // Loading a saved tasting — hydrate the store
+      hydrateFromSaved(savedTasting);
+      hydratedRef.current = true;
+    } else if (!idParam && !savedTastingId) {
+      // Fresh tasting — no id param and no saved session
+      resetSession();
+    }
+    // If no idParam but savedTastingId exists, keep current session (resume in-progress)
+  }, [idParam, savedTasting, savedTastingId, hydrateFromSaved, resetSession]);
 
   return (
     <div className="max-w-md mx-auto px-s py-m">

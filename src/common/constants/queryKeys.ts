@@ -12,6 +12,10 @@ export const queryKeys = {
     all: ['corkage'] as const,
     byCity: (city: string) => ['corkage', city] as const,
   },
+  guidedTastings: {
+    all: ['guided-tastings'] as const,
+    byId: (id: string) => ['guided-tastings', id] as const,
+  },
   generation: {
     status: ['generation', 'status'] as const,
   },

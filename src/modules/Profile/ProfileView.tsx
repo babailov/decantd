@@ -16,6 +16,7 @@ import { useAuthStore } from '@/common/stores/useAuthStore';
 import { PalateProfileCard } from '@/modules/PalateProfile';
 
 import { ChangePasswordDialog } from './ChangePasswordDialog';
+import { GuidedTastingsList } from './GuidedTastingsList';
 import { UserPlansList } from './UserPlansList';
 
 export function ProfileView() {
@@ -76,6 +77,14 @@ export function ProfileView() {
           My Palate
         </h2>
         <PalateProfileCard />
+      </div>
+
+      {/* My Tasting Notes */}
+      <div className="mb-m">
+        <h2 className="font-display text-heading-xs text-primary mb-s">
+          My Tasting Notes
+        </h2>
+        <GuidedTastingsList />
       </div>
 
       {/* My Tasting Plans */}

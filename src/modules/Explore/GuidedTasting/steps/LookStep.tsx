@@ -6,6 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 import { Button } from '@/common/components/Button';
+import { Input } from '@/common/components/Input';
 import {
   CLARITY_OPTIONS,
   COLOR_DEPTH_OPTIONS,
@@ -25,6 +26,12 @@ export function LookStep() {
   const viscosityNoted = useGuidedTastingStore((s) => s.viscosityNoted);
   const setViscosityNoted = useGuidedTastingStore((s) => s.setViscosityNoted);
   const nextStep = useGuidedTastingStore((s) => s.nextStep);
+  const wineName = useGuidedTastingStore((s) => s.wineName);
+  const setWineName = useGuidedTastingStore((s) => s.setWineName);
+  const varietal = useGuidedTastingStore((s) => s.varietal);
+  const setVarietal = useGuidedTastingStore((s) => s.setVarietal);
+  const year = useGuidedTastingStore((s) => s.year);
+  const setYear = useGuidedTastingStore((s) => s.setYear);
 
   const colorOptions = wineType ? COLOR_DEPTH_OPTIONS[wineType] : null;
 
@@ -36,6 +43,46 @@ export function LookStep() {
       <p className="text-body-m text-text-secondary mb-m">
         Hold your glass against a white background. Tilt it slightly and observe.
       </p>
+
+      {/* Wine identity */}
+      <div className="mb-m p-m rounded-xl border border-border bg-surface-elevated">
+        <h3 className="text-body-s font-medium text-text-primary mb-xs">
+          Your Wine
+        </h3>
+        <p className="text-body-xs text-text-muted mb-s">
+          You can add or change these after your tasting
+        </p>
+        <div className="flex flex-col gap-xs">
+          <Input
+            id="wine-name"
+            label="Wine Name"
+            placeholder="e.g. Château Margaux"
+            value={wineName}
+            onChange={(e) => setWineName(e.target.value)}
+          />
+          <div className="flex gap-xs">
+            <div className="flex-1">
+              <Input
+                id="varietal"
+                label="Varietal"
+                placeholder="e.g. Cabernet Sauvignon"
+                value={varietal}
+                onChange={(e) => setVarietal(e.target.value)}
+              />
+            </div>
+            <div className="w-24">
+              <Input
+                id="year"
+                label="Year"
+                placeholder="e.g. 2019"
+                type="number"
+                value={year}
+                onChange={(e) => setYear(e.target.value)}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Wine type selector */}
       <div className="mb-m">
