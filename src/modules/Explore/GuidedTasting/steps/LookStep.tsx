@@ -2,6 +2,7 @@
 
 import { Check, ArrowLeft } from 'lucide-react';
 import { motion } from 'motion/react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 import { Button } from '@/common/components/Button';
@@ -53,7 +54,14 @@ export function LookStep() {
               )}
               onClick={() => setWineType(opt.value)}
             >
-              <span className="text-xl">{opt.emoji}</span>
+              <Image
+                unoptimized
+                alt={opt.label}
+                className="object-contain"
+                height={40}
+                src={opt.image}
+                width={30}
+              />
               <span className="text-body-xs font-medium">{opt.label}</span>
             </button>
           ))}

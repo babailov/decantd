@@ -3,12 +3,12 @@ import type { WineTypeContext } from '@/common/types/explore';
 export const WINE_TYPE_OPTIONS: {
   value: WineTypeContext;
   label: string;
-  emoji: string;
+  image: string;
 }[] = [
-  { value: 'red', label: 'Red', emoji: '🍷' },
-  { value: 'white', label: 'White', emoji: '🥂' },
-  { value: 'rose', label: 'Rosé', emoji: '🌸' },
-  { value: 'sparkling', label: 'Sparkling', emoji: '✨' },
+  { value: 'red', label: 'Red', image: '/images/explore/glass-bordeaux.webp' },
+  { value: 'white', label: 'White', image: '/images/explore/glass-white.webp' },
+  { value: 'rose', label: 'Rosé', image: '/images/explore/glass-universal.webp' },
+  { value: 'sparkling', label: 'Sparkling', image: '/images/explore/glass-champagne.webp' },
 ];
 
 export const COLOR_DEPTH_OPTIONS = {
