@@ -28,11 +28,11 @@ export function GlasswareCard({ glass, index }: GlasswareCardProps) {
           {showImage ? (
             <div className="w-16 h-20 rounded-lg overflow-hidden bg-wine-cream">
               <Image
+                unoptimized
                 alt={glass.name}
                 className="object-cover"
                 height={80}
                 src={glass.image!}
-                unoptimized
                 width={64}
                 onError={() => setImgError(true)}
               />

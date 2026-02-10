@@ -2,8 +2,6 @@
 
 import { motion } from 'motion/react';
 
-import { cn } from '@/common/functions/cn';
-
 interface AromaSegmentProps {
   path: string;
   color: string;
