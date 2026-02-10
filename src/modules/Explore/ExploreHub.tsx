@@ -4,6 +4,7 @@ import {
   Eye,
   Flower2,
   MapPin,
+  Sparkles,
   Thermometer,
 } from 'lucide-react';
 import { motion } from 'motion/react';
@@ -70,6 +71,38 @@ export function ExploreHub() {
         <p className="text-body-m text-text-secondary mb-l">
           Develop your palate with interactive guides and wine education.
         </p>
+      </motion.div>
+
+      {/* Tasting Plan CTA */}
+      <motion.div
+        animate={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, y: 15 }}
+        transition={{ duration: 0.3, delay: 0.08 }}
+      >
+        <Link href="/tasting/new">
+          <div
+            className={cn(
+              'relative overflow-hidden rounded-2xl p-m mb-s',
+              'bg-gradient-to-br from-primary/15 via-primary/10 to-accent/10',
+              'border border-primary/20',
+              'transition-all active:scale-[0.98] hover:shadow-md hover:border-primary/40',
+            )}
+          >
+            <div className="flex items-center gap-m">
+              <div className="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-xl bg-primary/20">
+                <Sparkles className="w-6 h-6 text-primary" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h2 className="font-display text-heading-xs text-primary mb-0.5">
+                  Create a Tasting Plan
+                </h2>
+                <p className="text-body-s text-text-secondary">
+                  Get AI-curated wine selections tailored to your occasion, food, and palate.
+                </p>
+              </div>
+            </div>
+          </div>
+        </Link>
       </motion.div>
 
       <div className="flex flex-col gap-s">
