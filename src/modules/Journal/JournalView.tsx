@@ -62,44 +62,37 @@ function RatingCard({ entry }: { entry: JournalEntry }) {
   return (
     <Link href={`/tasting/${entry.planId}`}>
       <Card
-        className="hover:bg-surface transition-colors cursor-pointer"
+        className="flex items-center gap-s p-s hover:bg-surface transition-colors cursor-pointer"
         variant="outlined"
       >
-        <div className="flex items-start gap-s">
-          <div className="flex-1 min-w-0">
-            <p className="font-display text-body-l text-primary font-medium truncate">
-              {entry.wine?.varietal ?? 'Unknown wine'}
+        <div className="flex-1 min-w-0">
+          <p className="font-display text-body-l text-primary font-medium truncate">
+            {entry.wine?.varietal ?? 'Unknown wine'}
+          </p>
+          {entry.wine && (
+            <p className="text-body-s text-text-secondary truncate">
+              {entry.wine.region}
             </p>
+          )}
+          <div className="flex items-center gap-xs mt-1">
+            <StarRating rating={entry.rating} />
             {entry.wine && (
-              <p className="text-body-s text-text-secondary truncate">
-                {entry.wine.region}
-              </p>
+              <Badge variant={entry.wine.wineType as 'red' | 'white' | 'rose' | 'sparkling'}>
+                {WINE_TYPE_LABELS[entry.wine.wineType] ?? entry.wine.wineType}
+              </Badge>
             )}
-            <div className="flex items-center gap-xs mt-1">
-              <StarRating rating={entry.rating} />
-              {entry.wine && (
-                <Badge variant={entry.wine.wineType as 'red' | 'white' | 'rose' | 'sparkling'}>
-                  {WINE_TYPE_LABELS[entry.wine.wineType] ?? entry.wine.wineType}
-                </Badge>
-              )}
-            </div>
-            {entry.tastingNotes && (
-              <p className="text-body-s text-text-muted mt-xs line-clamp-2">
-                {entry.tastingNotes}
-              </p>
-            )}
-            <div className="flex items-center gap-xs mt-xs text-body-xs text-text-muted">
-              {entry.plan && (
-                <span className="truncate">{entry.plan.title}</span>
-              )}
-              <span>&middot;</span>
-              <span className="shrink-0">
-                {format(new Date(entry.createdAt), 'MMM d, yyyy')}
-              </span>
-            </div>
           </div>
-          <ChevronRight className="h-5 w-5 text-text-muted flex-shrink-0 mt-1" />
+          {entry.tastingNotes && (
+            <p className="text-body-s text-text-muted mt-xs line-clamp-2">
+              {entry.tastingNotes}
+            </p>
+          )}
+          <p className="text-body-xs text-text-muted mt-1">
+            {entry.plan && <>{entry.plan.title} &middot; </>}
+            {format(new Date(entry.createdAt), 'MMM d, yyyy')}
+          </p>
         </div>
+        <ChevronRight className="h-5 w-5 text-text-muted flex-shrink-0" />
       </Card>
     </Link>
   );
@@ -109,41 +102,35 @@ function GuidedTastingCard({ tasting }: { tasting: SavedGuidedTasting }) {
   return (
     <Link href={`/explore/tasting-guide?id=${tasting.id}`}>
       <Card
-        className="hover:bg-surface transition-colors cursor-pointer"
+        className="flex items-center gap-s p-s hover:bg-surface transition-colors cursor-pointer"
         variant="outlined"
       >
-        <div className="flex items-start gap-s">
-          <div className="flex-1 min-w-0">
-            <p className="font-display text-body-l text-primary font-medium truncate">
-              {tasting.wineName || 'Unnamed Wine'}
+        <div className="flex-1 min-w-0">
+          <p className="font-display text-body-l text-primary font-medium truncate">
+            {tasting.wineName || 'Unnamed Wine'}
+          </p>
+          {tasting.varietal && (
+            <p className="text-body-s text-text-secondary truncate">
+              {tasting.varietal}
+              {tasting.year ? ` · ${tasting.year}` : ''}
             </p>
-            {tasting.varietal && (
-              <p className="text-body-s text-text-secondary truncate">
-                {tasting.varietal}
-                {tasting.year ? ` · ${tasting.year}` : ''}
-              </p>
-            )}
-            <div className="flex items-center gap-xs mt-1">
-              {tasting.balance > 0 && <StarRating rating={tasting.balance} />}
-              <Badge variant={tasting.wineType as 'red' | 'white' | 'rose' | 'sparkling'}>
-                {WINE_TYPE_LABELS[tasting.wineType] ?? tasting.wineType}
-              </Badge>
-              <Badge variant="default">
-                <GlassWater className="h-3 w-3 mr-0.5" />
-                Guided
-              </Badge>
-            </div>
-            {tasting.notes && (
-              <p className="text-body-s text-text-muted mt-xs line-clamp-2">
-                {tasting.notes}
-              </p>
-            )}
-            <p className="text-body-xs text-text-muted mt-xs">
-              {format(new Date(tasting.createdAt), 'MMM d, yyyy')}
-            </p>
+          )}
+          <div className="flex items-center gap-xs mt-1">
+            {tasting.balance > 0 && <StarRating rating={tasting.balance} />}
+            <Badge variant={tasting.wineType as 'red' | 'white' | 'rose' | 'sparkling'}>
+              {WINE_TYPE_LABELS[tasting.wineType] ?? tasting.wineType}
+            </Badge>
           </div>
-          <ChevronRight className="h-5 w-5 text-text-muted flex-shrink-0 mt-1" />
+          {tasting.notes && (
+            <p className="text-body-s text-text-muted mt-xs line-clamp-2">
+              {tasting.notes}
+            </p>
+          )}
+          <p className="text-body-xs text-text-muted mt-1">
+            {format(new Date(tasting.createdAt), 'MMM d, yyyy')}
+          </p>
         </div>
+        <ChevronRight className="h-5 w-5 text-text-muted flex-shrink-0" />
       </Card>
     </Link>
   );
@@ -245,7 +232,7 @@ export function JournalView() {
                   Guided Tastings
                 </h2>
               </div>
-              <div className="space-y-s">
+              <div className="flex flex-col gap-s">
                 {guidedTastings.map((tasting) => (
                   <GuidedTastingCard key={tasting.id} tasting={tasting} />
                 ))}
@@ -262,7 +249,7 @@ export function JournalView() {
                   Recommended Pairings
                 </h2>
               </div>
-              <div className="space-y-s">
+              <div className="flex flex-col gap-s">
                 {ratings.map((entry) => (
                   <RatingCard key={entry.id} entry={entry} />
                 ))}
