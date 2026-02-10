@@ -73,6 +73,10 @@ interface GuidedTastingStore {
   setBalance: (v: number) => void;
   setComplexity: (v: number) => void;
 
+  // Review mode (summary view for saved tastings)
+  isReviewMode: boolean;
+  setIsReviewMode: (v: boolean) => void;
+
   // Hydrate from saved tasting
   hydrateFromSaved: (data: SavedGuidedTasting) => void;
 
@@ -101,6 +105,7 @@ const initialState = {
   finishLength: null as FinishLength | null,
   wouldDrinkAgain: null as boolean | null,
   notes: '',
+  isReviewMode: false,
 };
 
 const useGuidedTastingStore = createWithEqualityFn<GuidedTastingStore>()(
@@ -151,6 +156,8 @@ const useGuidedTastingStore = createWithEqualityFn<GuidedTastingStore>()(
       setWouldDrinkAgain: (wouldDrinkAgain) => set({ wouldDrinkAgain }),
       setNotes: (notes) => set({ notes }),
 
+      setIsReviewMode: (isReviewMode) => set({ isReviewMode }),
+
       hydrateFromSaved: (data) =>
         set({
           savedTastingId: data.id,
@@ -172,7 +179,8 @@ const useGuidedTastingStore = createWithEqualityFn<GuidedTastingStore>()(
           finishLength: data.finishLength,
           wouldDrinkAgain: data.wouldDrinkAgain,
           notes: data.notes,
-          currentStep: 'think',
+          currentStep: 'summary',
+          isReviewMode: true,
         }),
 
       resetSession: () => set(initialState),
@@ -200,6 +208,7 @@ const useGuidedTastingStore = createWithEqualityFn<GuidedTastingStore>()(
         finishLength: state.finishLength,
         wouldDrinkAgain: state.wouldDrinkAgain,
         notes: state.notes,
+        isReviewMode: state.isReviewMode,
       }),
     },
   ),

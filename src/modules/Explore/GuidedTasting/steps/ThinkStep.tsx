@@ -1,6 +1,6 @@
 'use client';
 
-import { Check, PartyPopper, Star, ThumbsDown, ThumbsUp } from 'lucide-react';
+import { ArrowLeft, Check, PartyPopper, Star, ThumbsDown, ThumbsUp } from 'lucide-react';
 import { motion } from 'motion/react';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -34,6 +34,8 @@ export function ThinkStep() {
   const setNotes = useGuidedTastingStore((s) => s.setNotes);
   const prevStep = useGuidedTastingStore((s) => s.prevStep);
   const resetSession = useGuidedTastingStore((s) => s.resetSession);
+  const isReviewMode = useGuidedTastingStore((s) => s.isReviewMode);
+  const setCurrentStep = useGuidedTastingStore((s) => s.setCurrentStep);
 
   // Summary data
   const wineType = useGuidedTastingStore((s) => s.wineType);
@@ -406,12 +408,21 @@ export function ThinkStep() {
       </div>
 
       <div className="flex gap-s mt-l">
-        <Button className="flex-1" variant="ghost" onClick={prevStep}>
-          Back
-        </Button>
-        <Button className="flex-1" onClick={handleComplete}>
-          Complete Tasting
-        </Button>
+        {isReviewMode ? (
+          <Button className="flex-1" onClick={() => setCurrentStep('summary')}>
+            <ArrowLeft className="w-4 h-4 mr-1" />
+            Back to Summary
+          </Button>
+        ) : (
+          <>
+            <Button className="flex-1" variant="ghost" onClick={prevStep}>
+              Back
+            </Button>
+            <Button className="flex-1" onClick={handleComplete}>
+              Complete Tasting
+            </Button>
+          </>
+        )}
       </div>
     </div>
   );

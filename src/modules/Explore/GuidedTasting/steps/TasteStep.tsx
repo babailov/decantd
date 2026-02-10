@@ -1,5 +1,7 @@
 'use client';
 
+import { ArrowLeft } from 'lucide-react';
+
 import { Button } from '@/common/components/Button';
 import { FlavorRadar } from '@/common/components/FlavorRadar';
 import { Slider } from '@/common/components/Slider';
@@ -18,6 +20,8 @@ export function TasteStep() {
   const setDimension = useGuidedTastingStore((s) => s.setDimension);
   const nextStep = useGuidedTastingStore((s) => s.nextStep);
   const prevStep = useGuidedTastingStore((s) => s.prevStep);
+  const isReviewMode = useGuidedTastingStore((s) => s.isReviewMode);
+  const setCurrentStep = useGuidedTastingStore((s) => s.setCurrentStep);
 
   const values: Record<string, number> = { acidity, tannin, sweetness, alcohol, body };
 
@@ -75,12 +79,21 @@ export function TasteStep() {
       </div>
 
       <div className="flex gap-s mt-l">
-        <Button className="flex-1" variant="ghost" onClick={prevStep}>
-          Back
-        </Button>
-        <Button className="flex-1" onClick={nextStep}>
-          Continue
-        </Button>
+        {isReviewMode ? (
+          <Button className="flex-1" onClick={() => setCurrentStep('summary')}>
+            <ArrowLeft className="w-4 h-4 mr-1" />
+            Back to Summary
+          </Button>
+        ) : (
+          <>
+            <Button className="flex-1" variant="ghost" onClick={prevStep}>
+              Back
+            </Button>
+            <Button className="flex-1" onClick={nextStep}>
+              Continue
+            </Button>
+          </>
+        )}
       </div>
     </div>
   );

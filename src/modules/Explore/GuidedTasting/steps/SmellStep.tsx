@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronDown, X } from 'lucide-react';
+import { ArrowLeft, ChevronDown, X } from 'lucide-react';
 import { motion } from 'motion/react';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -21,6 +21,8 @@ export function SmellStep() {
   const toggleAroma = useGuidedTastingStore((s) => s.toggleAroma);
   const nextStep = useGuidedTastingStore((s) => s.nextStep);
   const prevStep = useGuidedTastingStore((s) => s.prevStep);
+  const isReviewMode = useGuidedTastingStore((s) => s.isReviewMode);
+  const setCurrentStep = useGuidedTastingStore((s) => s.setCurrentStep);
 
   const [expandedSections, setExpandedSections] = useState<string[]>(['primary']);
 
@@ -135,12 +137,21 @@ export function SmellStep() {
       </Link>
 
       <div className="flex gap-s mt-l">
-        <Button className="flex-1" variant="ghost" onClick={prevStep}>
-          Back
-        </Button>
-        <Button className="flex-1" onClick={nextStep}>
-          Continue
-        </Button>
+        {isReviewMode ? (
+          <Button className="flex-1" onClick={() => setCurrentStep('summary')}>
+            <ArrowLeft className="w-4 h-4 mr-1" />
+            Back to Summary
+          </Button>
+        ) : (
+          <>
+            <Button className="flex-1" variant="ghost" onClick={prevStep}>
+              Back
+            </Button>
+            <Button className="flex-1" onClick={nextStep}>
+              Continue
+            </Button>
+          </>
+        )}
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 // Guided Tasting
-export type GuidedTastingStep = 'look' | 'smell' | 'taste' | 'think';
+export type GuidedTastingStep = 'look' | 'smell' | 'taste' | 'think' | 'summary';
 
 export type WineTypeContext = 'red' | 'white' | 'rose' | 'sparkling';
 

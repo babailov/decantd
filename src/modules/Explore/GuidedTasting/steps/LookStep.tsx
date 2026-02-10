@@ -32,6 +32,8 @@ export function LookStep() {
   const setVarietal = useGuidedTastingStore((s) => s.setVarietal);
   const year = useGuidedTastingStore((s) => s.year);
   const setYear = useGuidedTastingStore((s) => s.setYear);
+  const isReviewMode = useGuidedTastingStore((s) => s.isReviewMode);
+  const setCurrentStep = useGuidedTastingStore((s) => s.setCurrentStep);
 
   const colorOptions = wineType ? COLOR_DEPTH_OPTIONS[wineType] : null;
 
@@ -239,19 +241,28 @@ export function LookStep() {
       )}
 
       <div className="flex gap-s mt-l">
-        <Link className="flex-1" href="/explore">
-          <Button className="w-full" variant="ghost">
+        {isReviewMode ? (
+          <Button className="flex-1" onClick={() => setCurrentStep('summary')}>
             <ArrowLeft className="w-4 h-4 mr-1" />
-            Back
+            Back to Summary
           </Button>
-        </Link>
-        <Button
-          className="flex-1"
-          disabled={!wineType}
-          onClick={nextStep}
-        >
-          Continue
-        </Button>
+        ) : (
+          <>
+            <Link className="flex-1" href="/explore">
+              <Button className="w-full" variant="ghost">
+                <ArrowLeft className="w-4 h-4 mr-1" />
+                Back
+              </Button>
+            </Link>
+            <Button
+              className="flex-1"
+              disabled={!wineType}
+              onClick={nextStep}
+            >
+              Continue
+            </Button>
+          </>
+        )}
       </div>
     </div>
   );

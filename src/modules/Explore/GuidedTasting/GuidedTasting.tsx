@@ -11,6 +11,7 @@ import { GuidedTastingProgress } from './GuidedTastingProgress';
 import { LookStep } from './steps/LookStep';
 import { SmellStep } from './steps/SmellStep';
 import { TasteStep } from './steps/TasteStep';
+import { TastingSummary } from './steps/TastingSummary';
 import { ThinkStep } from './steps/ThinkStep';
 
 const stepComponents: Record<string, React.ComponentType> = {
@@ -18,6 +19,7 @@ const stepComponents: Record<string, React.ComponentType> = {
   smell: SmellStep,
   taste: TasteStep,
   think: ThinkStep,
+  summary: TastingSummary,
 };
 
 export function GuidedTasting() {
@@ -47,7 +49,7 @@ export function GuidedTasting() {
 
   return (
     <div className="max-w-md mx-auto px-s py-m">
-      <GuidedTastingProgress />
+      {currentStep !== 'summary' && <GuidedTastingProgress />}
 
       <AnimatePresence mode="wait">
         <motion.div
