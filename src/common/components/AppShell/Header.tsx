@@ -2,6 +2,7 @@
 
 import { LogIn, LogOut, Wine } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import { AuthDialog } from '@/common/components/AuthDialog';
@@ -10,12 +11,18 @@ import { logout } from '@/common/services/auth-api';
 import { useAuthStore } from '@/common/stores/useAuthStore';
 
 export function Header() {
-  const { user, isAuthenticated, clearAuth } = useAuthStore();
+  const { isAuthenticated, clearAuth } = useAuthStore();
+  const router = useRouter();
   const [authOpen, setAuthOpen] = useState(false);
 
   const handleLogout = async () => {
-    await logout();
+    try {
+      await logout();
+    } catch {
+      // Always clear auth even if the API call fails
+    }
     clearAuth();
+    router.push('/');
   };
 
   return (
