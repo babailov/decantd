@@ -28,25 +28,22 @@ export function GuidedTasting() {
 
   const resetSession = useGuidedTastingStore((s) => s.resetSession);
   const hydrateFromSaved = useGuidedTastingStore((s) => s.hydrateFromSaved);
-  const savedTastingId = useGuidedTastingStore((s) => s.savedTastingId);
   const currentStep = useGuidedTastingStore((s) => s.currentStep);
   const StepComponent = stepComponents[currentStep];
 
   const { data: savedTasting } = useGuidedTasting(idParam);
   const hydratedRef = useRef(false);
 
-  const isReviewMode = useGuidedTastingStore((s) => s.isReviewMode);
-
   useEffect(() => {
     if (idParam && savedTasting && !hydratedRef.current) {
       // Loading a saved tasting — hydrate the store
       hydrateFromSaved(savedTasting);
       hydratedRef.current = true;
-    } else if (!idParam && (isReviewMode || !savedTastingId)) {
-      // Fresh tasting — reset if coming from a saved review or no session exists
+    } else if (!idParam) {
+      // No id param — always start fresh
       resetSession();
     }
-  }, [idParam, savedTasting, savedTastingId, isReviewMode, hydrateFromSaved, resetSession]);
+  }, [idParam, savedTasting, hydrateFromSaved, resetSession]);
 
   return (
     <div className="max-w-md mx-auto px-s py-m">
