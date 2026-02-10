@@ -20,7 +20,7 @@ interface PlanSummary {
   createdAt: string;
 }
 
-export function UserPlansList() {
+export function UserPlansList({ limit }: { limit?: number }) {
   const { data, isLoading, error } = useQuery({
     queryKey: queryKeys.user.plans,
     queryFn: async (): Promise<{ plans: PlanSummary[] }> => {
@@ -67,7 +67,7 @@ export function UserPlansList() {
 
   return (
     <div className="flex flex-col gap-s">
-      {data.plans.map((plan) => {
+      {(limit ? data.plans.slice(0, limit) : data.plans).map((plan) => {
         const occasion = OCCASIONS.find((o) => o.value === plan.occasion);
         return (
           <Link key={plan.id} href={`/tasting/${plan.id}`}>
