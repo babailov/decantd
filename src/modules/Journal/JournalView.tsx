@@ -14,6 +14,7 @@ import { cn } from '@/common/functions/cn';
 import { useGuidedTastingsList } from '@/common/hooks/services/useGuidedTastings';
 import { useAuthStore } from '@/common/stores/useAuthStore';
 import type { SavedGuidedTasting } from '@/common/types/explore';
+import { UserPlansList } from '@/modules/Profile/UserPlansList';
 
 interface JournalEntry {
   id: string;
@@ -172,8 +173,6 @@ export function JournalView() {
     return items;
   }, [ratingsData]);
 
-  const isEmpty = guidedTastings.length === 0 && ratings.length === 0;
-
   if (isLoading || ratingsLoading || guidedLoading) {
     return (
       <div className="px-s py-m max-w-lg mx-auto">
@@ -201,63 +200,61 @@ export function JournalView() {
         </h1>
       </div>
 
-      {isEmpty ? (
-        <Card className="text-center py-l">
-          <Wine className="h-8 w-8 text-text-muted mx-auto mb-xs" />
-          <p className="text-body-m text-text-secondary">No tastings yet</p>
-          <p className="text-body-s text-text-muted mt-1">
-            Rate wines in your plans or complete a guided tasting to build your journal.
-          </p>
-          <div className="flex flex-col items-center gap-xs mt-s">
-            <Link href="/tasting/new">
-              <span className="text-body-s text-accent font-medium">
-                Create a tasting plan
-              </span>
-            </Link>
-            <Link href="/explore/tasting-guide">
-              <span className="text-body-s text-accent font-medium">
-                Start a guided tasting
-              </span>
-            </Link>
+      <div className="space-y-l">
+        {/* Guided Tastings */}
+        <section>
+          <div className="flex items-center gap-xs mb-s">
+            <GlassWater className="h-5 w-5 text-primary" />
+            <h2 className="font-display text-heading-s text-text-primary">
+              Guided Tastings
+            </h2>
           </div>
-        </Card>
-      ) : (
-        <div className="space-y-l">
-          {/* Guided Tastings */}
-          {guidedTastings.length > 0 && (
-            <section>
-              <div className="flex items-center gap-xs mb-s">
-                <GlassWater className="h-5 w-5 text-primary" />
-                <h2 className="font-display text-heading-s text-text-primary">
-                  Guided Tastings
-                </h2>
-              </div>
-              <div className="flex flex-col gap-s">
-                {guidedTastings.map((tasting) => (
-                  <GuidedTastingCard key={tasting.id} tasting={tasting} />
-                ))}
-              </div>
-            </section>
+          {guidedTastings.length > 0 ? (
+            <div className="flex flex-col gap-m">
+              {guidedTastings.map((tasting) => (
+                <GuidedTastingCard key={tasting.id} tasting={tasting} />
+              ))}
+            </div>
+          ) : (
+            <Card className="text-center py-m">
+              <p className="text-body-s text-text-muted">
+                No tasting notes yet.{' '}
+                <Link className="text-accent font-medium" href="/explore/tasting-guide">
+                  Start a guided tasting
+                </Link>
+              </p>
+            </Card>
           )}
+        </section>
 
-          {/* Recommended Pairings / Flights */}
-          {ratings.length > 0 && (
-            <section>
-              <div className="flex items-center gap-xs mb-s">
-                <Wine className="h-5 w-5 text-primary" />
-                <h2 className="font-display text-heading-s text-text-primary">
-                  Recommended Pairings
-                </h2>
-              </div>
-              <div className="flex flex-col gap-s">
-                {ratings.map((entry) => (
-                  <RatingCard key={entry.id} entry={entry} />
-                ))}
-              </div>
-            </section>
-          )}
-        </div>
-      )}
+        {/* Recommended Pairings */}
+        {ratings.length > 0 && (
+          <section>
+            <div className="flex items-center gap-xs mb-s">
+              <Wine className="h-5 w-5 text-primary" />
+              <h2 className="font-display text-heading-s text-text-primary">
+                Recommended Pairings
+              </h2>
+            </div>
+            <div className="flex flex-col gap-m">
+              {ratings.map((entry) => (
+                <RatingCard key={entry.id} entry={entry} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* My Tasting Plans */}
+        <section>
+          <div className="flex items-center gap-xs mb-s">
+            <BookOpen className="h-5 w-5 text-primary" />
+            <h2 className="font-display text-heading-s text-text-primary">
+              My Tasting Plans
+            </h2>
+          </div>
+          <UserPlansList />
+        </section>
+      </div>
     </div>
   );
 }
