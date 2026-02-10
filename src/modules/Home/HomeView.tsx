@@ -36,20 +36,20 @@ export function HomeView() {
         <PalateProfileCard />
       </div>
 
-      {/* Recent Plans */}
+      {/* Recent Pairings */}
       <div className="mb-l">
         <div className="flex items-center justify-between mb-s">
           <h2 className="font-display text-heading-xs text-primary">
-            My Recent Plans
+            Recent Pairings
           </h2>
           <Link
             className="text-body-s text-accent font-medium"
-            href="/profile"
+            href="/journal"
           >
             View all
           </Link>
         </div>
-        <UserPlansList />
+        <UserPlansList limit={3} />
       </div>
 
       {/* Journal link */}
