@@ -35,17 +35,18 @@ export function GuidedTasting() {
   const { data: savedTasting } = useGuidedTasting(idParam);
   const hydratedRef = useRef(false);
 
+  const isReviewMode = useGuidedTastingStore((s) => s.isReviewMode);
+
   useEffect(() => {
     if (idParam && savedTasting && !hydratedRef.current) {
       // Loading a saved tasting — hydrate the store
       hydrateFromSaved(savedTasting);
       hydratedRef.current = true;
-    } else if (!idParam && !savedTastingId) {
-      // Fresh tasting — no id param and no saved session
+    } else if (!idParam && (isReviewMode || !savedTastingId)) {
+      // Fresh tasting — reset if coming from a saved review or no session exists
       resetSession();
     }
-    // If no idParam but savedTastingId exists, keep current session (resume in-progress)
-  }, [idParam, savedTasting, savedTastingId, hydrateFromSaved, resetSession]);
+  }, [idParam, savedTasting, savedTastingId, isReviewMode, hydrateFromSaved, resetSession]);
 
   return (
     <div className="max-w-md mx-auto px-s py-m">
