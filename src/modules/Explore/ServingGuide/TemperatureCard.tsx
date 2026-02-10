@@ -23,7 +23,7 @@ export function TemperatureCard({ temp, index }: TemperatureCardProps) {
       <div className="flex gap-s">
         {/* Mini thermometer */}
         <div className="flex flex-col items-center flex-shrink-0">
-          <div className="w-4 h-20 rounded-full bg-border relative overflow-hidden">
+          <div className="w-4 h-20 rounded-full bg-primary/5 relative overflow-hidden">
             <motion.div
               animate={{ height: `${fillPercent}%` }}
               className="absolute bottom-0 left-0 right-0 rounded-full"
