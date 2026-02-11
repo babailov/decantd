@@ -124,21 +124,17 @@ export async function GET(request: NextRequest) {
     const response = NextResponse.redirect(new URL('/', request.url));
 
     // Set session cookie
-    response.cookies.set('decantd-session', token, {
-      httpOnly: true,
-      sameSite: 'lax',
-      secure: true,
-      path: '/',
-      expires: new Date(expiresAt),
-    });
+    const expires = new Date(expiresAt).toUTCString();
+    response.headers.append(
+      'Set-Cookie',
+      `decantd-session=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Expires=${expires}`,
+    );
 
     // Clear the state cookie
-    response.cookies.set(STATE_COOKIE, '', {
-      httpOnly: true,
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 0,
-    });
+    response.headers.append(
+      'Set-Cookie',
+      `${STATE_COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0`,
+    );
 
     return response;
   } catch (err) {
