@@ -1,1 +1,1 @@
-export { ProfileView } from './ProfileView';
+export { ChangePasswordDialog } from './ChangePasswordDialog';

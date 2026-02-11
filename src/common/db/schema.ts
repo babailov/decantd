@@ -9,6 +9,7 @@ export const users = sqliteTable('users', {
   passwordHash: text('password_hash').notNull(),
   displayName: text('display_name').notNull(),
   avatarUrl: text('avatar_url'),
+  subscriptionTier: text('subscription_tier').notNull().default('free'),
   createdAt: text('created_at')
     .notNull()
     .default(sql`(datetime('now'))`),
@@ -112,6 +113,99 @@ export const wineRatings = sqliteTable('wine_ratings', {
   rating: integer('rating').notNull(), // 1-5
   tastingNotes: text('tasting_notes'),
   tried: integer('tried', { mode: 'boolean' }).notNull().default(true),
+  createdAt: text('created_at')
+    .notNull()
+    .default(sql`(datetime('now'))`),
+  updatedAt: text('updated_at')
+    .notNull()
+    .default(sql`(datetime('now'))`),
+});
+
+// ── Plan Cache ────────────────────────────────────────
+
+export const cachedPlans = sqliteTable('cached_plans', {
+  id: text('id').primaryKey(),
+  inputHash: text('input_hash').notNull().unique(),
+  occasion: text('occasion').notNull(),
+  foodPairing: text('food_pairing').notNull(),
+  regionPreferences: text('region_preferences', { mode: 'json' })
+    .notNull()
+    .$type<string[]>()
+    .default([]),
+  budgetMin: real('budget_min').notNull(),
+  budgetMax: real('budget_max').notNull(),
+  wineCount: integer('wine_count').notNull(),
+  planId: text('plan_id')
+    .notNull()
+    .references(() => tastingPlans.id),
+  expiresAt: text('expires_at'),
+  createdAt: text('created_at')
+    .notNull()
+    .default(sql`(datetime('now'))`),
+});
+
+// ── Generation Logs ───────────────────────────────────
+
+export const generationLogs = sqliteTable('generation_logs', {
+  id: text('id').primaryKey(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id),
+  inputHash: text('input_hash').notNull(),
+  planId: text('plan_id').references(() => tastingPlans.id),
+  wasCacheHit: integer('was_cache_hit', { mode: 'boolean' })
+    .notNull()
+    .default(false),
+  createdAt: text('created_at')
+    .notNull()
+    .default(sql`(datetime('now'))`),
+});
+
+// ── Guided Tastings ─────────────────────────────────
+
+export const guidedTastings = sqliteTable('guided_tastings', {
+  id: text('id').primaryKey(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id),
+
+  // Wine identity (all optional)
+  wineName: text('wine_name'),
+  varietal: text('varietal'),
+  year: integer('year'),
+
+  // Look
+  wineType: text('wine_type').notNull(),
+  colorDepth: text('color_depth'),
+  clarity: text('clarity'),
+  viscosityNoted: integer('viscosity_noted', { mode: 'boolean' })
+    .notNull()
+    .default(false),
+
+  // Smell
+  selectedAromas: text('selected_aromas', { mode: 'json' })
+    .notNull()
+    .$type<string[]>()
+    .default([]),
+
+  // Taste (0-5)
+  acidity: real('acidity').notNull().default(3),
+  tannin: real('tannin').notNull().default(3),
+  sweetness: real('sweetness').notNull().default(1),
+  alcohol: real('alcohol').notNull().default(3),
+  body: real('body').notNull().default(3),
+
+  // Think
+  balance: integer('balance').notNull().default(0),
+  complexity: integer('complexity').notNull().default(0),
+  finishLength: text('finish_length'),
+  wouldDrinkAgain: integer('would_drink_again', { mode: 'boolean' }),
+  notes: text('notes').notNull().default(''),
+
+  // Meta
+  isComplete: integer('is_complete', { mode: 'boolean' })
+    .notNull()
+    .default(false),
   createdAt: text('created_at')
     .notNull()
     .default(sql`(datetime('now'))`),

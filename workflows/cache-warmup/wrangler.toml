@@ -1,0 +1,26 @@
+name = "decantd-cache-warmup"
+main = "src/index.ts"
+compatibility_date = "2025-03-25"
+compatibility_flags = ["nodejs_compat_v2"]
+
+[[workflows]]
+name = "cache-warmup"
+binding = "CACHE_WARMUP"
+class_name = "CacheWarmupWorkflow"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "decantd-db-dev"
+database_id = "b0031528-332f-404f-9f8c-0b3d7de8b37d"
+
+[env.production]
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "decantd-db-prod"
+database_id = "54b3a0a8-d6df-4ff5-9218-eceeb3568cdf"
+
+[env.staging]
+[[env.staging.d1_databases]]
+binding = "DB"
+database_name = "decantd-db-staging"
+database_id = "a99fee55-5eff-495d-a545-e3f39db1b93f"

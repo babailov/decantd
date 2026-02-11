@@ -50,3 +50,21 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      - name: Deploy Cache Warmup Workflow
+        run: |
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            WORKFLOW_ENV="production"
+          elif [ "${{ github.ref }}" = "refs/heads/staging" ]; then
+            WORKFLOW_ENV="staging"
+          else
+            WORKFLOW_ENV=""
+          fi
+
+          if [ -n "$WORKFLOW_ENV" ]; then
+            pnpm exec wrangler deploy --config workflows/cache-warmup/wrangler.toml --env $WORKFLOW_ENV
+          else
+            pnpm exec wrangler deploy --config workflows/cache-warmup/wrangler.toml
+          fi
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

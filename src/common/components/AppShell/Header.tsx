@@ -1,16 +1,18 @@
 'use client';
 
-import { LogIn, User, Wine } from 'lucide-react';
+import { LogIn, Wine } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 
 import { AuthDialog } from '@/common/components/AuthDialog';
+import { ProfileDrawer } from '@/common/components/ProfileDrawer';
 import { cn } from '@/common/functions/cn';
 import { useAuthStore } from '@/common/stores/useAuthStore';
 
 export function Header() {
   const { user, isAuthenticated } = useAuthStore();
   const [authOpen, setAuthOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
 
   return (
     <>
@@ -28,16 +30,17 @@ export function Header() {
           </span>
         </Link>
 
-        {isAuthenticated() ? (
-          <Link
-            className="flex items-center gap-1.5 text-text-secondary hover:text-primary transition-colors"
-            href="/profile"
+        {isAuthenticated() && user ? (
+          <button
+            className={cn(
+              'w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center',
+              'text-primary font-display text-body-s font-bold',
+              'hover:bg-primary/20 transition-colors',
+            )}
+            onClick={() => setProfileOpen(true)}
           >
-            <User className="h-5 w-5" />
-            <span className="text-body-s font-medium hidden sm:inline">
-              {user?.displayName}
-            </span>
-          </Link>
+            {user.displayName.charAt(0).toUpperCase()}
+          </button>
         ) : (
           <button
             className="flex items-center gap-1.5 text-text-secondary hover:text-primary transition-colors"
@@ -48,6 +51,8 @@ export function Header() {
           </button>
         )}
       </header>
+
+      <ProfileDrawer open={profileOpen} onOpenChange={setProfileOpen} />
 
       <AuthDialog
         defaultMode="login"

@@ -49,6 +49,7 @@ export async function getUserFromRequest(
     email: user.email,
     displayName: user.displayName,
     avatarUrl: user.avatarUrl,
+    subscriptionTier: (user.subscriptionTier as 'free' | 'paid') || 'free',
     createdAt: user.createdAt,
   };
 }

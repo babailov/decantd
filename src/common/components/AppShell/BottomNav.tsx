@@ -4,8 +4,6 @@ import {
   BookOpen,
   Compass,
   Home,
-  Plus,
-  User,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -20,16 +18,14 @@ export function BottomNav() {
 
   const navItems = [
     { href: '/', icon: Home, label: 'Home', enabled: true },
-    { href: '/corkage', icon: Compass, label: 'Explore', enabled: true },
-    { href: '/tasting/new', icon: Plus, label: 'New', enabled: true, primary: true },
+    { href: '/explore', icon: Compass, label: 'Explore', enabled: true },
     { href: '/journal', icon: BookOpen, label: 'Journal', enabled: loggedIn },
-    { href: '/profile', icon: User, label: 'Profile', enabled: loggedIn },
   ];
 
   return (
     <nav
       className={cn(
-        'fixed bottom-0 left-0 right-0 z-bottom-nav',
+        'fixed bottom-0 left-0 right-0 z-bottom-nav md:hidden',
         'bg-background/90 backdrop-blur-md border-t border-border',
         'h-[var(--bottom-nav-height)]',
         'flex items-center justify-around px-xs',
@@ -37,25 +33,10 @@ export function BottomNav() {
       )}
     >
       {navItems.map((item) => {
-        const isActive = pathname === item.href;
+        const isActive = item.href === '/'
+          ? pathname === '/'
+          : pathname.startsWith(item.href);
         const Icon = item.icon;
-
-        if (item.primary) {
-          return (
-            <Link
-              key={item.href}
-              className={cn(
-                'flex items-center justify-center',
-                'w-12 h-12 -mt-4 rounded-full',
-                'bg-primary text-text-on-primary shadow-lg',
-                'active:scale-95 transition-transform',
-              )}
-              href={item.href}
-            >
-              <Icon className="h-6 w-6" />
-            </Link>
-          );
-        }
 
         if (!item.enabled) {
           return (

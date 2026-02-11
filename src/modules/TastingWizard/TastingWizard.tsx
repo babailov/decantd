@@ -3,6 +3,7 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect } from 'react';
 
+import { useTierConfig } from '@/common/hooks/useTierConfig';
 import { useAuthStore } from '@/common/stores/useAuthStore';
 import { useTastingStore } from '@/common/stores/useTastingStore';
 
@@ -27,11 +28,29 @@ const stepComponents: Record<string, React.ComponentType> = {
 
 export function TastingWizard() {
   const resetWizard = useTastingStore((s) => s.resetWizard);
+  const setSurpriseMe = useTastingStore((s) => s.setSurpriseMe);
+  const setBudgetRange = useTastingStore((s) => s.setBudgetRange);
+  const setWineCount = useTastingStore((s) => s.setWineCount);
   const { isAuthenticated } = useAuthStore();
+  const tierConfig = useTierConfig();
 
   useEffect(() => {
     resetWizard();
   }, [resetWizard]);
+
+  // Enforce tier defaults for anonymous users
+  useEffect(() => {
+    if (tierConfig.forceSurpriseMe) {
+      setSurpriseMe(true);
+    }
+    if (tierConfig.fixedWineCount !== null) {
+      setWineCount(tierConfig.fixedWineCount);
+    }
+    if (tierConfig.budgetPresets.length === 1) {
+      const preset = tierConfig.budgetPresets[0];
+      setBudgetRange(preset.min, preset.max);
+    }
+  }, [tierConfig, setSurpriseMe, setBudgetRange, setWineCount]);
 
   const currentStep = useTastingStore((s) => s.currentStep);
   const StepComponent = stepComponents[currentStep];

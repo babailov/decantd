@@ -36,3 +36,22 @@ export async function getTastingPlan(id: string): Promise<TastingPlan> {
 
   return response.json();
 }
+
+export interface GenerationStatus {
+  tier: string;
+  dailyLimit: number | null;
+  used: number;
+  remaining: number | null;
+}
+
+export async function getGenerationStatus(): Promise<GenerationStatus> {
+  const response = await fetch('/api/tasting/generate-status', {
+    headers: getAuthHeaders(),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to get generation status');
+  }
+
+  return response.json();
+}
