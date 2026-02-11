@@ -4,8 +4,11 @@
   --header-height: 3.5rem;
   --bottom-nav-height: 4rem;
   --side-nav-width: 4.5rem;
-  --vineyard-glow: rgba(165, 42, 42, 0.14);
-  --vineyard-haze: rgba(245, 222, 179, 0.42);
+  --app-bg:
+    radial-gradient(circle at 10% -2%, rgba(244, 230, 191, 0.42), transparent 44%),
+    radial-gradient(circle at 84% 0%, rgba(146, 177, 98, 0.24), transparent 36%),
+    linear-gradient(180deg, #f6f0e4 0%, #efe5d2 52%, #e8dcc4 100%);
+  --story-vignette: inset 0 1px 0 rgba(255, 255, 255, 0.36);
 }
 
 /*
@@ -16,31 +19,31 @@
 
 /* COLORS */
 @theme {
-  --color-wine-dark: #8B0000;
-  --color-wine-burgundy: #722F37;
-  --color-wine-sienna: #A52A2A;
-  --color-wine-wheat: #F5DEB3;
-  --color-wine-goldenrod: #DAA520;
-  --color-wine-gold: #D4A017;
-  --color-wine-cream: #FDF8F0;
-  --color-wine-parchment: #F0E8DA;
-  --color-wine-charcoal: #333333;
+  --color-wine-dark: #260f12;
+  --color-wine-burgundy: #6b2934;
+  --color-wine-sienna: #8c3a2f;
+  --color-wine-wheat: #e7d2a2;
+  --color-wine-goldenrod: #d0a03d;
+  --color-wine-gold: #e6b858;
+  --color-wine-cream: #f7f0df;
+  --color-wine-parchment: #f0e3ca;
+  --color-wine-charcoal: #30241f;
 
-  --color-background: var(--color-wine-cream);
-  --color-primary: var(--color-wine-burgundy);
-  --color-primary-hover: #5e2530;
-  --color-accent: var(--color-wine-goldenrod);
-  --color-accent-hover: #c4951c;
-  --color-surface: var(--color-wine-parchment);
-  --color-surface-elevated: #ffffff;
-  --color-border: #e0d5c5;
-  --color-border-strong: #c8b8a2;
+  --color-background: #f6f0e4;
+  --color-primary: #5f8f3f;
+  --color-primary-hover: #4c7a2f;
+  --color-accent: #d0a03d;
+  --color-accent-hover: #bf8f33;
+  --color-surface: rgba(252, 246, 235, 0.88);
+  --color-surface-elevated: #fffaf0;
+  --color-border: rgba(128, 110, 84, 0.26);
+  --color-border-strong: rgba(100, 81, 58, 0.44);
 
-  --color-text-primary: var(--color-wine-charcoal);
-  --color-text-secondary: #666666;
-  --color-text-muted: #999999;
-  --color-text-on-primary: #ffffff;
-  --color-text-on-accent: #1a1a1a;
+  --color-text-primary: #2a1f16;
+  --color-text-secondary: #5b4f42;
+  --color-text-muted: #7c6b56;
+  --color-text-on-primary: #f9f5ea;
+  --color-text-on-accent: #2b2014;
 
   --color-success: #2d8a4e;
   --color-alert: #c0392b;
@@ -115,6 +118,41 @@
   --animate-slide-up: slide-up 0.3s ease-out;
 }
 
+/* Story themes */
+[data-theme='vineyard'] {
+  --color-background: #f6f0e4;
+  --color-primary: #5f8f3f;
+  --color-primary-hover: #4c7a2f;
+  --color-accent: #d0a03d;
+  --color-accent-hover: #bf8f33;
+  --color-surface: rgba(252, 246, 235, 0.9);
+  --color-surface-elevated: #fffaf0;
+  --color-border: rgba(128, 110, 84, 0.24);
+  --color-border-strong: rgba(100, 81, 58, 0.42);
+  --color-text-primary: #2a1f16;
+  --color-text-secondary: #5b4f42;
+  --color-text-muted: #7c6b56;
+  --color-text-on-primary: #f9f5ea;
+  --color-text-on-accent: #2b2014;
+}
+
+[data-theme='cellar'] {
+  --color-background: #1b1114;
+  --color-primary: #c09a56;
+  --color-primary-hover: #d3ad66;
+  --color-accent: #8f3546;
+  --color-accent-hover: #a84357;
+  --color-surface: rgba(44, 22, 27, 0.86);
+  --color-surface-elevated: rgba(56, 28, 35, 0.9);
+  --color-border: rgba(214, 175, 116, 0.25);
+  --color-border-strong: rgba(214, 175, 116, 0.42);
+  --color-text-primary: #f7ecdc;
+  --color-text-secondary: #d5c0a3;
+  --color-text-muted: #ae9072;
+  --color-text-on-primary: #2a190f;
+  --color-text-on-accent: #f8ece4;
+}
+
 @keyframes shimmer {
   0% {
     transform: translateX(-300%);
@@ -148,32 +186,40 @@
 }
 
 body {
-  background:
-    radial-gradient(circle at 12% 0%, var(--vineyard-haze), transparent 45%),
-    radial-gradient(circle at 92% 8%, var(--vineyard-glow), transparent 38%),
-    linear-gradient(180deg, #fdf8f0 0%, #f4ebde 50%, #efe3d2 100%);
+  background: var(--app-bg);
   color: var(--color-text-primary);
 }
 
-.vineyard-bg {
-  position: relative;
-  isolation: isolate;
-}
-
-.vineyard-bg::before {
-  content: '';
+.bg-story-cellar,
+.bg-story-vineyard {
   position: absolute;
   inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background-image: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.35) 0%,
-    rgba(255, 255, 255, 0) 45%
-  );
+  border-radius: inherit;
+  z-index: -1;
 }
 
-.vineyard-bg > * {
+.bg-story-cellar {
+  background:
+    radial-gradient(circle at 12% -8%, rgba(160, 59, 78, 0.4), transparent 38%),
+    radial-gradient(circle at 88% 0%, rgba(214, 175, 116, 0.24), transparent 36%),
+    linear-gradient(145deg, rgba(18, 10, 12, 0.97) 0%, rgba(44, 22, 27, 0.94) 60%, rgba(58, 30, 34, 0.96) 100%);
+  box-shadow:
+    var(--story-vignette),
+    0 24px 48px -28px rgba(14, 6, 9, 0.8);
+}
+
+.bg-story-vineyard {
+  background:
+    radial-gradient(circle at 8% 0%, rgba(245, 219, 145, 0.54), transparent 42%),
+    radial-gradient(circle at 90% 4%, rgba(138, 172, 88, 0.34), transparent 38%),
+    linear-gradient(160deg, rgba(248, 241, 222, 0.95) 0%, rgba(237, 225, 193, 0.9) 100%);
+  box-shadow:
+    var(--story-vignette),
+    0 20px 44px -30px rgba(90, 70, 44, 0.52);
+}
+
+.story-theme {
   position: relative;
-  z-index: 1;
+  isolation: isolate;
+  overflow: hidden;
 }
