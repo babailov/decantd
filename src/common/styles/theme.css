@@ -30,14 +30,14 @@
   --color-wine-charcoal: #30241f;
 
   --color-background: #f6f0e4;
-  --color-primary: #5f8f3f;
-  --color-primary-hover: #4c7a2f;
-  --color-accent: #d0a03d;
-  --color-accent-hover: #bf8f33;
+  --color-primary: #722f37;
+  --color-primary-hover: #5e2530;
+  --color-accent: #c7953a;
+  --color-accent-hover: #af812f;
   --color-surface: rgba(252, 246, 235, 0.88);
   --color-surface-elevated: #fffaf0;
-  --color-border: rgba(128, 110, 84, 0.26);
-  --color-border-strong: rgba(100, 81, 58, 0.44);
+  --color-border: rgba(114, 47, 55, 0.18);
+  --color-border-strong: rgba(114, 47, 55, 0.34);
 
   --color-text-primary: #2a1f16;
   --color-text-secondary: #5b4f42;
@@ -121,14 +121,14 @@
 /* Story themes */
 [data-theme='vineyard'] {
   --color-background: #f6f0e4;
-  --color-primary: #5f8f3f;
-  --color-primary-hover: #4c7a2f;
-  --color-accent: #d0a03d;
-  --color-accent-hover: #bf8f33;
+  --color-primary: #6e2c34;
+  --color-primary-hover: #5b242b;
+  --color-accent: #8f9a4e;
+  --color-accent-hover: #7f8944;
   --color-surface: rgba(252, 246, 235, 0.9);
   --color-surface-elevated: #fffaf0;
-  --color-border: rgba(128, 110, 84, 0.24);
-  --color-border-strong: rgba(100, 81, 58, 0.42);
+  --color-border: rgba(103, 83, 58, 0.26);
+  --color-border-strong: rgba(103, 83, 58, 0.44);
   --color-text-primary: #2a1f16;
   --color-text-secondary: #5b4f42;
   --color-text-muted: #7c6b56;
@@ -138,8 +138,8 @@
 
 [data-theme='cellar'] {
   --color-background: #1b1114;
-  --color-primary: #c09a56;
-  --color-primary-hover: #d3ad66;
+  --color-primary: #d7b071;
+  --color-primary-hover: #e3c184;
   --color-accent: #8f3546;
   --color-accent-hover: #a84357;
   --color-surface: rgba(44, 22, 27, 0.86);
