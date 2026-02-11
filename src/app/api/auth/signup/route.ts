@@ -61,6 +61,8 @@ export async function POST(request: NextRequest) {
         displayName: input.displayName,
         avatarUrl: null,
         subscriptionTier: 'free',
+        billingStatus: 'inactive',
+        subscriptionCurrentPeriodEnd: null,
         createdAt: now,
       },
     });

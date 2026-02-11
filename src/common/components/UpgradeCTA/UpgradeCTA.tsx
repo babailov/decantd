@@ -2,10 +2,12 @@
 
 import { Sparkles } from 'lucide-react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 
 import { AuthDialog } from '@/common/components/AuthDialog';
 import { cn } from '@/common/functions/cn';
 import { useUserTier } from '@/common/hooks/useTierConfig';
+import { redirectToCheckout } from '@/common/services/billing-api';
 
 interface UpgradeCTAProps {
   variant?: 'inline' | 'card';
@@ -20,8 +22,25 @@ export function UpgradeCTA({
 }: UpgradeCTAProps) {
   const tier = useUserTier();
   const [authOpen, setAuthOpen] = useState(false);
+  const [isLoadingCheckout, setIsLoadingCheckout] = useState(false);
 
   const buttonLabel = tier === 'anonymous' ? 'Sign up free' : 'Upgrade';
+
+  const handleUpgrade = async () => {
+    if (tier === 'anonymous') {
+      setAuthOpen(true);
+      return;
+    }
+
+    setIsLoadingCheckout(true);
+    try {
+      await redirectToCheckout();
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to open checkout';
+      toast.error(message);
+      setIsLoadingCheckout(false);
+    }
+  };
 
   if (variant === 'inline') {
     return (
@@ -29,10 +48,13 @@ export function UpgradeCTA({
         <p className={cn('text-body-xs text-text-muted mt-xs', className)}>
           {message}{' '}
           <button
-            className="text-accent font-medium hover:underline"
-            onClick={() => setAuthOpen(true)}
+            className={cn(
+              'text-accent font-medium hover:underline',
+              isLoadingCheckout && 'opacity-60 pointer-events-none',
+            )}
+            onClick={handleUpgrade}
           >
-            {buttonLabel}
+            {isLoadingCheckout ? 'Loading checkout...' : buttonLabel}
           </button>
         </p>
         <AuthDialog open={authOpen} onOpenChange={setAuthOpen} />
@@ -55,10 +77,13 @@ export function UpgradeCTA({
               {message}
             </p>
             <button
-              className="text-body-s text-accent font-medium hover:underline"
-              onClick={() => setAuthOpen(true)}
+              className={cn(
+                'text-body-s text-accent font-medium hover:underline',
+                isLoadingCheckout && 'opacity-60 pointer-events-none',
+              )}
+              onClick={handleUpgrade}
             >
-              {buttonLabel}
+              {isLoadingCheckout ? 'Loading checkout...' : buttonLabel}
             </button>
           </div>
         </div>

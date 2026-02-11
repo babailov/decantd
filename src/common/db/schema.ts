@@ -10,6 +10,10 @@ export const users = sqliteTable('users', {
   displayName: text('display_name').notNull(),
   avatarUrl: text('avatar_url'),
   subscriptionTier: text('subscription_tier').notNull().default('free'),
+  subscriptionStatus: text('subscription_status').notNull().default('inactive'),
+  stripeCustomerId: text('stripe_customer_id'),
+  stripeSubscriptionId: text('stripe_subscription_id'),
+  subscriptionCurrentPeriodEnd: text('subscription_current_period_end'),
   createdAt: text('created_at')
     .notNull()
     .default(sql`(datetime('now'))`),

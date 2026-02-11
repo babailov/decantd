@@ -1,4 +1,4 @@
-import { SubscriptionTier } from './tier';
+import { BillingStatus, SubscriptionTier } from './tier';
 
 export interface User {
   id: string;
@@ -6,6 +6,8 @@ export interface User {
   displayName: string;
   avatarUrl: string | null;
   subscriptionTier: SubscriptionTier;
+  billingStatus?: BillingStatus;
+  subscriptionCurrentPeriodEnd?: string | null;
   createdAt: string;
 }
 
