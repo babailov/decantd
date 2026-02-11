@@ -58,7 +58,7 @@ export function TastingWizard() {
   const StepComponent = stepComponents[currentStep];
 
   return (
-    <div className="vineyard-page max-w-md mx-auto px-s py-m">
+    <div className="max-w-md mx-auto px-s py-m">
       {!isAuthenticated() && <GuestPlansList compact />}
 
       <div className="mb-m rounded-2xl border border-white/60 bg-white/55 p-s backdrop-blur-sm">

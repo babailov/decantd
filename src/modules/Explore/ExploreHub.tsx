@@ -60,7 +60,7 @@ export function ExploreHub() {
   const [authOpen, setAuthOpen] = useState(false);
 
   return (
-    <div className="vineyard-page max-w-md mx-auto px-s py-m">
+    <div className="max-w-md mx-auto px-s py-m">
       <motion.div
         animate={{ opacity: 1, y: 0 }}
         initial={{ opacity: 0, y: 10 }}

@@ -9,7 +9,7 @@ import { trackEvent } from '@/common/services/analytics-api';
 
 export function LandingHero() {
   return (
-    <div className="vineyard-page flex flex-col items-center min-h-screen px-s pt-xl pb-l">
+    <div className="flex flex-col items-center min-h-screen px-s pt-xl pb-l">
       {/* Hero */}
       <motion.div
         animate={{ opacity: 1, y: 0 }}

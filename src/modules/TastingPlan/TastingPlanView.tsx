@@ -64,7 +64,7 @@ export function TastingPlanView({ plan }: TastingPlanViewProps) {
     OCCASIONS.find((o) => o.value === plan.occasion)?.emoji || '';
 
   return (
-    <div className="vineyard-page max-w-md mx-auto px-s py-m">
+    <div className="max-w-md mx-auto px-s py-m">
       {/* Header */}
       <motion.div
         animate={{ opacity: 1, y: 0 }}
