@@ -44,7 +44,7 @@ export function HomeView() {
 
       {/* Create new plan CTA */}
       <Link href="/tasting/new">
-        <Button className="w-full gap-xs mb-l shadow-[0_16px_28px_-20px_rgba(185,72,104,0.6)]" size="lg">
+        <Button className="w-full gap-xs mb-l shadow-[0_16px_28px_-20px_rgba(123,45,58,0.4)]" size="lg">
           <Sparkles className="w-5 h-5" />
           Create New Tasting Plan
           <ChevronRight className="w-4 h-4" />
@@ -61,7 +61,7 @@ export function HomeView() {
 
       {/* Gamified streak */}
       <div className="mb-l">
-        <Card className="bg-gradient-to-r from-accent/18 via-primary/10 to-accent/10 border-primary/18 shadow-[0_14px_24px_-20px_rgba(76,79,105,0.65)]">
+        <Card className="bg-gradient-to-r from-accent/18 via-primary/10 to-accent/10 border-primary/18 shadow-[0_14px_24px_-20px_rgba(45,41,38,0.12)]">
           <div className="flex items-center justify-between">
             <div>
               <div className="flex items-center gap-1.5">
@@ -116,7 +116,7 @@ export function HomeView() {
             Recent Pairings
           </h2>
           <Link
-            className="text-body-s text-blue-600 font-medium hover:text-blue-700"
+            className="text-body-s text-primary font-medium hover:text-primary-hover"
             href="/journal"
           >
             View all
@@ -127,7 +127,7 @@ export function HomeView() {
 
       {/* Journal link */}
       <Link
-        className="flex items-center gap-xs text-body-m text-blue-600 font-medium hover:text-blue-700"
+        className="flex items-center gap-xs text-body-m text-primary font-medium hover:text-primary-hover"
         href="/journal"
       >
         <BookOpen className="w-5 h-5" />

@@ -13,7 +13,7 @@ export function LandingHero() {
       {/* Hero */}
       <motion.div
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col items-center text-center max-w-md mx-auto rounded-[2rem] border border-border-strong/40 bg-surface-elevated/90 px-m py-l shadow-[0_22px_42px_-28px_rgba(95,65,122,0.55)]"
+        className="flex flex-col items-center text-center max-w-md mx-auto rounded-[2rem] border border-border-strong/40 bg-surface-elevated px-m py-l shadow-[0_22px_42px_-28px_rgba(123,45,58,0.3)]"
         initial={{ opacity: 0, y: 20 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
       >
@@ -82,7 +82,7 @@ export function LandingHero() {
           ].map((item) => (
             <div
               key={item.step}
-              className="flex gap-s items-start rounded-2xl border border-border/70 bg-surface/95 p-s shadow-[0_12px_24px_-20px_rgba(108,111,133,0.6)]"
+              className="flex gap-s items-start rounded-2xl border border-border/70 bg-surface-elevated p-s shadow-[0_12px_24px_-20px_rgba(45,41,38,0.12)]"
             >
               <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-text-on-primary font-display text-body-l font-bold shrink-0 shadow-sm">
                 {item.step}

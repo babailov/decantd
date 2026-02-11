@@ -94,7 +94,7 @@ export function TastingPlanView({ plan }: TastingPlanViewProps) {
         initial={{ opacity: 0, y: 10 }}
         transition={{ duration: 0.4, delay: 0.1 }}
       >
-        <Card className="mb-m bg-white/65 border-white/70" variant="outlined">
+        <Card className="mb-m bg-surface-elevated border-border" variant="outlined">
           <div className="flex items-start gap-xs mb-xs">
             <Sparkles className="w-5 h-5 text-accent shrink-0 mt-0.5" />
             <p className="text-body-m text-text-secondary">{plan.description}</p>
@@ -165,7 +165,7 @@ export function TastingPlanView({ plan }: TastingPlanViewProps) {
         transition={{ duration: 0.4, delay: 0.3 }}
       >
         <button
-          className="flex w-full items-center justify-between rounded-xl border border-border/70 bg-white/60 px-s py-xs text-left"
+          className="flex w-full items-center justify-between rounded-xl border border-border/70 bg-surface-elevated px-s py-xs text-left"
           onClick={() => setDeepDiveExpanded(!deepDiveExpanded)}
         >
           <div className="flex items-center gap-xs">
@@ -184,7 +184,7 @@ export function TastingPlanView({ plan }: TastingPlanViewProps) {
         {deepDiveExpanded && (
           <motion.div
             animate={{ opacity: 1, height: 'auto' }}
-            className="mt-s space-y-s rounded-xl border border-border/70 bg-white/55 p-s"
+            className="mt-s space-y-s rounded-xl border border-border/70 bg-surface p-s"
             initial={{ opacity: 0, height: 0 }}
           >
             <div className="flex items-center gap-xs text-body-s">

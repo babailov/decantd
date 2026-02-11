@@ -9,7 +9,7 @@ export const SERVING_TEMPERATURES: ServingTemperature[] = [
     tempMinC: 4,
     tempMaxC: 7,
     tip: 'Chill for 3+ hours in the fridge or 30 min in an ice bucket. Too warm and you lose the bubbles; too cold and you mute the flavors.',
-    color: '#FFD700',
+    color: '#D4A84B',
   },
   {
     wineType: 'Light White',
@@ -29,7 +29,7 @@ export const SERVING_TEMPERATURES: ServingTemperature[] = [
     tempMinC: 10,
     tempMaxC: 13,
     tip: 'Pull from the fridge 15-20 minutes before serving. Slightly warmer temp lets the oak and body come through.',
-    color: '#DAA520',
+    color: '#C4953A',
   },
   {
     wineType: 'Rosé',
@@ -59,7 +59,7 @@ export const SERVING_TEMPERATURES: ServingTemperature[] = [
     tempMinC: 16,
     tempMaxC: 18,
     tip: '"Room temperature" was coined in European castles — cooler than your living room! If it\'s over 68°F, a brief chill helps.',
-    color: '#722F37',
+    color: '#7B2D3A',
   },
   {
     wineType: 'Dessert Wine',

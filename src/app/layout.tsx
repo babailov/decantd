@@ -10,7 +10,7 @@ import { QueryProvider } from '@/common/providers/QueryProvider';
 import '@/common/styles/main.css';
 
 export const viewport: Viewport = {
-  themeColor: '#722F37',
+  themeColor: '#7B2D3A',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,

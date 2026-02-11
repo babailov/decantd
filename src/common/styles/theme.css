@@ -4,8 +4,6 @@
   --header-height: 3.5rem;
   --bottom-nav-height: 4rem;
   --side-nav-width: 4.5rem;
-  --vineyard-glow: rgba(114, 94, 160, 0.08);
-  --vineyard-haze: rgba(252, 228, 201, 0.34);
 }
 
 /*
@@ -16,68 +14,43 @@
 
 /* COLORS */
 @theme {
-  /* Catppuccin Latte semantic foundation */
-  --ctp-rosewater: #dc8a78;
-  --ctp-flamingo: #dd7878;
-  --ctp-pink: #ea76cb;
-  --ctp-mauve: #8839ef;
-  --ctp-red: #d20f39;
-  --ctp-maroon: #e64553;
-  --ctp-peach: #fe640b;
-  --ctp-yellow: #df8e1d;
-  --ctp-green: #40a02b;
-  --ctp-teal: #179299;
-  --ctp-sky: #04a5e5;
-  --ctp-sapphire: #209fb5;
-  --ctp-blue: #1e66f5;
-  --ctp-lavender: #7287fd;
-  --ctp-text: #4c4f69;
-  --ctp-subtext1: #5c5f77;
-  --ctp-subtext0: #6c6f85;
-  --ctp-overlay2: #7c7f93;
-  --ctp-overlay1: #8c8fa1;
-  --ctp-overlay0: #9ca0b0;
-  --ctp-surface2: #acb0be;
-  --ctp-surface1: #bcc0cc;
-  --ctp-surface0: #ccd0da;
-  --ctp-base: #eff1f5;
-  --ctp-mantle: #e6e9ef;
-  --ctp-crust: #dce0e8;
-
-  /* Wine-centric pastel alias tokens */
+  /* Wine-centric alias tokens */
   --color-wine-dark: #5f2f43;
-  --color-wine-burgundy: #b94868;
+  --color-wine-burgundy: #7B2D3A;
   --color-wine-sienna: #dc8a78;
   --color-wine-wheat: #f3e6d5;
-  --color-wine-goldenrod: #df8e1d;
-  --color-wine-gold: #f4b57d;
-  --color-wine-cream: var(--ctp-base);
-  --color-wine-parchment: #f4f0e8;
-  --color-wine-charcoal: var(--ctp-text);
+  --color-wine-goldenrod: #C4953A;
+  --color-wine-gold: #D4A84B;
+  --color-wine-cream: #FAF7F2;
+  --color-wine-parchment: #F5F0E8;
+  --color-wine-charcoal: #2D2926;
+  --color-wine-rose: #DB7093;
+  --color-wine-sparkling: #D4A84B;
+  --color-link: #7B2D3A;
 
-  --color-background: var(--ctp-base);
-  --color-primary: #b94868;
-  --color-primary-hover: #a53a5a;
-  --color-accent: #f29f67;
-  --color-accent-hover: #e48e55;
-  --color-surface: #f5efe8;
-  --color-surface-elevated: #fcf8f2;
-  --color-border: rgba(124, 127, 147, 0.34);
-  --color-border-strong: rgba(92, 95, 119, 0.45);
+  --color-background: #FAF7F2;
+  --color-primary: #7B2D3A;
+  --color-primary-hover: #662536;
+  --color-accent: #C4953A;
+  --color-accent-hover: #B0843A;
+  --color-surface: #F5F0E8;
+  --color-surface-elevated: #FFFFFF;
+  --color-border: #E8E2D9;
+  --color-border-strong: #D4CCC0;
 
-  --color-text-primary: var(--ctp-text);
-  --color-text-secondary: var(--ctp-subtext1);
-  --color-text-muted: var(--ctp-subtext0);
-  --color-text-on-primary: #fff7f8;
-  --color-text-on-accent: #4b2b1f;
+  --color-text-primary: #2D2926;
+  --color-text-secondary: #5C5650;
+  --color-text-muted: #8A837C;
+  --color-text-on-primary: #FFF8F6;
+  --color-text-on-accent: #3D2B13;
 
-  --color-success: #2d8a4e;
-  --color-alert: #c0392b;
+  --color-success: #2D7A45;
+  --color-alert: #B03030;
 
-  --color-wine-red-fill: rgba(114, 47, 55, 0.3);
-  --color-wine-white-fill: rgba(218, 165, 32, 0.3);
+  --color-wine-red-fill: rgba(123, 45, 58, 0.3);
+  --color-wine-white-fill: rgba(196, 149, 58, 0.3);
   --color-wine-rose-fill: rgba(219, 112, 147, 0.3);
-  --color-wine-sparkling-fill: rgba(255, 215, 0, 0.2);
+  --color-wine-sparkling-fill: rgba(212, 168, 75, 0.2);
 }
 
 /* SPACING/GAPS */
@@ -177,9 +150,7 @@
 }
 
 body {
-  background:
-    radial-gradient(circle at 10% -6%, var(--vineyard-haze), transparent 42%),
-    linear-gradient(180deg, #f6f2f7 0%, #f1efe9 48%, #ebe9df 100%);
+  background: linear-gradient(180deg, #FAF7F2 0%, #F5F0E8 60%, #EDE7DC 100%);
   color: var(--color-text-primary);
 }
 
@@ -194,15 +165,7 @@ body {
   inset: 0;
   pointer-events: none;
   z-index: 0;
-  background:
-    linear-gradient(150deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 44%),
-    repeating-linear-gradient(
-      -12deg,
-      rgba(111, 179, 95, 0.08) 0px,
-      rgba(111, 179, 95, 0.08) 2px,
-      rgba(255, 255, 255, 0) 2px,
-      rgba(255, 255, 255, 0) 14px
-    );
+  background: radial-gradient(ellipse at 50% 0%, rgba(196, 149, 58, 0.06) 0%, transparent 60%);
 }
 
 .vineyard-bg > * {

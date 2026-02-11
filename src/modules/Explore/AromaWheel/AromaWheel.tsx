@@ -256,10 +256,10 @@ export function AromaWheel({
         })}
 
         {/* Center circle */}
-        <circle cx={CX} cy={CY} fill="white" r={INNER_R - 2} stroke="#e0d5c5" strokeWidth={1} />
+        <circle cx={CX} cy={CY} fill="white" r={INNER_R - 2} stroke="#E8E2D9" strokeWidth={1} />
         <text
           dominantBaseline="central"
-          fill="#722F37"
+          fill="#7B2D3A"
           fontSize={selectedCategoryId ? 10 : 12}
           fontWeight={700}
           textAnchor="middle"

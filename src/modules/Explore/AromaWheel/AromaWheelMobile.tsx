@@ -205,10 +205,10 @@ export function AromaWheelMobile({
             </motion.g>
           </AnimatePresence>
 
-          <circle cx={CX} cy={CY} fill="white" r={INNER_R - 4} stroke="#e0d5c5" strokeWidth={1.2} />
+          <circle cx={CX} cy={CY} fill="white" r={INNER_R - 4} stroke="#E8E2D9" strokeWidth={1.2} />
           <text
             dominantBaseline="middle"
-            fill="#722F37"
+            fill="#7B2D3A"
             fontSize={18}
             fontWeight={700}
             textAnchor="middle"
@@ -219,7 +219,7 @@ export function AromaWheelMobile({
           </text>
           <text
             dominantBaseline="middle"
-            fill="#9b8b83"
+            fill="#8A837C"
             fontSize={10}
             fontWeight={500}
             textAnchor="middle"

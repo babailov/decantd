@@ -8,8 +8,8 @@ export default function manifest(): MetadataRoute.Manifest {
       'Plan the perfect wine tasting in seconds with AI-powered recommendations.',
     start_url: '/',
     display: 'standalone',
-    background_color: '#FDF8F0',
-    theme_color: '#722F37',
+    background_color: '#FAF7F2',
+    theme_color: '#7B2D3A',
     icons: [
       {
         src: '/icons/icon-192.png',
