@@ -9,24 +9,27 @@ import { trackEvent } from '@/common/services/analytics-api';
 
 export function LandingHero() {
   return (
-    <div className="flex flex-col items-center min-h-screen px-s pt-xl pb-l">
+    <div className="vineyard-bg flex flex-col items-center min-h-screen px-s pt-xl pb-l">
       {/* Hero */}
       <motion.div
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col items-center text-center max-w-md mx-auto rounded-3xl border border-white/60 bg-white/55 backdrop-blur-sm px-m py-l shadow-sm"
+        className="flex flex-col items-center text-center max-w-md mx-auto rounded-[2rem] border border-border-strong/40 bg-surface-elevated/90 px-m py-l shadow-[0_22px_42px_-28px_rgba(95,65,122,0.55)]"
         initial={{ opacity: 0, y: 20 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
       >
-        <div className="flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 mb-m shadow-inner">
+        <span className="inline-flex items-center rounded-full bg-accent/20 text-primary px-s py-1 text-body-xs font-semibold mb-s">
+          Decantd Daily Pour
+        </span>
+        <div className="flex items-center justify-center w-20 h-20 rounded-full bg-primary/12 mb-m shadow-inner border border-primary/20">
           <Wine className="w-10 h-10 text-primary" />
         </div>
 
-        <h1 className="font-display text-heading-xl text-primary mb-xs">
+        <h1 className="font-display text-heading-xl text-primary mb-xs tracking-tight">
           Walk Through Your Next Tasting
         </h1>
         <p className="text-body-l text-text-secondary mb-l max-w-sm">
-          A guided, story-like journey through food, mood, and wines you will
-          actually want to open.
+          A guided, story-like tasting path through mood, bites, and bottles
+          that feel like your vibe tonight.
         </p>
 
         <Link href="/tasting/new">
@@ -79,9 +82,9 @@ export function LandingHero() {
           ].map((item) => (
             <div
               key={item.step}
-              className="flex gap-s items-start rounded-2xl border border-white/65 bg-white/60 p-s backdrop-blur-sm"
+              className="flex gap-s items-start rounded-2xl border border-border/70 bg-surface/95 p-s shadow-[0_12px_24px_-20px_rgba(108,111,133,0.6)]"
             >
-              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-text-on-primary font-display text-body-l font-bold shrink-0">
+              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-text-on-primary font-display text-body-l font-bold shrink-0 shadow-sm">
                 {item.step}
               </div>
               <div>

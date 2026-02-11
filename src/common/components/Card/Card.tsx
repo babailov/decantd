@@ -12,10 +12,10 @@ const Card = forwardRef<HTMLDivElement, CardProps>(
       <div
         ref={ref}
         className={cn(
-          'rounded-2xl p-m',
+          'rounded-2xl p-m border border-border/70',
           variant === 'default' && 'bg-surface',
-          variant === 'elevated' && 'bg-surface-elevated shadow-md',
-          variant === 'outlined' && 'bg-surface-elevated border border-border',
+          variant === 'elevated' && 'bg-surface-elevated shadow-md border-border-strong/65',
+          variant === 'outlined' && 'bg-surface-elevated border-border-strong',
           className,
         )}
         {...props}

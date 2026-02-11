@@ -33,15 +33,18 @@ export function HomeView() {
   });
 
   return (
-    <div className="px-s py-m max-w-lg mx-auto">
+    <div className="vineyard-bg px-s py-m max-w-lg mx-auto">
       {/* Greeting */}
-      <h1 className="font-display text-heading-m text-primary mb-m">
+      <h1 className="font-display text-heading-m text-primary mb-xs tracking-tight">
         Welcome back, {user?.displayName}
       </h1>
+      <p className="text-body-s text-text-secondary mb-m">
+        Your cellar club is ready. Pick a vibe and pour smarter tonight.
+      </p>
 
       {/* Create new plan CTA */}
       <Link href="/tasting/new">
-        <Button className="w-full gap-xs mb-l" size="lg">
+        <Button className="w-full gap-xs mb-l shadow-[0_16px_28px_-20px_rgba(185,72,104,0.6)]" size="lg">
           <Sparkles className="w-5 h-5" />
           Create New Tasting Plan
           <ChevronRight className="w-4 h-4" />
@@ -58,7 +61,7 @@ export function HomeView() {
 
       {/* Gamified streak */}
       <div className="mb-l">
-        <Card className="bg-gradient-to-r from-accent/10 via-primary/5 to-accent/5 border-accent/20">
+        <Card className="bg-gradient-to-r from-accent/18 via-primary/10 to-accent/10 border-primary/18 shadow-[0_14px_24px_-20px_rgba(76,79,105,0.65)]">
           <div className="flex items-center justify-between">
             <div>
               <div className="flex items-center gap-1.5">
@@ -92,7 +95,7 @@ export function HomeView() {
                 {streak?.actionsThisWeek ?? 0} qualifying actions this week
               </p>
             </div>
-            <Sparkles className="w-8 h-8 text-accent" />
+            <Sparkles className="w-8 h-8 text-primary" />
           </div>
         </Card>
       </div>
@@ -113,7 +116,7 @@ export function HomeView() {
             Recent Pairings
           </h2>
           <Link
-            className="text-body-s text-accent font-medium"
+            className="text-body-s text-blue-600 font-medium hover:text-blue-700"
             href="/journal"
           >
             View all
@@ -124,7 +127,7 @@ export function HomeView() {
 
       {/* Journal link */}
       <Link
-        className="flex items-center gap-xs text-body-m text-accent font-medium"
+        className="flex items-center gap-xs text-body-m text-blue-600 font-medium hover:text-blue-700"
         href="/journal"
       >
         <BookOpen className="w-5 h-5" />
