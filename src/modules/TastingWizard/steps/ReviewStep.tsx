@@ -128,10 +128,10 @@ export function ReviewStep() {
   return (
     <div>
       <h2 className="font-display text-heading-m text-primary mb-2xs">
-        Your Tasting Plan
+        Ready to craft your tasting story
       </h2>
       <p className="text-body-m text-text-secondary mb-m">
-        Review your selections before we craft your personalized plan.
+        One last look, then we will build your lineup.
       </p>
 
       <Card variant="outlined">
@@ -149,7 +149,7 @@ export function ReviewStep() {
 
       <div className="mt-s">
         <label className="text-body-s text-text-secondary block mb-xs" htmlFor="special-request">
-          Advanced AI refinement request
+          Optional sommelier note
         </label>
         <textarea
           className={cn(
@@ -163,7 +163,7 @@ export function ReviewStep() {
           placeholder={
             tierConfig.allowSpecialRequests
               ? 'e.g., prioritize low-intervention wines, include one Ontario option, and keep tannins softer.'
-              : 'Paid feature: add custom sommelier instructions.'
+              : 'Paid feature: add your own custom sommelier note.'
           }
           rows={3}
           value={specialRequest}

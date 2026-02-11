@@ -58,8 +58,15 @@ export function TastingWizard() {
   const StepComponent = stepComponents[currentStep];
 
   return (
-    <div className="max-w-md mx-auto px-s py-m">
+    <div className="vineyard-page max-w-md mx-auto px-s py-m">
       {!isAuthenticated() && <GuestPlansList compact />}
+
+      <div className="mb-m rounded-2xl border border-white/60 bg-white/55 p-s backdrop-blur-sm">
+        <p className="font-display text-body-m text-primary">Build your tasting story</p>
+        <p className="text-body-s text-text-secondary">
+          We will guide you through six quick stops to craft a balanced wine lineup.
+        </p>
+      </div>
 
       <WizardProgress />
 

@@ -9,24 +9,24 @@ import { trackEvent } from '@/common/services/analytics-api';
 
 export function LandingHero() {
   return (
-    <div className="flex flex-col items-center min-h-screen px-s pt-xl pb-l">
+    <div className="vineyard-page flex flex-col items-center min-h-screen px-s pt-xl pb-l">
       {/* Hero */}
       <motion.div
         animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col items-center text-center max-w-md mx-auto"
+        className="flex flex-col items-center text-center max-w-md mx-auto rounded-3xl border border-white/60 bg-white/55 backdrop-blur-sm px-m py-l shadow-sm"
         initial={{ opacity: 0, y: 20 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
       >
-        <div className="flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 mb-m">
+        <div className="flex items-center justify-center w-20 h-20 rounded-full bg-primary/10 mb-m shadow-inner">
           <Wine className="w-10 h-10 text-primary" />
         </div>
 
         <h1 className="font-display text-heading-xl text-primary mb-xs">
-          Plan the Perfect Wine Tasting
+          Walk Through Your Next Tasting
         </h1>
         <p className="text-body-l text-text-secondary mb-l max-w-sm">
-          AI-powered tasting plans with food pairings, flavor profiles, and
-          expert recommendations — in seconds.
+          A guided, story-like journey through food, mood, and wines you will
+          actually want to open.
         </p>
 
         <Link href="/tasting/new">
@@ -39,7 +39,7 @@ export function LandingHero() {
             }}
           >
             <Sparkles className="w-5 h-5" />
-            Create Your Tasting Plan
+            Start the Journey
             <ChevronRight className="w-4 h-4" />
           </Button>
         </Link>
@@ -53,31 +53,34 @@ export function LandingHero() {
         transition={{ duration: 0.6, delay: 0.3, ease: 'easeOut' }}
       >
         <h2 className="font-display text-heading-s text-primary text-center mb-m">
-          How It Works
+          Your Three Stops
         </h2>
 
         <div className="flex flex-col gap-m">
           {[
             {
               step: '1',
-              title: 'Tell us about your tasting',
+              title: 'Set the scene',
               description:
-                'Occasion, food, preferences, and budget — just a few quick taps.',
+                'Tell us your occasion, table mood, and what is on the plate.',
             },
             {
               step: '2',
-              title: 'AI crafts your plan',
+              title: 'Meet your lineup',
               description:
-                'Our sommelier AI selects the perfect wines with tasting order and notes.',
+                'Your sommelier guide suggests an order with simple notes and pairing cues.',
             },
             {
               step: '3',
-              title: 'Share & enjoy',
+              title: 'Pour and explore',
               description:
-                'Get a shareable link with flavor profiles, pairing tips, and more.',
+                'Save and share your tasting path for dinner, date night, or a hosted flight.',
             },
           ].map((item) => (
-            <div key={item.step} className="flex gap-s items-start">
+            <div
+              key={item.step}
+              className="flex gap-s items-start rounded-2xl border border-white/65 bg-white/60 p-s backdrop-blur-sm"
+            >
               <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-text-on-primary font-display text-body-l font-bold shrink-0">
                 {item.step}
               </div>

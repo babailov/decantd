@@ -24,10 +24,10 @@ export function PreferencesStep() {
   return (
     <div>
       <h2 className="font-display text-heading-m text-primary mb-2xs">
-        Any region preferences?
+        Any style direction?
       </h2>
       <p className="text-body-m text-text-secondary mb-m">
-        Select your favorite wine regions, or let us surprise you.
+        Pick your favorite regions or let your guide choose the route.
       </p>
 
       <button
@@ -44,10 +44,10 @@ export function PreferencesStep() {
         <Shuffle className="w-5 h-5 text-accent" />
         <div className="text-left">
           <span className="font-medium text-body-m text-text-primary block">
-            Surprise me!
+            Guide me!
           </span>
           <span className="text-body-xs text-text-muted">
-            Let our AI pick the best regions for your occasion
+            Let our sommelier AI choose the best route for your occasion
           </span>
         </div>
       </button>

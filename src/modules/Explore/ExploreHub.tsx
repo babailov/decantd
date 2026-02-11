@@ -19,7 +19,7 @@ import { useAuthStore } from '@/common/stores/useAuthStore';
 const FEATURES = [
   {
     title: 'Guided Tasting',
-    description: 'Learn the Look → Smell → Taste → Think method used by sommeliers worldwide.',
+    description: 'Walk through Look → Smell → Taste → Think with quick, sensory prompts.',
     href: '/explore/tasting-guide',
     icon: Eye,
     badge: 'Interactive',
@@ -28,7 +28,7 @@ const FEATURES = [
   },
   {
     title: 'Aroma Wheel',
-    description: 'Explore 70+ wine aromas across 6 categories. Identify what you smell.',
+    description: 'Discover aroma families with a tap-first wheel made for fast recognition.',
     href: '/explore/aroma-wheel',
     icon: Flower2,
     badge: 'Interactive',
@@ -37,7 +37,7 @@ const FEATURES = [
   },
   {
     title: 'Serving Guide',
-    description: 'Temperatures, glassware, and decanting — serve every wine at its best.',
+    description: 'Simple serving cues for temperature, glassware, and when to decant.',
     href: '/explore/serving-guide',
     icon: Thermometer,
     badge: 'Reference',
@@ -46,7 +46,7 @@ const FEATURES = [
   },
   {
     title: 'Corkage Directory',
-    description: 'Find BYOB-friendly restaurants in Toronto with corkage policies.',
+    description: 'Find local BYOB spots and corkage rules for easier night planning.',
     href: '/corkage',
     icon: MapPin,
     badge: 'Toronto',
@@ -60,17 +60,18 @@ export function ExploreHub() {
   const [authOpen, setAuthOpen] = useState(false);
 
   return (
-    <div className="max-w-md mx-auto px-s py-m">
+    <div className="vineyard-page max-w-md mx-auto px-s py-m">
       <motion.div
         animate={{ opacity: 1, y: 0 }}
         initial={{ opacity: 0, y: 10 }}
         transition={{ duration: 0.3 }}
       >
         <h1 className="font-display text-heading-l text-primary mb-2xs">
-          Explore
+          Vineyard Walk
         </h1>
         <p className="text-body-m text-text-secondary mb-l">
-          Develop your palate with interactive guides and wine education.
+          Explore wine with playful guides designed to build confidence, not
+          overwhelm you.
         </p>
       </motion.div>
 
@@ -96,10 +97,11 @@ export function ExploreHub() {
               </div>
               <div className="flex-1 min-w-0">
                 <h2 className="font-display text-heading-xs text-primary mb-0.5">
-                  Create a Tasting Plan
+                  Start a New Tasting Story
                 </h2>
                 <p className="text-body-s text-text-secondary">
-                  Get AI-curated wine selections tailored to your occasion, food, and palate.
+                  We turn your moment and menu into a guided lineup worth
+                  sharing.
                 </p>
               </div>
             </div>

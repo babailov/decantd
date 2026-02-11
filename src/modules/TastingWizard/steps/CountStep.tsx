@@ -23,10 +23,10 @@ export function CountStep() {
   return (
     <div>
       <h2 className="font-display text-heading-m text-primary mb-2xs">
-        How many wines?
+        How long is the walk?
       </h2>
       <p className="text-body-m text-text-secondary mb-l">
-        We recommend 3–5 wines for a well-rounded tasting experience.
+        For most nights, 3-5 pours keeps the flight lively without fatigue.
       </p>
 
       <div className="flex items-center justify-center gap-l mb-l">

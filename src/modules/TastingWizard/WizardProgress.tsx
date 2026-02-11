@@ -4,12 +4,12 @@ import { Progress } from '@/common/components/Progress';
 import { STEP_ORDER, useTastingStore } from '@/common/stores/useTastingStore';
 
 const STEP_LABELS: Record<string, string> = {
-  occasion: 'Occasion',
-  food: 'Food Pairing',
-  preferences: 'Preferences',
-  budget: 'Budget',
-  count: 'Wine Count',
-  review: 'Review',
+  occasion: 'Chapter 1: Occasion',
+  food: 'Chapter 2: Table',
+  preferences: 'Chapter 3: Style',
+  budget: 'Chapter 4: Budget',
+  count: 'Chapter 5: Lineup',
+  review: 'Chapter 6: Final Pour',
 };
 
 export function WizardProgress() {
@@ -21,7 +21,7 @@ export function WizardProgress() {
     <div className="mb-l">
       <div className="flex justify-between items-center mb-xs">
         <span className="text-body-xs text-text-muted">
-          Step {idx + 1} of {STEP_ORDER.length}
+          Stop {idx + 1} of {STEP_ORDER.length}
         </span>
         <span className="text-body-xs font-medium text-primary">
           {STEP_LABELS[currentStep]}
