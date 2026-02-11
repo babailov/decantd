@@ -121,10 +121,16 @@ export async function GET(request: NextRequest) {
     // Create session
     const { token, expiresAt } = await createSession(db, dbUser.id);
 
-    const response = NextResponse.redirect(new URL('/', request.url));
+    // Use HTML meta-refresh instead of 302 redirect so Set-Cookie headers
+    // are reliably processed by the browser on Cloudflare Workers.
+    const expires = new Date(expiresAt).toUTCString();
+    const html = `<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=/"></head><body>Redirecting...</body></html>`;
+    const response = new NextResponse(html, {
+      status: 200,
+      headers: { 'Content-Type': 'text/html' },
+    });
 
     // Set session cookie
-    const expires = new Date(expiresAt).toUTCString();
     response.headers.append(
       'Set-Cookie',
       `decantd-session=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Expires=${expires}`,
