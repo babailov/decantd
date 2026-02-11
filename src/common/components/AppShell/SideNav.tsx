@@ -11,7 +11,7 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/common/functions/cn';
 import { useAuthStore } from '@/common/stores/useAuthStore';
 
-export function BottomNav() {
+export function SideNav() {
   const pathname = usePathname();
   const { isAuthenticated } = useAuthStore();
   const loggedIn = isAuthenticated();
@@ -25,11 +25,10 @@ export function BottomNav() {
   return (
     <nav
       className={cn(
-        'fixed bottom-0 left-0 right-0 z-bottom-nav md:hidden',
-        'bg-background/90 backdrop-blur-md border-t border-border',
-        'h-[var(--bottom-nav-height)]',
-        'flex items-center justify-around px-xs',
-        'pb-[env(safe-area-inset-bottom)]',
+        'fixed top-[var(--header-height)] left-0 bottom-0 z-bottom-nav',
+        'w-[var(--side-nav-width)]',
+        'bg-background/90 backdrop-blur-md border-r border-border',
+        'hidden md:flex flex-col items-center pt-m gap-xs',
       )}
     >
       {navItems.map((item) => {
@@ -44,7 +43,7 @@ export function BottomNav() {
               key={item.href}
               disabled
               className={cn(
-                'flex flex-col items-center gap-0.5 py-xs px-xs',
+                'flex flex-col items-center gap-0.5 py-xs px-xs w-full',
                 'text-text-muted opacity-50',
               )}
             >
@@ -58,7 +57,7 @@ export function BottomNav() {
           <Link
             key={item.href}
             className={cn(
-              'flex flex-col items-center gap-0.5 py-xs px-xs',
+              'flex flex-col items-center gap-0.5 py-xs px-xs w-full',
               isActive ? 'text-primary' : 'text-text-secondary',
             )}
             href={item.href}
