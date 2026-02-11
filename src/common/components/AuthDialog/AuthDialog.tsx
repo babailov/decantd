@@ -1,6 +1,7 @@
 'use client';
 
 import { CheckCircle, Wine } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -34,6 +35,7 @@ export function AuthDialog({ open, onOpenChange, defaultMode = 'signup' }: AuthD
   const [error, setError] = useState('');
   const [forgotSent, setForgotSent] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
+  const router = useRouter();
   const { setAuth } = useAuthStore();
 
   // Check for OAuth error in URL params
@@ -89,6 +91,7 @@ export function AuthDialog({ open, onOpenChange, defaultMode = 'signup' }: AuthD
         usePlanHistoryStore.getState().clearHistory();
         toast.success('Welcome to Decantd!');
         resetForm();
+        router.push('/');
         onOpenChange(false);
       } else {
         const session = await login({ email, password });
@@ -96,6 +99,7 @@ export function AuthDialog({ open, onOpenChange, defaultMode = 'signup' }: AuthD
         usePlanHistoryStore.getState().clearHistory();
         toast.success('Welcome back!');
         resetForm();
+        router.push('/');
         onOpenChange(false);
       }
     } catch (err) {
