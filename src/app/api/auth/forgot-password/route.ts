@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
       where: eq(users.email, input.email.toLowerCase()),
     });
 
-    if (user) {
+    if (user && user.passwordHash !== 'OAUTH_NO_PASSWORD') {
       const { raw, hash } = await generateResetToken();
       const expiresAt = new Date(Date.now() + TOKEN_EXPIRY_MS).toISOString();
 

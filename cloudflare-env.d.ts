@@ -8,6 +8,8 @@ declare global {
     STRIPE_WEBHOOK_SECRET: string;
     STRIPE_PRICE_ID_MONTHLY: string;
     BILLING_RETURN_URL: string;
+    GOOGLE_CLIENT_ID: string;
+    GOOGLE_CLIENT_SECRET: string;
   }
 }
 

@@ -9,6 +9,8 @@ export const users = sqliteTable('users', {
   passwordHash: text('password_hash').notNull(),
   displayName: text('display_name').notNull(),
   avatarUrl: text('avatar_url'),
+  oauthProvider: text('oauth_provider'),
+  oauthId: text('oauth_id'),
   subscriptionTier: text('subscription_tier').notNull().default('free'),
   subscriptionStatus: text('subscription_status').notNull().default('inactive'),
   stripeCustomerId: text('stripe_customer_id'),

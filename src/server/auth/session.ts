@@ -49,6 +49,7 @@ export async function getUserFromRequest(
     email: user.email,
     displayName: user.displayName,
     avatarUrl: user.avatarUrl,
+    authProvider: (user.oauthProvider as 'google') || null,
     subscriptionTier: (user.subscriptionTier as 'anonymous' | 'free' | 'paid') || 'free',
     billingStatus: (user.subscriptionStatus as
       | 'inactive'

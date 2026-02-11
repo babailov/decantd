@@ -9,18 +9,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { token, setAuth, clearAuth, setLoading } = useAuthStore();
 
   useEffect(() => {
-    if (!token) {
-      setLoading(false);
-      return;
-    }
-
-    // Verify the persisted token is still valid
+    // Always call getMe() — after OAuth redirect, session cookie is set
+    // server-side but Zustand has no token yet
     getMe()
       .then(({ user }) => {
-        setAuth(user, token);
+        setAuth(user, token || 'cookie-session');
       })
       .catch(() => {
-        clearAuth();
+        if (token) {
+          clearAuth();
+        } else {
+          setLoading(false);
+        }
       });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 

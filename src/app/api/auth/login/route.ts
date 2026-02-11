@@ -37,6 +37,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (user.passwordHash === 'OAUTH_NO_PASSWORD') {
+      return NextResponse.json(
+        { message: 'This account uses Google sign-in. Please continue with Google.' },
+        { status: 400 },
+      );
+    }
+
     const valid = await verifyPassword(input.password, user.passwordHash);
     if (!valid) {
       return NextResponse.json(
@@ -55,6 +62,7 @@ export async function POST(request: NextRequest) {
         email: user.email,
         displayName: user.displayName,
         avatarUrl: user.avatarUrl,
+        authProvider: (user.oauthProvider as 'google') || null,
         subscriptionTier: (user.subscriptionTier as 'anonymous' | 'free' | 'paid') || 'free',
         billingStatus: (user.subscriptionStatus as
           | 'inactive'
