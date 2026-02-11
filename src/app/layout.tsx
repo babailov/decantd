@@ -34,7 +34,10 @@ const GlobalLayout = ({ children }: PropsWithChildren) => {
       className={cn(playfairDisplay.variable, sourceSans.variable)}
       lang="en"
     >
-      <body className="bg-background text-text-primary font-body">
+      <body
+        className="bg-background text-text-primary font-body"
+        data-theme="vineyard"
+      >
         <QueryProvider>
           <AuthProvider>
             {children}
