@@ -9,7 +9,7 @@ import {
   fetchGoogleUserInfo,
   getGoogleOAuthConfig,
 } from '@/server/auth/oauth';
-import { createSession, setSessionCookie } from '@/server/auth/session';
+import { createSession } from '@/server/auth/session';
 
 const STATE_COOKIE = 'decantd-oauth-state';
 const OAUTH_NO_PASSWORD = 'OAUTH_NO_PASSWORD';
@@ -122,7 +122,15 @@ export async function GET(request: NextRequest) {
     const { token, expiresAt } = await createSession(db, dbUser.id);
 
     const response = NextResponse.redirect(new URL('/', request.url));
-    response.headers.append('Set-Cookie', setSessionCookie(token, expiresAt));
+
+    // Set session cookie
+    response.cookies.set('decantd-session', token, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: true,
+      path: '/',
+      expires: new Date(expiresAt),
+    });
 
     // Clear the state cookie
     response.cookies.set(STATE_COOKIE, '', {
