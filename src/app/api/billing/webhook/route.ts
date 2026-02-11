@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { users } from '@/common/db/schema';
+import { analyticsEvents, users } from '@/common/db/schema';
 
 import { getDb } from '@/server/auth/get-db';
 import {
@@ -49,16 +49,40 @@ async function upsertUserSubscriptionByCustomer(
 ) {
   if (!db) return;
 
+  const nextTier = mapStripeStatusToTier(payload.subscriptionStatus);
+  const nextStatus = mapStripeStatusToBillingStatus(payload.subscriptionStatus);
+
   await db
     .update(users)
     .set({
       stripeSubscriptionId: payload.subscriptionId,
-      subscriptionStatus: mapStripeStatusToBillingStatus(payload.subscriptionStatus),
-      subscriptionTier: mapStripeStatusToTier(payload.subscriptionStatus),
+      subscriptionStatus: nextStatus,
+      subscriptionTier: nextTier,
       subscriptionCurrentPeriodEnd: toIsoPeriodEnd(payload.currentPeriodEnd),
       updatedAt: new Date().toISOString(),
     } as Partial<typeof users.$inferInsert>)
     .where(eq(users.stripeCustomerId, payload.customerId));
+
+  if (nextTier === 'paid') {
+    const targetUser = await db.query.users.findFirst({
+      where: eq(users.stripeCustomerId, payload.customerId),
+      columns: { id: true },
+    });
+
+    if (targetUser) {
+      await db.insert(analyticsEvents).values({
+        id: crypto.randomUUID(),
+        userId: targetUser.id,
+        sessionId: 'billing-webhook',
+        eventName: 'subscription_activated',
+        propertiesJson: {
+          status: nextStatus,
+        },
+        path: '/api/billing/webhook',
+        createdAt: new Date().toISOString(),
+      } as typeof analyticsEvents.$inferInsert);
+    }
+  }
 }
 
 export async function POST(request: NextRequest) {

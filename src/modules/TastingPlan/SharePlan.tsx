@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/common/components/Button';
+import { trackEvent } from '@/common/services/analytics-api';
 
 interface SharePlanProps {
   planId: string;
@@ -15,6 +16,7 @@ export function SharePlan({ planId }: SharePlanProps) {
 
   const handleShare = async () => {
     const url = `${window.location.origin}/tasting/${planId}`;
+    trackEvent('plan_shared', { planId });
 
     if (navigator.share) {
       try {

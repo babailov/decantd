@@ -13,6 +13,7 @@ import { useState } from 'react';
 
 import { AuthDialog } from '@/common/components/AuthDialog';
 import { cn } from '@/common/functions/cn';
+import { trackEvent } from '@/common/services/analytics-api';
 import { useAuthStore } from '@/common/stores/useAuthStore';
 
 const FEATURES = [
@@ -87,6 +88,7 @@ export function ExploreHub() {
               'border border-primary/20',
               'transition-all active:scale-[0.98] hover:shadow-md hover:border-primary/40',
             )}
+            onClick={() => trackEvent('plan_wizard_started', { source: 'explore' })}
           >
             <div className="flex items-center gap-m">
               <div className="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-xl bg-primary/20">
@@ -154,7 +156,13 @@ export function ExploreHub() {
               <button
                 key={feature.title}
                 className="text-left"
-                onClick={() => setAuthOpen(true)}
+                onClick={() => {
+                  trackEvent('upgrade_cta_clicked', {
+                    source: 'explore_feature_gate',
+                    feature: feature.title,
+                  });
+                  setAuthOpen(true);
+                }}
               >
                 {card}
               </button>
@@ -162,7 +170,15 @@ export function ExploreHub() {
           }
 
           return (
-            <Link key={feature.title} href={feature.href}>
+            <Link
+              key={feature.title}
+              href={feature.href}
+              onClick={() => {
+                if (feature.title === 'Corkage Directory') {
+                  trackEvent('corkage_page_viewed', { source: 'explore_feature_card' });
+                }
+              }}
+            >
               {card}
             </Link>
           );

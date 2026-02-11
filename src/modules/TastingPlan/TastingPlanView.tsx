@@ -22,6 +22,7 @@ import { Card } from '@/common/components/Card';
 import { WineRating } from '@/common/components/WineRating';
 import { queryKeys } from '@/common/constants/queryKeys';
 import { OCCASIONS } from '@/common/constants/wine.const';
+import { trackEvent } from '@/common/services/analytics-api';
 import { useAuthStore } from '@/common/stores/useAuthStore';
 import { TastingPlan } from '@/common/types/tasting';
 
@@ -170,6 +171,7 @@ export function TastingPlanView({ plan }: TastingPlanViewProps) {
           <Card
             className="flex items-center gap-s hover:bg-surface transition-colors cursor-pointer"
             variant="outlined"
+            onClick={() => trackEvent('corkage_page_viewed', { source: 'tasting_plan_cta' })}
           >
             <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0">
               <MapPin className="h-5 w-5 text-accent" />

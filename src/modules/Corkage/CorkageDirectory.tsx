@@ -2,6 +2,8 @@
 
 import { useQuery } from '@tanstack/react-query';
 import {
+  Bookmark,
+  BookmarkCheck,
   DollarSign,
   ExternalLink,
   MapPin,
@@ -10,12 +12,16 @@ import {
   UtensilsCrossed,
   Wine,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
+import { AuthDialog } from '@/common/components/AuthDialog';
 import { Badge } from '@/common/components/Badge';
 import { Card } from '@/common/components/Card';
 import { queryKeys } from '@/common/constants/queryKeys';
 import { cn } from '@/common/functions/cn';
+import { trackEvent } from '@/common/services/analytics-api';
+import { useAuthStore } from '@/common/stores/useAuthStore';
 
 interface CorkageRestaurant {
   id: string;
@@ -29,6 +35,10 @@ interface CorkageRestaurant {
   phone: string | null;
   website: string | null;
   isVerified: boolean;
+  offerTitle: string | null;
+  offerDescription: string | null;
+  offerCode: string | null;
+  offerExpiresAt: string | null;
 }
 
 const CUISINE_FILTERS = [
@@ -44,17 +54,80 @@ const CUISINE_FILTERS = [
 ];
 
 export function CorkageDirectory() {
+  const { isAuthenticated } = useAuthStore();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCuisine, setSelectedCuisine] = useState('All');
+  const [onlyWithDeals, setOnlyWithDeals] = useState(false);
+  const [maxFee, setMaxFee] = useState<number | null>(null);
+  const [authOpen, setAuthOpen] = useState(false);
+  const viewedDealIds = useRef(new Set<string>());
+
+  const { data: savedData, refetch: refetchSaved } = useQuery({
+    queryKey: queryKeys.corkage.saved,
+    queryFn: async (): Promise<{ restaurantIds: string[] }> => {
+      const res = await fetch('/api/corkage/save');
+      if (!res.ok) return { restaurantIds: [] };
+      return res.json();
+    },
+    enabled: isAuthenticated(),
+  });
 
   const { data, isLoading } = useQuery({
-    queryKey: [...queryKeys.corkage.all, 'Toronto'],
+    queryKey: [...queryKeys.corkage.all, 'Toronto', onlyWithDeals, maxFee],
     queryFn: async (): Promise<{ restaurants: CorkageRestaurant[] }> => {
-      const res = await fetch('/api/corkage?city=Toronto');
+      const params = new URLSearchParams({ city: 'Toronto' });
+      if (onlyWithDeals) params.set('hasOffer', '1');
+      if (maxFee !== null) params.set('maxFee', String(maxFee));
+
+      const res = await fetch(`/api/corkage?${params.toString()}`);
       if (!res.ok) throw new Error('Failed to fetch');
       return res.json();
     },
   });
+
+  const savedVenueIds = new Set(savedData?.restaurantIds ?? []);
+
+  useEffect(() => {
+    trackEvent('corkage_page_viewed', { city: 'Toronto' });
+  }, []);
+
+  useEffect(() => {
+    for (const restaurant of data?.restaurants || []) {
+      if (restaurant.offerTitle && !viewedDealIds.current.has(restaurant.id)) {
+        viewedDealIds.current.add(restaurant.id);
+        trackEvent('deal_viewed', {
+          restaurantId: restaurant.id,
+          neighborhood: restaurant.neighborhood,
+        });
+      }
+    }
+  }, [data]);
+
+  const handleToggleSave = async (restaurantId: string, restaurantName: string) => {
+    if (!isAuthenticated()) {
+      trackEvent('upgrade_cta_clicked', { source: 'corkage_save_gate' });
+      setAuthOpen(true);
+      return;
+    }
+
+    const wasSaved = savedVenueIds.has(restaurantId);
+    const res = await fetch('/api/corkage/save', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ restaurantId }),
+    });
+    if (!res.ok) {
+      toast.error('Could not update saved venues');
+      return;
+    }
+
+    await refetchSaved();
+    trackEvent('corkage_saved', {
+      restaurantId,
+      restaurantName,
+      action: wasSaved ? 'unsave' : 'save',
+    });
+  };
 
   const restaurants = (data?.restaurants || []).filter((r) => {
     const matchesSearch =
@@ -96,9 +169,49 @@ export function CorkageDirectory() {
             )}
             placeholder="Search by name, neighborhood, or cuisine..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+              trackEvent('corkage_search_used', { queryLength: e.target.value.length });
+            }}
           />
         </div>
+      </div>
+
+      {/* Quick intent filters */}
+      <div className="flex flex-wrap gap-1.5 mb-s">
+        <button
+          className={cn(
+            'text-body-xs px-s py-1 rounded-full border transition-colors',
+            onlyWithDeals
+              ? 'bg-primary text-text-on-primary border-primary'
+              : 'bg-surface-elevated text-text-secondary border-border hover:border-primary',
+          )}
+          onClick={() => {
+            const next = !onlyWithDeals;
+            setOnlyWithDeals(next);
+            trackEvent('corkage_filter_used', { filter: 'hasDeal', value: next });
+          }}
+        >
+          Deals only
+        </button>
+        {[20, 30].map((fee) => (
+          <button
+            key={fee}
+            className={cn(
+              'text-body-xs px-s py-1 rounded-full border transition-colors',
+              maxFee === fee
+                ? 'bg-primary text-text-on-primary border-primary'
+                : 'bg-surface-elevated text-text-secondary border-border hover:border-primary',
+            )}
+            onClick={() => {
+              const next = maxFee === fee ? null : fee;
+              setMaxFee(next);
+              trackEvent('corkage_filter_used', { filter: 'maxFee', value: next });
+            }}
+          >
+            {maxFee === fee ? `Fee ≤ $${fee}` : `Under $${fee} fee`}
+          </button>
+        ))}
       </div>
 
       {/* Cuisine filter chips */}
@@ -112,7 +225,10 @@ export function CorkageDirectory() {
                 ? 'bg-primary text-text-on-primary border-primary'
                 : 'bg-surface-elevated text-text-secondary border-border hover:border-primary',
             )}
-            onClick={() => setSelectedCuisine(cuisine)}
+            onClick={() => {
+              setSelectedCuisine(cuisine);
+              trackEvent('corkage_filter_used', { filter: 'cuisine', value: cuisine });
+            }}
           >
             {cuisine}
           </button>
@@ -137,19 +253,38 @@ export function CorkageDirectory() {
       ) : (
         <div className="space-y-xs">
           {restaurants.map((restaurant) => (
-            <Card key={restaurant.id} variant="outlined">
+            <Card
+              key={restaurant.id}
+              variant="outlined"
+              onClick={() => trackEvent('corkage_card_opened', {
+                restaurantId: restaurant.id,
+                neighborhood: restaurant.neighborhood,
+              })}
+            >
               <div className="flex items-start justify-between mb-1">
                 <h3 className="font-display text-body-l text-primary font-semibold">
                   {restaurant.name}
                 </h3>
-                {restaurant.corkageFee !== null && (
-                  <Badge variant="default">
-                    <DollarSign className="h-3 w-3 inline" />
-                    {restaurant.corkageFee === 0
-                      ? 'Free!'
-                      : `$${restaurant.corkageFee}`}
-                  </Badge>
-                )}
+                <div className="flex items-center gap-1.5">
+                  {restaurant.corkageFee !== null && (
+                    <Badge variant="default">
+                      <DollarSign className="h-3 w-3 inline" />
+                      {restaurant.corkageFee === 0
+                        ? 'Free!'
+                        : `$${restaurant.corkageFee}`}
+                    </Badge>
+                  )}
+                  <button
+                    className="text-primary hover:text-primary/80 transition-colors"
+                    onClick={() => handleToggleSave(restaurant.id, restaurant.name)}
+                  >
+                    {savedVenueIds.has(restaurant.id) ? (
+                      <BookmarkCheck className="h-4 w-4" />
+                    ) : (
+                      <Bookmark className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
               </div>
 
               <div className="flex items-center gap-1 text-body-xs text-text-secondary mb-1">
@@ -174,11 +309,43 @@ export function CorkageDirectory() {
                 </p>
               )}
 
+              {restaurant.offerTitle && (
+                <div className="mb-xs p-xs rounded-lg border border-accent/30 bg-accent/10">
+                  <p className="text-body-xs font-medium text-accent">{restaurant.offerTitle}</p>
+                  {restaurant.offerDescription && (
+                    <p className="text-body-xs text-text-secondary mt-0.5">{restaurant.offerDescription}</p>
+                  )}
+                  {restaurant.offerCode && (
+                    <button
+                      className="text-body-xs text-accent font-medium mt-1 hover:underline"
+                      onClick={() => {
+                        trackEvent('deal_claim_started', {
+                          restaurantId: restaurant.id,
+                          neighborhood: restaurant.neighborhood,
+                        });
+                        navigator.clipboard.writeText(restaurant.offerCode || '');
+                        toast.success(`Code copied: ${restaurant.offerCode}`);
+                        trackEvent('deal_claim_completed', {
+                          restaurantId: restaurant.id,
+                          neighborhood: restaurant.neighborhood,
+                        });
+                      }}
+                    >
+                      Copy code: {restaurant.offerCode}
+                    </button>
+                  )}
+                </div>
+              )}
+
               <div className="flex items-center gap-s">
                 {restaurant.phone && (
                   <a
                     className="flex items-center gap-1 text-body-xs text-primary hover:underline"
                     href={`tel:${restaurant.phone}`}
+                    onClick={() => trackEvent('corkage_call_clicked', {
+                      restaurantId: restaurant.id,
+                      neighborhood: restaurant.neighborhood,
+                    })}
                   >
                     <Phone className="h-3.5 w-3.5" />
                     Call
@@ -190,11 +357,28 @@ export function CorkageDirectory() {
                     href={restaurant.website}
                     rel="noopener noreferrer"
                     target="_blank"
+                    onClick={() => trackEvent('corkage_website_clicked', {
+                      restaurantId: restaurant.id,
+                      neighborhood: restaurant.neighborhood,
+                    })}
                   >
                     <ExternalLink className="h-3.5 w-3.5" />
                     Website
                   </a>
                 )}
+                <a
+                  className="flex items-center gap-1 text-body-xs text-primary hover:underline"
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(restaurant.address)}`}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  onClick={() => trackEvent('corkage_direction_clicked', {
+                    restaurantId: restaurant.id,
+                    neighborhood: restaurant.neighborhood,
+                  })}
+                >
+                  <MapPin className="h-3.5 w-3.5" />
+                  Directions
+                </a>
                 {restaurant.isVerified && (
                   <span className="text-body-xs text-success">Verified</span>
                 )}
@@ -207,6 +391,7 @@ export function CorkageDirectory() {
       <p className="text-body-xs text-text-muted text-center mt-m">
         Know a corkage-friendly restaurant? We&apos;d love to add it.
       </p>
+      <AuthDialog defaultMode="signup" open={authOpen} onOpenChange={setAuthOpen} />
     </div>
   );
 }

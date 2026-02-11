@@ -51,6 +51,9 @@ interface TastingStore {
   wineCount: number;
   setWineCount: (count: number) => void;
 
+  specialRequest: string;
+  setSpecialRequest: (value: string) => void;
+
   // Generation state
   isGenerating: boolean;
   setIsGenerating: (value: boolean) => void;
@@ -72,6 +75,7 @@ const initialState = {
   budgetMin: 20,
   budgetMax: 40,
   wineCount: 3,
+  specialRequest: '',
   isGenerating: false,
   generatedPlan: null as TastingPlan | null,
   generationError: null as string | null,
@@ -117,6 +121,7 @@ const useTastingStore = createWithEqualityFn<TastingStore>()(
       setBudgetRange: (budgetMin, budgetMax) => set({ budgetMin, budgetMax }),
 
       setWineCount: (wineCount) => set({ wineCount }),
+      setSpecialRequest: (specialRequest) => set({ specialRequest }),
 
       setIsGenerating: (isGenerating) => set({ isGenerating }),
       setGeneratedPlan: (generatedPlan) => set({ generatedPlan }),
@@ -134,6 +139,7 @@ const useTastingStore = createWithEqualityFn<TastingStore>()(
         budgetMin: state.budgetMin,
         budgetMax: state.budgetMax,
         wineCount: state.wineCount,
+        specialRequest: state.specialRequest,
         currentStep: state.currentStep,
       }),
     },

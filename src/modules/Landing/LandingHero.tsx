@@ -5,6 +5,7 @@ import { motion } from 'motion/react';
 import Link from 'next/link';
 
 import { Button } from '@/common/components/Button';
+import { trackEvent } from '@/common/services/analytics-api';
 
 export function LandingHero() {
   return (
@@ -29,7 +30,14 @@ export function LandingHero() {
         </p>
 
         <Link href="/tasting/new">
-          <Button className="gap-xs" size="lg">
+          <Button
+            className="gap-xs"
+            size="lg"
+            onClick={() => {
+              trackEvent('landing_cta_clicked');
+              trackEvent('plan_wizard_started', { source: 'landing' });
+            }}
+          >
             <Sparkles className="w-5 h-5" />
             Create Your Tasting Plan
             <ChevronRight className="w-4 h-4" />

@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
 import { NextRequest, NextResponse } from 'next/server';
 
-import { users } from '@/common/db/schema';
+import { analyticsEvents, users } from '@/common/db/schema';
 
 import { getDb } from '@/server/auth/get-db';
 import { getUserFromRequest } from '@/server/auth/session';
@@ -73,6 +73,18 @@ export async function POST(request: NextRequest) {
       cancelUrl,
       userId: dbUser.id,
     });
+
+    await db.insert(analyticsEvents).values({
+      id: crypto.randomUUID(),
+      userId: dbUser.id,
+      sessionId: 'billing-checkout',
+      eventName: 'checkout_started',
+      propertiesJson: {
+        tier: dbUser.subscriptionTier,
+      },
+      path: '/api/billing/checkout',
+      createdAt: new Date().toISOString(),
+    } as typeof analyticsEvents.$inferInsert);
 
     if (!session.url) {
       return NextResponse.json({ message: 'Checkout session URL missing' }, { status: 500 });

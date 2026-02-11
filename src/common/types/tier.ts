@@ -4,6 +4,7 @@ export type BillingStatus = 'inactive' | 'trialing' | 'active' | 'past_due' | 'c
 export interface TierConfig {
   tier: SubscriptionTier;
   allowCustomFoodText: boolean;
+  allowSpecialRequests: boolean;
   foodOptions: string[];
   forceSurpriseMe: boolean;
   allowCustomBudget: boolean;

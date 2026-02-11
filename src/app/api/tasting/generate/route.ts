@@ -21,6 +21,7 @@ const inputSchema = z.object({
   budgetMax: z.number().positive(),
   budgetCurrency: z.string().default('USD'),
   wineCount: z.number().int().min(1).max(8),
+  specialRequest: z.string().max(300).optional(),
 });
 
 export async function POST(request: NextRequest) {

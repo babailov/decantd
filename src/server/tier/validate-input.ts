@@ -2,10 +2,21 @@ import { ANONYMOUS_FOOD_OPTIONS } from '@/common/constants/tier.const';
 import { TastingPlanInput } from '@/common/types/tasting';
 import { SubscriptionTier } from '@/common/types/tier';
 
+import { getTierConfig } from './resolve-tier';
+
 export function validateInputForTier(
   input: TastingPlanInput,
   tier: SubscriptionTier,
 ): { valid: boolean; error?: string } {
+  const config = getTierConfig(tier);
+
+  if (input.specialRequest && !config.allowSpecialRequests) {
+    return {
+      valid: false,
+      error: 'Upgrade to add custom sommelier requests and advanced AI refinements.',
+    };
+  }
+
   if (tier !== 'anonymous') {
     return { valid: true };
   }

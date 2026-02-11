@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useEffect } from 'react';
 
 import { useTierConfig } from '@/common/hooks/useTierConfig';
+import { trackEvent } from '@/common/services/analytics-api';
 import { useAuthStore } from '@/common/stores/useAuthStore';
 import { useTastingStore } from '@/common/stores/useTastingStore';
 
@@ -36,6 +37,7 @@ export function TastingWizard() {
 
   useEffect(() => {
     resetWizard();
+    trackEvent('plan_wizard_started', { source: 'tasting_new' });
   }, [resetWizard]);
 
   // Enforce tier defaults for anonymous users

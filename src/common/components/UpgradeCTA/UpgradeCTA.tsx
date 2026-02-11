@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { AuthDialog } from '@/common/components/AuthDialog';
 import { cn } from '@/common/functions/cn';
 import { useUserTier } from '@/common/hooks/useTierConfig';
+import { trackEvent } from '@/common/services/analytics-api';
 import { redirectToCheckout } from '@/common/services/billing-api';
 
 interface UpgradeCTAProps {
@@ -27,6 +28,8 @@ export function UpgradeCTA({
   const buttonLabel = tier === 'anonymous' ? 'Sign up free' : 'Upgrade';
 
   const handleUpgrade = async () => {
+    trackEvent('upgrade_cta_clicked', { tier, variant });
+
     if (tier === 'anonymous') {
       setAuthOpen(true);
       return;
@@ -34,6 +37,7 @@ export function UpgradeCTA({
 
     setIsLoadingCheckout(true);
     try {
+      trackEvent('checkout_started', { variant });
       await redirectToCheckout();
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to open checkout';

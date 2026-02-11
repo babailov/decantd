@@ -19,6 +19,8 @@ export async function GET(request: NextRequest) {
     const city = searchParams.get('city');
     const neighborhood = searchParams.get('neighborhood');
     const cuisine = searchParams.get('cuisine');
+    const hasOffer = searchParams.get('hasOffer');
+    const maxFee = searchParams.get('maxFee');
 
     let query = db.select().from(corkageRestaurants);
 
@@ -40,6 +42,15 @@ export async function GET(request: NextRequest) {
         (r) => r.cuisineType.toLowerCase() === cuisine.toLowerCase(),
       );
     }
+    if (hasOffer === '1') {
+      results = results.filter((r) => !!r.offerTitle);
+    }
+    if (maxFee) {
+      const parsedMaxFee = Number(maxFee);
+      if (!Number.isNaN(parsedMaxFee)) {
+        results = results.filter((r) => r.corkageFee === null || r.corkageFee <= parsedMaxFee);
+      }
+    }
 
     return NextResponse.json({
       restaurants: results.map((r) => ({
@@ -57,6 +68,10 @@ export async function GET(request: NextRequest) {
         longitude: r.longitude,
         isVerified: r.isVerified,
         verifiedAt: r.verifiedAt,
+        offerTitle: r.offerTitle,
+        offerDescription: r.offerDescription,
+        offerCode: r.offerCode,
+        offerExpiresAt: r.offerExpiresAt,
       })),
     });
   } catch (err) {

@@ -7,10 +7,12 @@ export const queryKeys = {
     plans: ['user', 'plans'] as const,
     ratings: ['user', 'ratings'] as const,
     ratingsForPlan: (planId: string) => ['user', 'ratings', planId] as const,
+    streak: ['user', 'streak'] as const,
   },
   corkage: {
     all: ['corkage'] as const,
     byCity: (city: string) => ['corkage', city] as const,
+    saved: ['corkage', 'saved'] as const,
   },
   guidedTastings: {
     all: ['guided-tastings'] as const,
@@ -18,5 +20,8 @@ export const queryKeys = {
   },
   generation: {
     status: ['generation', 'status'] as const,
+  },
+  analytics: {
+    weeklySummary: ['analytics', 'weekly-summary'] as const,
   },
 };

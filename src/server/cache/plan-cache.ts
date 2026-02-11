@@ -12,6 +12,7 @@ export async function computeInputHash(input: TastingPlanInput): Promise<string>
     budgetMin: input.budgetMin,
     budgetMax: input.budgetMax,
     wineCount: input.wineCount,
+    specialRequest: input.specialRequest?.toLowerCase().trim() || '',
   };
 
   const data = new TextEncoder().encode(JSON.stringify(normalized));

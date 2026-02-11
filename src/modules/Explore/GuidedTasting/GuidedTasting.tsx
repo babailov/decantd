@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
 import { useGuidedTasting } from '@/common/hooks/services/useGuidedTastings';
+import { trackEvent } from '@/common/services/analytics-api';
 import { useGuidedTastingStore } from '@/common/stores/useGuidedTastingStore';
 
 import { GuidedTastingProgress } from './GuidedTastingProgress';
@@ -33,6 +34,7 @@ export function GuidedTasting() {
 
   const { data: savedTasting } = useGuidedTasting(idParam);
   const hydratedRef = useRef(false);
+  const startedRef = useRef(false);
 
   useEffect(() => {
     if (idParam && savedTasting && !hydratedRef.current) {
@@ -44,6 +46,15 @@ export function GuidedTasting() {
       resetSession();
     }
   }, [idParam, savedTasting, hydrateFromSaved, resetSession]);
+
+  useEffect(() => {
+    if (!startedRef.current) {
+      startedRef.current = true;
+      trackEvent('guided_tasting_started', {
+        mode: idParam ? 'resume' : 'new',
+      });
+    }
+  }, [idParam]);
 
   return (
     <div className="max-w-md mx-auto px-s py-m">

@@ -8,6 +8,7 @@ export interface TastingPlanInput {
   budgetMax: number;
   budgetCurrency: string;
   wineCount: number;
+  specialRequest?: string;
 }
 
 export interface TastingPlan {
