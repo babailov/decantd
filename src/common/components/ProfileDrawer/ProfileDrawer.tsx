@@ -7,7 +7,6 @@ import { useState } from 'react';
 import { Drawer as DrawerPrimitive } from 'vaul';
 
 import { Button } from '@/common/components/Button';
-
 import { Card } from '@/common/components/Card';
 import { cn } from '@/common/functions/cn';
 import { logout } from '@/common/services/auth-api';

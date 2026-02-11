@@ -1,7 +1,7 @@
 'use client';
 
-import { AnimatePresence, motion } from 'motion/react';
 import { ChevronLeft, RotateCcw } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 import { useMemo } from 'react';
 
 import { AROMA_CATEGORIES } from '@/common/constants/aroma-wheel.const';
@@ -129,8 +129,8 @@ export function AromaWheelMobile({
           <button
             className="inline-flex items-center gap-1 text-body-xs text-text-secondary disabled:opacity-40"
             disabled={level === 'category'}
-            onClick={onBack}
             type="button"
+            onClick={onBack}
           >
             <ChevronLeft className="w-4 h-4" />
             Back
@@ -141,8 +141,8 @@ export function AromaWheelMobile({
           <button
             className="inline-flex items-center gap-1 text-body-xs text-text-secondary disabled:opacity-40"
             disabled={level === 'category'}
-            onClick={onReset}
             type="button"
+            onClick={onReset}
           >
             <RotateCcw className="w-3.5 h-3.5" />
             Reset
@@ -159,10 +159,10 @@ export function AromaWheelMobile({
         <svg viewBox="0 0 360 360" xmlns="http://www.w3.org/2000/svg">
           <AnimatePresence mode="wait">
             <motion.g
+              key={`${level}:${selectedCategoryId ?? 'all'}:${selectedSubcategoryId ?? 'all'}`}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.94 }}
               initial={{ opacity: 0, scale: 1.06 }}
-              key={`${level}:${selectedCategoryId ?? 'all'}:${selectedSubcategoryId ?? 'all'}`}
               transition={{ duration: 0.22, ease: 'easeOut' }}
             >
               {arcs.map((arc, index) => {
@@ -170,10 +170,10 @@ export function AromaWheelMobile({
 
                 return (
                   <motion.g
+                    key={arc.id}
                     animate={{ opacity: 1, scale: 1 }}
                     className="cursor-pointer"
                     initial={{ opacity: 0, scale: 0.96 }}
-                    key={arc.id}
                     transition={{ delay: index * 0.02, duration: 0.18 }}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => {
