@@ -26,7 +26,7 @@ import { trackEvent } from '@/common/services/analytics-api';
 import { useAuthStore } from '@/common/stores/useAuthStore';
 import { TastingPlan } from '@/common/types/tasting';
 
-import { SharePlan } from './SharePlan';
+import { ShareDrawer } from './ShareDrawer';
 import { WineRecommendation } from './WineRecommendation';
 
 interface TastingPlanViewProps {
@@ -84,7 +84,7 @@ export function TastingPlanView({ plan }: TastingPlanViewProps) {
               </Badge>
             </div>
           </div>
-          <SharePlan planId={plan.id} />
+          <ShareDrawer plan={plan} />
         </div>
       </motion.div>
 

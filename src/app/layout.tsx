@@ -18,13 +18,22 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'Decantd - AI Wine Tasting Planner',
+  metadataBase: new URL('https://decantd.app'),
+  title: {
+    default: 'Decantd — AI Wine Tasting Planner',
+    template: '%s | Decantd',
+  },
   description:
     'Plan the perfect wine tasting in seconds. AI-powered tasting plans with food pairings, flavor profiles, and expert recommendations.',
   openGraph: {
-    title: 'Decantd - AI Wine Tasting Planner',
+    type: 'website',
+    siteName: 'Decantd',
+    title: 'Decantd — AI Wine Tasting Planner',
     description:
       'Plan the perfect wine tasting in seconds. AI-powered tasting plans with food pairings, flavor profiles, and expert recommendations.',
+  },
+  twitter: {
+    card: 'summary_large_image',
   },
 };
 
