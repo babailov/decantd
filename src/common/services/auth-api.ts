@@ -3,7 +3,7 @@ import { AuthSession, LoginInput, SignUpInput, User } from '@/common/types/auth'
 
 function getAuthHeaders(): Record<string, string> {
   const token = useAuthStore.getState().token;
-  if (token && token !== 'cookie-session') {
+  if (token) {
     return { 'x-auth-token': token };
   }
   return {};
