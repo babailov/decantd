@@ -92,7 +92,7 @@ export async function deleteSession(
 
 export function setSessionCookie(token: string, expiresAt: string): string {
   const expires = new Date(expiresAt).toUTCString();
-  return `${TOKEN_COOKIE}=${token}; Path=/; HttpOnly; SameSite=Lax; Expires=${expires}`;
+  return `${TOKEN_COOKIE}=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Expires=${expires}`;
 }
 
 export function clearSessionCookie(): string {

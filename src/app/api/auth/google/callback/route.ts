@@ -9,7 +9,7 @@ import {
   fetchGoogleUserInfo,
   getGoogleOAuthConfig,
 } from '@/server/auth/oauth';
-import { createSession } from '@/server/auth/session';
+import { createSession, setSessionCookie } from '@/server/auth/session';
 
 const STATE_COOKIE = 'decantd-oauth-state';
 const OAUTH_NO_PASSWORD = 'OAUTH_NO_PASSWORD';
@@ -121,25 +121,17 @@ export async function GET(request: NextRequest) {
     // Create session
     const { token, expiresAt } = await createSession(db, dbUser.id);
 
-    // Use response.cookies.set() (Next.js cookie API) instead of raw
-    // Set-Cookie headers — @opennextjs/cloudflare strips raw headers.
-    const response = NextResponse.redirect(new URL('/', request.url));
-
-    response.cookies.set('decantd-session', token, {
-      path: '/',
-      httpOnly: true,
-      secure: true,
-      sameSite: 'lax',
-      expires: new Date(expiresAt),
+    // Return 200 HTML with meta-refresh redirect instead of 302.
+    // @opennextjs/cloudflare strips Set-Cookie from redirects and from
+    // headers.append() / response.cookies.set(). The only method that
+    // works is headers.set() on a non-redirect response.
+    const html = `<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=/"><script>window.location.href="/";</script></head><body></body></html>`;
+    const response = new NextResponse(html, {
+      status: 200,
+      headers: { 'Content-Type': 'text/html' },
     });
 
-    // Clear the state cookie
-    response.cookies.set(STATE_COOKIE, '', {
-      path: '/',
-      httpOnly: true,
-      sameSite: 'lax',
-      maxAge: 0,
-    });
+    response.headers.set('Set-Cookie', setSessionCookie(token, expiresAt));
 
     return response;
   } catch (err) {
