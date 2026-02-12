@@ -84,7 +84,7 @@ export function LandingHero() {
               key={item.step}
               className="flex gap-s items-start rounded-2xl border border-border/70 bg-surface-elevated p-s shadow-[0_12px_24px_-20px_rgba(45,41,38,0.12)]"
             >
-              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-text-on-primary font-display text-body-l font-bold shrink-0 shadow-sm">
+              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-text-on-primary font-display text-body-l leading-none font-bold shrink-0 shadow-sm">
                 {item.step}
               </div>
               <div>
