@@ -311,6 +311,7 @@ pnpm db:migrate:local # Apply migrations to local D1
 ```
 
 ### Conventions
+- **Git workflow:** Always commit and push after completing work
 - **Package manager:** Always `pnpm`, never `npm` or `yarn`
 - **Components:** `ComponentName/ComponentName.tsx` + `index.ts` barrel export
 - **State:** Zustand with `createWithEqualityFn` + `persist` + `shallow`

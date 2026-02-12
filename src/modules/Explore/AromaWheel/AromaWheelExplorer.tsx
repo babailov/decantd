@@ -15,6 +15,7 @@ import { AROMA_CATEGORIES } from '@/common/constants/aroma-wheel.const';
 import { cn } from '@/common/functions/cn';
 
 import { AromaWheel } from './AromaWheel';
+import { AromaWheelMobile } from './AromaWheelMobile';
 import { useAromaWheel } from './useAromaWheel';
 
 export function AromaWheelExplorer() {
@@ -63,7 +64,7 @@ export function AromaWheelExplorer() {
           </div>
           {selectedCategory && (
             <button
-              className="flex items-center gap-1 text-body-xs text-text-muted hover:text-primary transition-colors"
+              className="hidden md:flex items-center gap-1 text-body-xs text-text-muted hover:text-primary transition-colors"
               onClick={clearSelection}
             >
               <RotateCcw className="w-4 h-4" />
@@ -77,7 +78,7 @@ export function AromaWheelExplorer() {
       {selectedCategory && (
         <motion.div
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center gap-1 text-body-xs text-text-muted mb-s"
+          className="hidden md:flex items-center gap-1 text-body-xs text-text-muted mb-s"
           initial={{ opacity: 0, y: -5 }}
           transition={{ duration: 0.2 }}
         >
@@ -106,14 +107,27 @@ export function AromaWheelExplorer() {
         </motion.div>
       )}
 
-      <AromaWheel
+      <AromaWheelMobile
         selectedAromaId={selectedAroma?.id ?? null}
         selectedCategoryId={selectedCategory?.id ?? null}
         selectedSubcategoryId={selectedSubcategory?.id ?? null}
+        onBack={goBack}
+        onReset={clearSelection}
         onSelectAroma={handleAromaClick}
         onSelectCategory={selectCategory}
         onSelectSubcategory={selectSubcategory}
       />
+
+      <div className="hidden md:block">
+        <AromaWheel
+          selectedAromaId={selectedAroma?.id ?? null}
+          selectedCategoryId={selectedCategory?.id ?? null}
+          selectedSubcategoryId={selectedSubcategory?.id ?? null}
+          onSelectAroma={handleAromaClick}
+          onSelectCategory={selectCategory}
+          onSelectSubcategory={selectSubcategory}
+        />
+      </div>
 
       {/* Detail drawer for selected aroma */}
       <Drawer

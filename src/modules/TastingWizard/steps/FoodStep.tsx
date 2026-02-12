@@ -38,10 +38,10 @@ export function FoodStep() {
   return (
     <div>
       <h2 className="font-display text-heading-m text-primary mb-2xs">
-        What are you eating?
+        What&apos;s on the table?
       </h2>
       <p className="text-body-m text-text-secondary mb-m">
-        We&apos;ll pick wines that pair beautifully with your food.
+        Tell us the main dish and we&apos;ll match texture, freshness, and intensity.
       </p>
 
       {tierConfig.allowCustomFoodText && (

@@ -15,7 +15,7 @@ export function getPasswordResetEmail(resetUrl: string): { subject: string; html
         <table width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;background-color:#ffffff;border-radius:16px;padding:40px;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
           <tr>
             <td align="center" style="padding-bottom:24px;">
-              <h1 style="margin:0;font-size:24px;font-weight:700;color:#722F37;">Decantd</h1>
+              <h1 style="margin:0;font-size:24px;font-weight:700;color:#7B2D3A;">Decantd</h1>
             </td>
           </tr>
           <tr>
@@ -32,7 +32,7 @@ export function getPasswordResetEmail(resetUrl: string): { subject: string; html
           </tr>
           <tr>
             <td align="center" style="padding-bottom:24px;">
-              <a href="${resetUrl}" style="display:inline-block;padding:12px 32px;background-color:#722F37;color:#ffffff;text-decoration:none;border-radius:8px;font-size:15px;font-weight:600;">
+              <a href="${resetUrl}" style="display:inline-block;padding:12px 32px;background-color:#7B2D3A;color:#ffffff;text-decoration:none;border-radius:8px;font-size:15px;font-weight:600;">
                 Reset Password
               </a>
             </td>
@@ -48,7 +48,7 @@ export function getPasswordResetEmail(resetUrl: string): { subject: string; html
             <td>
               <p style="margin:0;font-size:13px;line-height:1.5;color:#888888;">
                 If the button doesn't work, copy and paste this link into your browser:<br>
-                <a href="${resetUrl}" style="color:#722F37;word-break:break-all;">${resetUrl}</a>
+                <a href="${resetUrl}" style="color:#7B2D3A;word-break:break-all;">${resetUrl}</a>
               </p>
             </td>
           </tr>

@@ -13,13 +13,13 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantStyles: Record<ButtonVariant, string> = {
   primary:
-    'bg-primary text-text-on-primary hover:bg-primary-hover active:bg-primary-hover',
+    'bg-primary text-text-on-primary hover:bg-primary-hover active:bg-primary-hover shadow-sm hover:shadow-md',
   secondary:
-    'bg-accent text-text-on-accent hover:bg-accent-hover active:bg-accent-hover',
+    'bg-accent text-text-on-accent hover:bg-accent-hover active:bg-accent-hover shadow-sm hover:shadow-md',
   ghost:
-    'bg-transparent text-text-primary hover:bg-surface active:bg-surface',
+    'bg-transparent text-text-primary border border-transparent hover:border-border hover:bg-surface active:bg-surface',
   outline:
-    'bg-transparent text-primary border border-primary hover:bg-primary/5 active:bg-primary/10',
+    'bg-transparent text-primary border border-primary/70 hover:bg-primary/10 active:bg-primary/15',
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -45,7 +45,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         className={cn(
-          'inline-flex items-center justify-center font-medium whitespace-nowrap transition-all active:scale-[0.98]',
+          'inline-flex items-center justify-center font-medium whitespace-nowrap transition-all duration-200 active:scale-[0.98]',
           'disabled:pointer-events-none disabled:opacity-50',
           variantStyles[variant],
           sizeStyles[size],

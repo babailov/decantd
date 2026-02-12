@@ -1,4 +1,13 @@
+import { useAuthStore } from '@/common/stores/useAuthStore';
 import { AuthSession, LoginInput, SignUpInput, User } from '@/common/types/auth';
+
+function getAuthHeaders(): Record<string, string> {
+  const token = useAuthStore.getState().token;
+  if (token) {
+    return { 'x-auth-token': token };
+  }
+  return {};
+}
 
 export async function signUp(input: SignUpInput): Promise<AuthSession> {
   const response = await fetch('/api/auth/signup', {
@@ -35,17 +44,24 @@ export async function login(input: LoginInput): Promise<AuthSession> {
 }
 
 export async function getMe(): Promise<{ user: User }> {
-  const response = await fetch('/api/auth/me');
+  const response = await fetch('/api/auth/me', {
+    headers: getAuthHeaders(),
+  });
 
   if (!response.ok) {
-    throw new Error('Not authenticated');
+    const error = new Error('Not authenticated') as Error & { status: number };
+    error.status = response.status;
+    throw error;
   }
 
   return response.json();
 }
 
 export async function logout(): Promise<void> {
-  await fetch('/api/auth/logout', { method: 'POST' });
+  await fetch('/api/auth/logout', {
+    method: 'POST',
+    headers: getAuthHeaders(),
+  });
 }
 
 export async function changePassword(input: {

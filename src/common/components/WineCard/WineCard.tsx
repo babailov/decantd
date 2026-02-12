@@ -34,8 +34,8 @@ interface WineCardProps {
 const borderColors: Record<string, string> = {
   red: 'border-l-wine-burgundy',
   white: 'border-l-wine-goldenrod',
-  rose: 'border-l-pink-400',
-  sparkling: 'border-l-amber-400',
+  rose: 'border-l-wine-rose',
+  sparkling: 'border-l-wine-sparkling',
 };
 
 const badgeVariants: Record<string, 'red' | 'white' | 'rose' | 'sparkling'> = {

@@ -9,7 +9,13 @@ export const users = sqliteTable('users', {
   passwordHash: text('password_hash').notNull(),
   displayName: text('display_name').notNull(),
   avatarUrl: text('avatar_url'),
+  oauthProvider: text('oauth_provider'),
+  oauthId: text('oauth_id'),
   subscriptionTier: text('subscription_tier').notNull().default('free'),
+  subscriptionStatus: text('subscription_status').notNull().default('inactive'),
+  stripeCustomerId: text('stripe_customer_id'),
+  stripeSubscriptionId: text('stripe_subscription_id'),
+  subscriptionCurrentPeriodEnd: text('subscription_current_period_end'),
   createdAt: text('created_at')
     .notNull()
     .default(sql`(datetime('now'))`),
@@ -231,11 +237,43 @@ export const corkageRestaurants = sqliteTable('corkage_restaurants', {
   longitude: real('longitude'),
   isVerified: integer('is_verified', { mode: 'boolean' }).notNull().default(false),
   verifiedAt: text('verified_at'),
+  offerTitle: text('offer_title'),
+  offerDescription: text('offer_description'),
+  offerCode: text('offer_code'),
+  offerExpiresAt: text('offer_expires_at'),
   submittedBy: text('submitted_by'),
   createdAt: text('created_at')
     .notNull()
     .default(sql`(datetime('now'))`),
   updatedAt: text('updated_at')
+    .notNull()
+    .default(sql`(datetime('now'))`),
+});
+
+export const savedVenues = sqliteTable('saved_venues', {
+  id: text('id').primaryKey(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id),
+  restaurantId: text('restaurant_id')
+    .notNull()
+    .references(() => corkageRestaurants.id),
+  createdAt: text('created_at')
+    .notNull()
+    .default(sql`(datetime('now'))`),
+});
+
+export const analyticsEvents = sqliteTable('analytics_events', {
+  id: text('id').primaryKey(),
+  userId: text('user_id').references(() => users.id),
+  sessionId: text('session_id').notNull(),
+  eventName: text('event_name').notNull(),
+  propertiesJson: text('properties_json', { mode: 'json' })
+    .notNull()
+    .$type<Record<string, unknown>>()
+    .default(sql`'{}'`),
+  path: text('path'),
+  createdAt: text('created_at')
     .notNull()
     .default(sql`(datetime('now'))`),
 });

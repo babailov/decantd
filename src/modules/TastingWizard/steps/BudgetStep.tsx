@@ -29,10 +29,10 @@ export function BudgetStep() {
   return (
     <div>
       <h2 className="font-display text-heading-m text-primary mb-2xs">
-        What&apos;s your budget?
+        Choose your comfort range
       </h2>
       <p className="text-body-m text-text-secondary mb-m">
-        Price range per bottle (USD).
+        Per-bottle budget (USD) so recommendations stay realistic.
       </p>
 
       {/* Quick presets */}

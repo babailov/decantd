@@ -1,8 +1,10 @@
 export type SubscriptionTier = 'anonymous' | 'free' | 'paid';
+export type BillingStatus = 'inactive' | 'trialing' | 'active' | 'past_due' | 'canceled' | 'unpaid';
 
 export interface TierConfig {
   tier: SubscriptionTier;
   allowCustomFoodText: boolean;
+  allowSpecialRequests: boolean;
   foodOptions: string[];
   forceSurpriseMe: boolean;
   allowCustomBudget: boolean;

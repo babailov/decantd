@@ -17,6 +17,7 @@ import {
   useSaveGuidedTasting,
   useUpdateGuidedTasting,
 } from '@/common/hooks/services/useGuidedTastings';
+import { trackEvent } from '@/common/services/analytics-api';
 import { useAuthStore } from '@/common/stores/useAuthStore';
 import { useGuidedTastingStore } from '@/common/stores/useGuidedTastingStore';
 import type { WineTypeContext } from '@/common/types/explore';
@@ -67,6 +68,13 @@ export function ThinkStep() {
   const [authOpen, setAuthOpen] = useState(false);
 
   const handleComplete = () => {
+    trackEvent('guided_tasting_completed', {
+      balance,
+      complexity,
+      hasNotes: notes.trim().length > 0,
+      aromaCount: selectedAromas.length,
+    });
+    trackEvent('streak_day_completed', { source: 'guided_tasting' });
     setCompleted(true);
   };
 
@@ -107,6 +115,10 @@ export function ThinkStep() {
       const data = buildTastingData();
       const result = await saveMutation.mutateAsync(data);
       setSavedTastingId(result.id);
+      trackEvent('journal_entry_created', {
+        source: 'guided_tasting',
+        tastingId: result.id,
+      });
       toast.success('Tasting saved!');
     } catch {
       toast.error('Failed to save tasting');

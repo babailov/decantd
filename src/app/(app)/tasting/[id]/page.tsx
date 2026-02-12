@@ -1,57 +1,65 @@
-'use client';
+import { Metadata } from 'next';
 
-import { Wine } from 'lucide-react';
-import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { getOgImageUrl } from '@/common/constants/urls';
+import { OCCASIONS } from '@/common/constants/wine.const';
 
-import { Button } from '@/common/components/Button';
-import { useTastingPlan } from '@/common/hooks/services/useTastingPlan';
-import { useTastingStore } from '@/common/stores/useTastingStore';
+import { TastingPlanPageClient } from './TastingPlanPageClient';
 
-import { TastingPlanView } from '@/modules/TastingPlan/TastingPlanView';
+import { getDb } from '@/server/auth/get-db';
+import { fetchPlanById } from '@/server/plans/fetch-plan';
 
-export default function TastingPlanPage() {
-  const { id } = useParams<{ id: string }>();
-  const generatedPlan = useTastingStore((s) => s.generatedPlan);
+export const dynamic = 'force-dynamic';
 
-  // If we just generated the plan, use the store data (no fetch needed)
-  const hasCachedPlan = generatedPlan?.id === id;
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
 
-  const { data: fetchedPlan, isLoading, error } = useTastingPlan(id);
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { id } = await params;
 
-  const plan = hasCachedPlan ? generatedPlan : fetchedPlan;
+  try {
+    const db = await getDb();
+    if (!db) return {};
 
-  if (isLoading && !hasCachedPlan) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh]">
-        <div className="flex items-center gap-xs">
-          <Wine className="h-6 w-6 text-primary animate-pulse" />
-          <span className="text-body-l text-text-secondary">
-            Loading your tasting plan...
-          </span>
-        </div>
-      </div>
-    );
+    const plan = await fetchPlanById(db, id);
+    if (!plan) return {};
+
+    const occasionLabel =
+      OCCASIONS.find((o) => o.value === plan.occasion)?.label || plan.occasion;
+
+    const wineNames = plan.wines
+      .slice(0, 3)
+      .map((w) => w.varietal)
+      .join(', ');
+    const suffix = plan.wines.length > 3 ? '...' : '';
+
+    const description = plan.foodPairing
+      ? `${occasionLabel} tasting plan paired with ${plan.foodPairing}: ${wineNames}${suffix}`
+      : `${occasionLabel} tasting plan: ${wineNames}${suffix}`;
+
+    const title = `${plan.title} — ${plan.wineCount} ${plan.wineCount === 1 ? 'Wine' : 'Wines'}`;
+
+    return {
+      title,
+      description,
+      openGraph: {
+        title,
+        description,
+        images: [{ url: getOgImageUrl(id), width: 1200, height: 630 }],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title,
+        description,
+        images: [getOgImageUrl(id)],
+      },
+    };
+  } catch {
+    return {};
   }
+}
 
-  if (error && !hasCachedPlan) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] px-s text-center">
-        <Wine className="h-12 w-12 text-text-muted mb-s" />
-        <h2 className="font-display text-heading-s text-primary mb-xs">
-          Plan Not Found
-        </h2>
-        <p className="text-body-m text-text-secondary mb-m">
-          This tasting plan may have been removed or the link is incorrect.
-        </p>
-        <Link href="/tasting/new">
-          <Button>Create a New Plan</Button>
-        </Link>
-      </div>
-    );
-  }
-
-  if (!plan) return null;
-
-  return <TastingPlanView plan={plan} />;
+export default async function TastingPlanPage({ params }: PageProps) {
+  const { id } = await params;
+  return <TastingPlanPageClient id={id} />;
 }

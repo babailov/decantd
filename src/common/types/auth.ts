@@ -1,11 +1,14 @@
-import { SubscriptionTier } from './tier';
+import { BillingStatus, SubscriptionTier } from './tier';
 
 export interface User {
   id: string;
   email: string;
   displayName: string;
   avatarUrl: string | null;
+  authProvider?: 'google' | null;
   subscriptionTier: SubscriptionTier;
+  billingStatus?: BillingStatus;
+  subscriptionCurrentPeriodEnd?: string | null;
   createdAt: string;
 }
 

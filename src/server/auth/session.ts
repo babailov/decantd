@@ -49,7 +49,16 @@ export async function getUserFromRequest(
     email: user.email,
     displayName: user.displayName,
     avatarUrl: user.avatarUrl,
-    subscriptionTier: (user.subscriptionTier as 'free' | 'paid') || 'free',
+    authProvider: (user.oauthProvider as 'google') || null,
+    subscriptionTier: (user.subscriptionTier as 'anonymous' | 'free' | 'paid') || 'free',
+    billingStatus: (user.subscriptionStatus as
+      | 'inactive'
+      | 'trialing'
+      | 'active'
+      | 'past_due'
+      | 'canceled'
+      | 'unpaid') || 'inactive',
+    subscriptionCurrentPeriodEnd: user.subscriptionCurrentPeriodEnd,
     createdAt: user.createdAt,
   };
 }
@@ -83,7 +92,7 @@ export async function deleteSession(
 
 export function setSessionCookie(token: string, expiresAt: string): string {
   const expires = new Date(expiresAt).toUTCString();
-  return `${TOKEN_COOKIE}=${token}; Path=/; HttpOnly; SameSite=Lax; Expires=${expires}`;
+  return `${TOKEN_COOKIE}=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Expires=${expires}`;
 }
 
 export function clearSessionCookie(): string {

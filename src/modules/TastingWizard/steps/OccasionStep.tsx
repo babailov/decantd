@@ -20,10 +20,10 @@ export function OccasionStep() {
   return (
     <div>
       <h2 className="font-display text-heading-m text-primary mb-2xs">
-        What&apos;s the occasion?
+        Where are we pouring?
       </h2>
       <p className="text-body-m text-text-secondary mb-m">
-        This helps us tailor the wine selection to your event.
+        Set the mood first so your wine path feels right from the first pour.
       </p>
 
       <div className="grid grid-cols-2 gap-s">

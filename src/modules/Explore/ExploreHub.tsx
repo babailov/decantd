@@ -13,12 +13,13 @@ import { useState } from 'react';
 
 import { AuthDialog } from '@/common/components/AuthDialog';
 import { cn } from '@/common/functions/cn';
+import { trackEvent } from '@/common/services/analytics-api';
 import { useAuthStore } from '@/common/stores/useAuthStore';
 
 const FEATURES = [
   {
     title: 'Guided Tasting',
-    description: 'Learn the Look → Smell → Taste → Think method used by sommeliers worldwide.',
+    description: 'Walk through Look → Smell → Taste → Think with quick, sensory prompts.',
     href: '/explore/tasting-guide',
     icon: Eye,
     badge: 'Interactive',
@@ -27,7 +28,7 @@ const FEATURES = [
   },
   {
     title: 'Aroma Wheel',
-    description: 'Explore 70+ wine aromas across 6 categories. Identify what you smell.',
+    description: 'Discover aroma families with a tap-first wheel made for fast recognition.',
     href: '/explore/aroma-wheel',
     icon: Flower2,
     badge: 'Interactive',
@@ -36,7 +37,7 @@ const FEATURES = [
   },
   {
     title: 'Serving Guide',
-    description: 'Temperatures, glassware, and decanting — serve every wine at its best.',
+    description: 'Simple serving cues for temperature, glassware, and when to decant.',
     href: '/explore/serving-guide',
     icon: Thermometer,
     badge: 'Reference',
@@ -45,7 +46,7 @@ const FEATURES = [
   },
   {
     title: 'Corkage Directory',
-    description: 'Find BYOB-friendly restaurants in Toronto with corkage policies.',
+    description: 'Find local BYOB spots and corkage rules for easier night planning.',
     href: '/corkage',
     icon: MapPin,
     badge: 'Toronto',
@@ -66,10 +67,11 @@ export function ExploreHub() {
         transition={{ duration: 0.3 }}
       >
         <h1 className="font-display text-heading-l text-primary mb-2xs">
-          Explore
+          Vineyard Walk
         </h1>
         <p className="text-body-m text-text-secondary mb-l">
-          Develop your palate with interactive guides and wine education.
+          Explore wine with playful guides designed to build confidence, not
+          overwhelm you.
         </p>
       </motion.div>
 
@@ -87,6 +89,7 @@ export function ExploreHub() {
               'border border-primary/20',
               'transition-all active:scale-[0.98] hover:shadow-md hover:border-primary/40',
             )}
+            onClick={() => trackEvent('plan_wizard_started', { source: 'explore' })}
           >
             <div className="flex items-center gap-m">
               <div className="flex-shrink-0 flex items-center justify-center w-12 h-12 rounded-xl bg-primary/20">
@@ -94,10 +97,11 @@ export function ExploreHub() {
               </div>
               <div className="flex-1 min-w-0">
                 <h2 className="font-display text-heading-xs text-primary mb-0.5">
-                  Create a Tasting Plan
+                  Start a New Tasting Story
                 </h2>
                 <p className="text-body-s text-text-secondary">
-                  Get AI-curated wine selections tailored to your occasion, food, and palate.
+                  We turn your moment and menu into a guided lineup worth
+                  sharing.
                 </p>
               </div>
             </div>
@@ -154,7 +158,13 @@ export function ExploreHub() {
               <button
                 key={feature.title}
                 className="text-left"
-                onClick={() => setAuthOpen(true)}
+                onClick={() => {
+                  trackEvent('upgrade_cta_clicked', {
+                    source: 'explore_feature_gate',
+                    feature: feature.title,
+                  });
+                  setAuthOpen(true);
+                }}
               >
                 {card}
               </button>
@@ -162,7 +172,15 @@ export function ExploreHub() {
           }
 
           return (
-            <Link key={feature.title} href={feature.href}>
+            <Link
+              key={feature.title}
+              href={feature.href}
+              onClick={() => {
+                if (feature.title === 'Corkage Directory') {
+                  trackEvent('corkage_page_viewed', { source: 'explore_feature_card' });
+                }
+              }}
+            >
               {card}
             </Link>
           );

@@ -89,7 +89,7 @@ function StarRating({ rating }: { rating: number }) {
 
 function RatingCard({ entry }: { entry: JournalEntry }) {
   return (
-    <Link href={`/tasting/${entry.planId}`}>
+    <Link href={`/tasting/${entry.planId}?from=journal`}>
       <Card
         className="flex items-center gap-s p-s hover:bg-surface transition-colors cursor-pointer"
         variant="outlined"
@@ -129,7 +129,7 @@ function RatingCard({ entry }: { entry: JournalEntry }) {
 
 function GuidedTastingCard({ tasting }: { tasting: SavedGuidedTasting }) {
   return (
-    <Link href={`/explore/tasting-guide?id=${tasting.id}`}>
+    <Link href={`/explore/tasting-guide?id=${tasting.id}&from=journal`}>
       <Card
         className="flex items-center gap-s p-s hover:bg-surface transition-colors cursor-pointer"
         variant="outlined"
@@ -167,7 +167,7 @@ function GuidedTastingCard({ tasting }: { tasting: SavedGuidedTasting }) {
 
 function TastingNoteCard({ tasting }: { tasting: SavedGuidedTasting }) {
   return (
-    <Link href={`/explore/tasting-guide?id=${tasting.id}`}>
+    <Link href={`/explore/tasting-guide?id=${tasting.id}&from=journal`}>
       <Card
         className="flex items-center gap-s p-s hover:bg-surface transition-colors cursor-pointer"
         variant="outlined"
@@ -192,7 +192,7 @@ function TastingNoteCard({ tasting }: { tasting: SavedGuidedTasting }) {
 function PlanCard({ plan }: { plan: PlanSummary }) {
   const occasion = OCCASIONS.find((o) => o.value === plan.occasion);
   return (
-    <Link href={`/tasting/${plan.id}`}>
+    <Link href={`/tasting/${plan.id}?from=journal`}>
       <Card
         className="flex items-center gap-s p-s hover:bg-surface transition-colors cursor-pointer"
         variant="outlined"

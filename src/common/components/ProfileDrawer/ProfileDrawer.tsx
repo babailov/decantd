@@ -7,7 +7,6 @@ import { useState } from 'react';
 import { Drawer as DrawerPrimitive } from 'vaul';
 
 import { Button } from '@/common/components/Button';
-
 import { Card } from '@/common/components/Card';
 import { cn } from '@/common/functions/cn';
 import { logout } from '@/common/services/auth-api';
@@ -103,15 +102,17 @@ export function ProfileDrawer({ open, onOpenChange }: ProfileDrawerProps) {
 
               {/* Actions */}
               <div className="px-m pb-m flex flex-col gap-xs mt-auto">
-                <Button
-                  className="w-full"
-                  size="md"
-                  variant="ghost"
-                  onClick={() => setChangePasswordOpen(true)}
-                >
-                  <KeyRound className="h-4 w-4 mr-xs" />
-                  Change Password
-                </Button>
+                {user.authProvider !== 'google' && (
+                  <Button
+                    className="w-full"
+                    size="md"
+                    variant="ghost"
+                    onClick={() => setChangePasswordOpen(true)}
+                  >
+                    <KeyRound className="h-4 w-4 mr-xs" />
+                    Change Password
+                  </Button>
+                )}
                 <Button
                   className="w-full"
                   size="md"

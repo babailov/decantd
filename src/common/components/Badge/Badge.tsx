@@ -12,8 +12,8 @@ const variantStyles: Record<BadgeVariant, string> = {
   default: 'bg-surface text-text-primary border border-border',
   red: 'bg-wine-burgundy/10 text-wine-burgundy border border-wine-burgundy/20',
   white: 'bg-wine-goldenrod/10 text-wine-goldenrod border border-wine-goldenrod/20',
-  rose: 'bg-pink-100 text-pink-700 border border-pink-200',
-  sparkling: 'bg-amber-50 text-amber-700 border border-amber-200',
+  rose: 'bg-wine-rose/10 text-wine-rose border border-wine-rose/20',
+  sparkling: 'bg-wine-sparkling/10 text-wine-sparkling border border-wine-sparkling/20',
 };
 
 const Badge = forwardRef<HTMLSpanElement, BadgeProps>(

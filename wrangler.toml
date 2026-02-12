@@ -16,6 +16,8 @@ database_id = "b0031528-332f-404f-9f8c-0b3d7de8b37d"
 
 [vars]
 NEXT_PUBLIC_ENV = "development"
+# GOOGLE_CLIENT_ID = "" # Set in .dev.vars for local dev
+# GOOGLE_CLIENT_SECRET is stored via `wrangler secret put` — never in VCS
 
 [env.production]
 name = "decantd-prod"

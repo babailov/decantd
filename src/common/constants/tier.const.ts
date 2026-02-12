@@ -13,6 +13,7 @@ export const TIER_CONFIGS: Record<string, TierConfig> = {
   anonymous: {
     tier: 'anonymous',
     allowCustomFoodText: false,
+    allowSpecialRequests: false,
     foodOptions: ANONYMOUS_FOOD_OPTIONS,
     forceSurpriseMe: true,
     allowCustomBudget: false,
@@ -25,6 +26,7 @@ export const TIER_CONFIGS: Record<string, TierConfig> = {
   free: {
     tier: 'free',
     allowCustomFoodText: true,
+    allowSpecialRequests: false,
     foodOptions: [],
     forceSurpriseMe: false,
     allowCustomBudget: true,
@@ -42,6 +44,7 @@ export const TIER_CONFIGS: Record<string, TierConfig> = {
   paid: {
     tier: 'paid',
     allowCustomFoodText: true,
+    allowSpecialRequests: true,
     foodOptions: [],
     forceSurpriseMe: false,
     allowCustomBudget: true,

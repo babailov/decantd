@@ -24,17 +24,17 @@ interface FlavorRadarProps {
 }
 
 const fillColors: Record<string, string> = {
-  red: 'rgba(114, 47, 55, 0.4)',
-  white: 'rgba(218, 165, 32, 0.4)',
+  red: 'rgba(123, 45, 58, 0.4)',
+  white: 'rgba(196, 149, 58, 0.4)',
   rose: 'rgba(219, 112, 147, 0.4)',
-  sparkling: 'rgba(255, 215, 0, 0.35)',
+  sparkling: 'rgba(212, 168, 75, 0.35)',
 };
 
 const strokeColors: Record<string, string> = {
-  red: '#722F37',
-  white: '#DAA520',
+  red: '#7B2D3A',
+  white: '#C4953A',
   rose: '#DB7093',
-  sparkling: '#FFD700',
+  sparkling: '#D4A84B',
 };
 
 export function FlavorRadar({
@@ -54,10 +54,10 @@ export function FlavorRadar({
     <div className={cn('w-full h-48', className)}>
       <ResponsiveContainer height="100%" width="100%">
         <RadarChart cx="50%" cy="50%" data={chartData} outerRadius="75%">
-          <PolarGrid stroke="#e0d5c5" />
+          <PolarGrid stroke="#E8E2D9" />
           <PolarAngleAxis
             dataKey="axis"
-            tick={{ fontSize: 11, fill: '#666666' }}
+            tick={{ fontSize: 11, fill: '#5C5650' }}
           />
           <PolarRadiusAxis angle={90} domain={[0, 5]} tick={false} />
           <Radar

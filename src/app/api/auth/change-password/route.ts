@@ -45,6 +45,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    if (dbUser.passwordHash === 'OAUTH_NO_PASSWORD') {
+      return NextResponse.json(
+        { message: 'This account uses Google sign-in and has no password to change.' },
+        { status: 400 },
+      );
+    }
+
     const valid = await verifyPassword(input.currentPassword, dbUser.passwordHash);
     if (!valid) {
       return NextResponse.json(

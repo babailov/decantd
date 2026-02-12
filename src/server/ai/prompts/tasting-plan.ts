@@ -22,11 +22,16 @@ export const buildTastingPlanUserPrompt = (input: {
   budgetMax: number;
   budgetCurrency: string;
   wineCount: number;
+  specialRequest?: string;
 }) => {
   const regionText =
     input.regionPreferences.length > 0
       ? `Preferred regions: ${input.regionPreferences.join(', ')}`
       : 'No region preference — surprise me with a diverse global selection';
+
+  const specialRequestText = input.specialRequest?.trim()
+    ? `- Special sommelier request: ${input.specialRequest.trim()}`
+    : '- Special sommelier request: none';
 
   return `Create a wine tasting plan with these details:
 
@@ -35,6 +40,7 @@ export const buildTastingPlanUserPrompt = (input: {
 - ${regionText}
 - Budget: ${input.budgetCurrency} ${input.budgetMin}–${input.budgetMax} per bottle
 - Number of wines: ${input.wineCount}
+${specialRequestText}
 
 Respond with JSON matching this exact schema:
 {

@@ -6,7 +6,7 @@ const AppLayout = ({ children }: PropsWithChildren) => {
   return (
     <>
       <Header />
-      <main className="pt-[var(--header-height)] pb-[var(--bottom-nav-height)] md:pb-0 md:pl-[var(--side-nav-width)] min-h-screen">
+      <main className="vineyard-bg pt-[var(--header-height)] pb-[var(--bottom-nav-height)] md:pb-0 md:pl-[var(--side-nav-width)] min-h-screen">
         {children}
       </main>
       <BottomNav />

@@ -4,16 +4,18 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Sparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { toast } from 'sonner';
 
 import { Button } from '@/common/components/Button';
 import { Card } from '@/common/components/Card';
 import { UpgradeCTA } from '@/common/components/UpgradeCTA';
 import { queryKeys } from '@/common/constants/queryKeys';
 import { OCCASIONS, POPULAR_REGIONS } from '@/common/constants/wine.const';
-import { useUserTier } from '@/common/hooks/useTierConfig';
+import { cn } from '@/common/functions/cn';
+import { useTierConfig, useUserTier } from '@/common/hooks/useTierConfig';
+import { trackEvent } from '@/common/services/analytics-api';
 import { generateTastingPlan, getGenerationStatus } from '@/common/services/tasting-api';
 import { usePlanHistoryStore } from '@/common/stores/usePlanHistoryStore';
+import { useTastingGenerationToastStore } from '@/common/stores/useTastingGenerationToastStore';
 import { useTastingStore } from '@/common/stores/useTastingStore';
 
 export function ReviewStep() {
@@ -25,6 +27,8 @@ export function ReviewStep() {
     budgetMin,
     budgetMax,
     wineCount,
+    specialRequest,
+    setSpecialRequest,
     isGenerating,
     setIsGenerating,
     setGeneratedPlan,
@@ -36,6 +40,7 @@ export function ReviewStep() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const tier = useUserTier();
+  const tierConfig = useTierConfig();
   const [rateLimited, setRateLimited] = useState(false);
 
   // Fetch generation status for free users
@@ -58,6 +63,8 @@ export function ReviewStep() {
     setIsGenerating(true);
     setGenerationError(null);
     setRateLimited(false);
+    useTastingGenerationToastStore.getState().startGeneration('/tasting/generating');
+    router.push('/tasting/generating');
 
     try {
       const plan = await generateTastingPlan({
@@ -68,6 +75,13 @@ export function ReviewStep() {
         budgetMax,
         budgetCurrency: 'USD',
         wineCount,
+        specialRequest: specialRequest.trim() || undefined,
+      });
+
+      trackEvent('plan_generated', {
+        occasion: plan.occasion,
+        wineCount: plan.wineCount,
+        usedSpecialRequest: Boolean(specialRequest.trim()),
       });
 
       setGeneratedPlan(plan);
@@ -80,8 +94,15 @@ export function ReviewStep() {
       });
       queryClient.invalidateQueries({ queryKey: queryKeys.user.plans });
       queryClient.invalidateQueries({ queryKey: queryKeys.generation.status });
+      const shouldAutoNavigate =
+        typeof window !== 'undefined' && window.location.pathname === '/tasting/generating';
       resetWizard();
-      router.push(`/tasting/${plan.id}`);
+      if (shouldAutoNavigate) {
+        useTastingGenerationToastStore.getState().clearGeneration();
+        router.push(`/tasting/${plan.id}`);
+      } else {
+        useTastingGenerationToastStore.getState().finishGeneration(plan.id);
+      }
     } catch (err) {
       const message =
         err instanceof Error ? err.message : 'Something went wrong';
@@ -89,10 +110,10 @@ export function ReviewStep() {
       // Check for rate limit error
       if (message.includes('Daily limit') || message.includes('daily limit')) {
         setRateLimited(true);
+        useTastingGenerationToastStore.getState().clearGeneration();
       } else {
-        toast.error(message);
+        useTastingGenerationToastStore.getState().failGeneration(message);
       }
-
       setGenerationError(message);
     } finally {
       setIsGenerating(false);
@@ -116,10 +137,10 @@ export function ReviewStep() {
   return (
     <div>
       <h2 className="font-display text-heading-m text-primary mb-2xs">
-        Your Tasting Plan
+        Ready to craft your tasting story
       </h2>
       <p className="text-body-m text-text-secondary mb-m">
-        Review your selections before we craft your personalized plan.
+        One last look, then we will build your lineup.
       </p>
 
       <Card variant="outlined">
@@ -134,6 +155,43 @@ export function ReviewStep() {
           ))}
         </div>
       </Card>
+
+      <div className="mt-s">
+        <label className="text-body-s text-text-secondary block mb-xs" htmlFor="special-request">
+          Optional sommelier note
+        </label>
+        <textarea
+          className={cn(
+            'w-full rounded-xl border border-border bg-surface-elevated px-s py-xs text-body-s text-text-primary',
+            'placeholder:text-text-muted focus:border-primary focus:outline-none',
+            !tierConfig.allowSpecialRequests && 'opacity-70',
+          )}
+          disabled={!tierConfig.allowSpecialRequests}
+          id="special-request"
+          maxLength={300}
+          placeholder={
+            tierConfig.allowSpecialRequests
+              ? 'e.g., prioritize low-intervention wines, include one Ontario option, and keep tannins softer.'
+              : 'Paid feature: add your own custom sommelier note.'
+          }
+          rows={3}
+          value={specialRequest}
+          onChange={(e) => setSpecialRequest(e.target.value)}
+        />
+        <p className="text-body-xs text-text-muted mt-1">
+          {tierConfig.allowSpecialRequests
+            ? `${specialRequest.length}/300 characters`
+            : 'Upgrade to add custom sommelier instructions.'}
+        </p>
+      </div>
+
+      {!tierConfig.allowSpecialRequests && (
+        <UpgradeCTA
+          className="mt-1"
+          message="Unlock custom sommelier requests and advanced tasting refinements."
+          variant="inline"
+        />
+      )}
 
       {/* Generation status for free users */}
       {tier === 'free' && genStatus && genStatus.dailyLimit !== null && (

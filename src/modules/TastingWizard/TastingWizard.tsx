@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useEffect } from 'react';
 
 import { useTierConfig } from '@/common/hooks/useTierConfig';
+import { trackEvent } from '@/common/services/analytics-api';
 import { useAuthStore } from '@/common/stores/useAuthStore';
 import { useTastingStore } from '@/common/stores/useTastingStore';
 
@@ -36,6 +37,7 @@ export function TastingWizard() {
 
   useEffect(() => {
     resetWizard();
+    trackEvent('plan_wizard_started', { source: 'tasting_new' });
   }, [resetWizard]);
 
   // Enforce tier defaults for anonymous users
@@ -58,6 +60,13 @@ export function TastingWizard() {
   return (
     <div className="max-w-md mx-auto px-s py-m">
       {!isAuthenticated() && <GuestPlansList compact />}
+
+      <div className="mb-m rounded-2xl border border-border bg-surface-elevated p-s">
+        <p className="font-display text-body-m text-primary">Build your tasting story</p>
+        <p className="text-body-s text-text-secondary">
+          We will guide you through six quick stops to craft a balanced wine lineup.
+        </p>
+      </div>
 
       <WizardProgress />
 

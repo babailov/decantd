@@ -33,8 +33,11 @@ export async function POST(request: NextRequest) {
     });
 
     if (existing) {
+      const message = existing.oauthProvider
+        ? 'An account with this email uses Google sign-in. Please continue with Google.'
+        : 'An account with this email already exists';
       return NextResponse.json(
-        { message: 'An account with this email already exists' },
+        { message },
         { status: 409 },
       );
     }
@@ -60,7 +63,10 @@ export async function POST(request: NextRequest) {
         email: input.email.toLowerCase(),
         displayName: input.displayName,
         avatarUrl: null,
+        authProvider: null,
         subscriptionTier: 'free',
+        billingStatus: 'inactive',
+        subscriptionCurrentPeriodEnd: null,
         createdAt: now,
       },
     });

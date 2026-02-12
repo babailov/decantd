@@ -2,6 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import {
+  ArrowLeft,
   Bookmark,
   ChevronDown,
   ChevronUp,
@@ -22,14 +23,16 @@ import { Card } from '@/common/components/Card';
 import { WineRating } from '@/common/components/WineRating';
 import { queryKeys } from '@/common/constants/queryKeys';
 import { OCCASIONS } from '@/common/constants/wine.const';
+import { trackEvent } from '@/common/services/analytics-api';
 import { useAuthStore } from '@/common/stores/useAuthStore';
 import { TastingPlan } from '@/common/types/tasting';
 
-import { SharePlan } from './SharePlan';
+import { ShareDrawer } from './ShareDrawer';
 import { WineRecommendation } from './WineRecommendation';
 
 interface TastingPlanViewProps {
   plan: TastingPlan;
+  showBackToJournal?: boolean;
 }
 
 interface RatingData {
@@ -38,8 +41,8 @@ interface RatingData {
   tastingNotes: string | null;
 }
 
-export function TastingPlanView({ plan }: TastingPlanViewProps) {
-  const [tipsExpanded, setTipsExpanded] = useState(false);
+export function TastingPlanView({ plan, showBackToJournal = false }: TastingPlanViewProps) {
+  const [deepDiveExpanded, setDeepDiveExpanded] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
   const { isAuthenticated } = useAuthStore();
 
@@ -64,6 +67,24 @@ export function TastingPlanView({ plan }: TastingPlanViewProps) {
 
   return (
     <div className="max-w-md mx-auto px-s py-m">
+      {showBackToJournal && (
+        <motion.div
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-m"
+          initial={{ opacity: 0, y: 10 }}
+          transition={{ duration: 0.3 }}
+        >
+          <Card className="p-xs bg-surface-elevated/70" variant="outlined">
+            <Link href="/journal">
+              <Button className="w-full justify-start gap-xs" variant="ghost">
+                <ArrowLeft className="h-4 w-4" />
+                Back to Journal
+              </Button>
+            </Link>
+          </Card>
+        </motion.div>
+      )}
+
       {/* Header */}
       <motion.div
         animate={{ opacity: 1, y: 0 }}
@@ -83,81 +104,26 @@ export function TastingPlanView({ plan }: TastingPlanViewProps) {
               </Badge>
             </div>
           </div>
-          <SharePlan planId={plan.id} />
+          <ShareDrawer plan={plan} />
         </div>
       </motion.div>
 
-      {/* Overview card */}
+      {/* Story card */}
       <motion.div
         animate={{ opacity: 1, y: 0 }}
         initial={{ opacity: 0, y: 10 }}
         transition={{ duration: 0.4, delay: 0.1 }}
       >
-        <Card className="mb-m" variant="outlined">
+        <Card className="mb-m bg-surface-elevated border-border" variant="outlined">
           <div className="flex items-start gap-xs mb-xs">
             <Sparkles className="w-5 h-5 text-accent shrink-0 mt-0.5" />
             <p className="text-body-m text-text-secondary">{plan.description}</p>
           </div>
-          <div className="flex items-center gap-xs text-body-s">
-            <DollarSign className="w-4 h-4 text-accent" />
-            <span className="text-text-secondary">
-              Estimated total: ${plan.totalEstimatedCostMin}–$
-              {plan.totalEstimatedCostMax}
-            </span>
-          </div>
-          {plan.foodPairing && (
-            <div className="flex items-center gap-xs text-body-s mt-1">
-              <Wine className="w-4 h-4 text-primary" />
-              <span className="text-text-secondary">
-                Pairing with: {plan.foodPairing}
-              </span>
-            </div>
-          )}
+          <p className="text-body-s text-text-muted">
+            Follow the order below, then open details only if you want the full sommelier breakdown.
+          </p>
         </Card>
       </motion.div>
-
-      {/* Tasting tips */}
-      {plan.tastingTips && plan.tastingTips.length > 0 && (
-        <motion.div
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-m"
-          initial={{ opacity: 0, y: 10 }}
-          transition={{ duration: 0.4, delay: 0.15 }}
-        >
-          <button
-            className="flex items-center justify-between w-full text-left"
-            onClick={() => setTipsExpanded(!tipsExpanded)}
-          >
-            <div className="flex items-center gap-xs">
-              <Lightbulb className="w-5 h-5 text-accent" />
-              <span className="font-display text-body-l font-semibold text-text-primary">
-                Tasting Tips
-              </span>
-            </div>
-            {tipsExpanded ? (
-              <ChevronUp className="w-4 h-4 text-text-muted" />
-            ) : (
-              <ChevronDown className="w-4 h-4 text-text-muted" />
-            )}
-          </button>
-          {tipsExpanded && (
-            <motion.ul
-              animate={{ opacity: 1, height: 'auto' }}
-              className="mt-xs space-y-xs pl-8"
-              initial={{ opacity: 0, height: 0 }}
-            >
-              {plan.tastingTips.map((tip, i) => (
-                <li
-                  key={i}
-                  className="text-body-s text-text-secondary list-disc"
-                >
-                  {tip}
-                </li>
-              ))}
-            </motion.ul>
-          )}
-        </motion.div>
-      )}
 
       {/* Bring Your Wines CTA */}
       <motion.div
@@ -170,6 +136,7 @@ export function TastingPlanView({ plan }: TastingPlanViewProps) {
           <Card
             className="flex items-center gap-s hover:bg-surface transition-colors cursor-pointer"
             variant="outlined"
+            onClick={() => trackEvent('corkage_page_viewed', { source: 'tasting_plan_cta' })}
           >
             <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center flex-shrink-0">
               <MapPin className="h-5 w-5 text-accent" />
@@ -209,6 +176,66 @@ export function TastingPlanView({ plan }: TastingPlanViewProps) {
           ))}
         </div>
       </div>
+
+      {/* Sommelier deep dive */}
+      <motion.div
+        animate={{ opacity: 1, y: 0 }}
+        className="mt-m"
+        initial={{ opacity: 0, y: 10 }}
+        transition={{ duration: 0.4, delay: 0.3 }}
+      >
+        <button
+          className="flex w-full items-center justify-between rounded-xl border border-border/70 bg-surface-elevated px-s py-xs text-left"
+          onClick={() => setDeepDiveExpanded(!deepDiveExpanded)}
+        >
+          <div className="flex items-center gap-xs">
+            <Lightbulb className="h-5 w-5 text-accent" />
+            <span className="font-display text-body-m font-semibold text-text-primary">
+              Sommelier Notes
+            </span>
+          </div>
+          {deepDiveExpanded ? (
+            <ChevronUp className="h-4 w-4 text-text-muted" />
+          ) : (
+            <ChevronDown className="h-4 w-4 text-text-muted" />
+          )}
+        </button>
+
+        {deepDiveExpanded && (
+          <motion.div
+            animate={{ opacity: 1, height: 'auto' }}
+            className="mt-s space-y-s rounded-xl border border-border/70 bg-surface p-s"
+            initial={{ opacity: 0, height: 0 }}
+          >
+            <div className="flex items-center gap-xs text-body-s">
+              <DollarSign className="h-4 w-4 text-accent" />
+              <span className="text-text-secondary">
+                Estimated total: ${plan.totalEstimatedCostMin}–$
+                {plan.totalEstimatedCostMax}
+              </span>
+            </div>
+
+            {plan.foodPairing && (
+              <div className="flex items-center gap-xs text-body-s">
+                <Wine className="h-4 w-4 text-primary" />
+                <span className="text-text-secondary">
+                  Pairing direction: {plan.foodPairing}
+                </span>
+              </div>
+            )}
+
+            {plan.tastingTips && plan.tastingTips.length > 0 && (
+              <ul className="space-y-xs pl-5">
+                {plan.tastingTips.map((tip, i) => (
+                  <li key={i} className="list-disc text-body-s text-text-secondary">
+                    {tip}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </motion.div>
+        )}
+      </motion.div>
 
       {/* Auth prompt (show for unauthenticated users) */}
       {!isAuthenticated() && (
