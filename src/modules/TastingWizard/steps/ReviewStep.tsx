@@ -96,11 +96,12 @@ export function ReviewStep() {
       queryClient.invalidateQueries({ queryKey: queryKeys.generation.status });
       const shouldAutoNavigate =
         typeof window !== 'undefined' && window.location.pathname === '/tasting/generating';
-
-      useTastingGenerationToastStore.getState().finishGeneration(plan.id);
       resetWizard();
       if (shouldAutoNavigate) {
+        useTastingGenerationToastStore.getState().clearGeneration();
         router.push(`/tasting/${plan.id}`);
+      } else {
+        useTastingGenerationToastStore.getState().finishGeneration(plan.id);
       }
     } catch (err) {
       const message =
