@@ -2,6 +2,7 @@ import { Metadata, Viewport } from 'next';
 import type { PropsWithChildren } from 'react';
 
 import { Sonner } from '@/common/components/Toast';
+import { TastingGenerationToastController } from '@/common/components/Toast/TastingGenerationToastController';
 import { playfairDisplay, sourceSans } from '@/common/fonts';
 import { cn } from '@/common/functions/cn';
 import { AuthProvider } from '@/common/providers/AuthProvider';
@@ -48,6 +49,7 @@ const GlobalLayout = ({ children }: PropsWithChildren) => {
           <AuthProvider>
             {children}
           </AuthProvider>
+          <TastingGenerationToastController />
           <Sonner />
         </QueryProvider>
       </body>

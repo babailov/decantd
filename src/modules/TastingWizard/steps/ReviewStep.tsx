@@ -4,7 +4,6 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Sparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { toast } from 'sonner';
 
 import { Button } from '@/common/components/Button';
 import { Card } from '@/common/components/Card';
@@ -16,6 +15,7 @@ import { useTierConfig, useUserTier } from '@/common/hooks/useTierConfig';
 import { trackEvent } from '@/common/services/analytics-api';
 import { generateTastingPlan, getGenerationStatus } from '@/common/services/tasting-api';
 import { usePlanHistoryStore } from '@/common/stores/usePlanHistoryStore';
+import { useTastingGenerationToastStore } from '@/common/stores/useTastingGenerationToastStore';
 import { useTastingStore } from '@/common/stores/useTastingStore';
 
 export function ReviewStep() {
@@ -63,6 +63,7 @@ export function ReviewStep() {
     setIsGenerating(true);
     setGenerationError(null);
     setRateLimited(false);
+    useTastingGenerationToastStore.getState().startGeneration('/tasting/new');
 
     try {
       const plan = await generateTastingPlan({
@@ -92,8 +93,14 @@ export function ReviewStep() {
       });
       queryClient.invalidateQueries({ queryKey: queryKeys.user.plans });
       queryClient.invalidateQueries({ queryKey: queryKeys.generation.status });
+      const shouldAutoNavigate =
+        typeof window !== 'undefined' && window.location.pathname === '/tasting/new';
+
+      useTastingGenerationToastStore.getState().finishGeneration(plan.id);
       resetWizard();
-      router.push(`/tasting/${plan.id}`);
+      if (shouldAutoNavigate) {
+        router.push(`/tasting/${plan.id}`);
+      }
     } catch (err) {
       const message =
         err instanceof Error ? err.message : 'Something went wrong';
@@ -101,10 +108,10 @@ export function ReviewStep() {
       // Check for rate limit error
       if (message.includes('Daily limit') || message.includes('daily limit')) {
         setRateLimited(true);
+        useTastingGenerationToastStore.getState().clearGeneration();
       } else {
-        toast.error(message);
+        useTastingGenerationToastStore.getState().failGeneration(message);
       }
-
       setGenerationError(message);
     } finally {
       setIsGenerating(false);
