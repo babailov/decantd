@@ -1,8 +1,8 @@
 'use client';
 
+import { Loader2 } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
-import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { useTastingGenerationToastStore } from '@/common/stores/useTastingGenerationToastStore';
@@ -28,7 +28,7 @@ export function TastingGenerationToastController() {
     if (status === 'loading') {
       const showReturnAction = Boolean(sourcePath && pathname !== sourcePath);
 
-      toast.loading('Generating your tasting plan...', {
+      toast('Generating your tasting plan...', {
         id: TASTING_GENERATION_TOAST_ID,
         duration: Infinity,
         className: 'tasting-generation-toast',
