@@ -24,7 +24,7 @@ export function ShowMoreList<T>({
   const visibleItems = expanded ? items : items.slice(0, previewCount);
 
   return (
-    <div className="flex flex-col gap-m">
+    <div className="flex flex-col gap-s">
       {visibleItems.slice(0, previewCount).map((item, i) => (
         <div key={keyExtractor(item)}>
           {renderItem(item, i)}
