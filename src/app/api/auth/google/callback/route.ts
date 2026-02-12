@@ -9,7 +9,7 @@ import {
   fetchGoogleUserInfo,
   getGoogleOAuthConfig,
 } from '@/server/auth/oauth';
-import { createSession, setSessionCookie } from '@/server/auth/session';
+import { createSession } from '@/server/auth/session';
 
 const STATE_COOKIE = 'decantd-oauth-state';
 const OAUTH_NO_PASSWORD = 'OAUTH_NO_PASSWORD';
@@ -119,21 +119,62 @@ export async function GET(request: NextRequest) {
     }
 
     // Create session
-    const { token, expiresAt } = await createSession(db, dbUser.id);
+    const { token } = await createSession(db, dbUser.id);
 
-    // Return 200 HTML with meta-refresh redirect instead of 302.
-    // @opennextjs/cloudflare strips Set-Cookie from redirects and from
-    // headers.append() / response.cookies.set(). The only method that
-    // works is headers.set() on a non-redirect response.
-    const html = `<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=/"><script>window.location.href="/";</script></head><body></body></html>`;
-    const response = new NextResponse(html, {
+    // @opennextjs/cloudflare strips Set-Cookie from navigation responses
+    // (302 redirects, meta-refresh HTML, etc.). Instead, return an HTML page
+    // with inline JS that performs a fetch() to /api/auth/token-exchange —
+    // fetch() responses preserve Set-Cookie headers (proven by login route).
+    const html = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Signing in...</title>
+  <style>
+    body { margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #1a1a2e; font-family: system-ui, sans-serif; color: #e0d6cc; }
+    .container { text-align: center; }
+    .spinner { width: 40px; height: 40px; border: 3px solid rgba(168,135,103,0.3); border-top-color: #a88767; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .error { color: #e57373; margin-top: 12px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="spinner"></div>
+    <p id="status">Completing sign in...</p>
+  </div>
+  <script>
+    (async function() {
+      try {
+        const res = await fetch('/api/auth/token-exchange', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: '${token}' }),
+        });
+        if (!res.ok) throw new Error('Token exchange failed');
+        const data = await res.json();
+        localStorage.setItem('decantd-auth', JSON.stringify({
+          state: { user: data.user, token: data.token },
+          version: 0,
+        }));
+        window.location.href = '/';
+      } catch (e) {
+        document.getElementById('status').innerHTML =
+          'Sign in failed. <a href="/?auth_error=oauth_error" style="color:#a88767;">Return home</a>';
+      }
+    })();
+  </script>
+</body>
+</html>`;
+
+    return new NextResponse(html, {
       status: 200,
-      headers: { 'Content-Type': 'text/html' },
+      headers: {
+        'Content-Type': 'text/html',
+        'Cache-Control': 'no-store',
+      },
     });
-
-    response.headers.set('Set-Cookie', setSessionCookie(token, expiresAt));
-
-    return response;
   } catch (err) {
     console.error('Google OAuth callback error:', err);
     return NextResponse.redirect(
