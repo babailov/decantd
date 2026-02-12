@@ -49,10 +49,11 @@ export function TastingGenerationToastController() {
     }
 
     if (status === 'success' && planId) {
-      toast.success('Your tasting plan is ready.', {
+      toast('Your tasting plan is ready.', {
         id: TASTING_GENERATION_TOAST_ID,
         duration: 8000,
         className: 'tasting-generation-toast',
+        icon: null,
         action: {
           label: 'Open tasting',
           onClick: () => {
