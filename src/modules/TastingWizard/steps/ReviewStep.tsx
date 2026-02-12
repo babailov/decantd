@@ -63,7 +63,8 @@ export function ReviewStep() {
     setIsGenerating(true);
     setGenerationError(null);
     setRateLimited(false);
-    useTastingGenerationToastStore.getState().startGeneration('/tasting/new');
+    useTastingGenerationToastStore.getState().startGeneration('/tasting/generating');
+    router.push('/tasting/generating');
 
     try {
       const plan = await generateTastingPlan({
@@ -94,7 +95,7 @@ export function ReviewStep() {
       queryClient.invalidateQueries({ queryKey: queryKeys.user.plans });
       queryClient.invalidateQueries({ queryKey: queryKeys.generation.status });
       const shouldAutoNavigate =
-        typeof window !== 'undefined' && window.location.pathname === '/tasting/new';
+        typeof window !== 'undefined' && window.location.pathname === '/tasting/generating';
 
       useTastingGenerationToastStore.getState().finishGeneration(plan.id);
       resetWizard();
