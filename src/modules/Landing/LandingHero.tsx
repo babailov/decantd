@@ -85,7 +85,7 @@ export function LandingHero() {
               className="flex gap-s items-start rounded-2xl border border-border/70 bg-surface-elevated p-s shadow-[0_12px_24px_-20px_rgba(45,41,38,0.12)]"
             >
               <div className="grid place-items-center text-center w-10 h-10 rounded-full bg-primary text-text-on-primary font-display text-body-l leading-none font-bold shrink-0 shadow-sm">
-                {item.step}
+                <span className="block -translate-y-px">{item.step}</span>
               </div>
               <div>
                 <h3 className="font-display text-body-l font-semibold text-text-primary">
