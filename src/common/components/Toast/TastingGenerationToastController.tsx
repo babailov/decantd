@@ -20,12 +20,19 @@ export function TastingGenerationToastController() {
   const clearGeneration = useTastingGenerationToastStore((s) => s.clearGeneration);
 
   useEffect(() => {
+    const isGeneratingPage = pathname === '/tasting/generating';
+
     if (status === 'idle') {
       toast.dismiss(TASTING_GENERATION_TOAST_ID);
       return;
     }
 
     if (status === 'loading') {
+      if (isGeneratingPage) {
+        toast.dismiss(TASTING_GENERATION_TOAST_ID);
+        return;
+      }
+
       const showReturnAction = Boolean(sourcePath && pathname !== sourcePath);
 
       toast('Generating your tasting plan...', {
