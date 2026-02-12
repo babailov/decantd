@@ -9,18 +9,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { token, setAuth, clearAuth, setLoading } = useAuthStore();
 
   useEffect(() => {
-    // Always call getMe() — after OAuth redirect, session cookie is set
-    // server-side but Zustand has no token yet
+    // Skip network request if no token — OAuth callback now writes
+    // token + user to localStorage before redirecting (see d682354)
+    if (!token) {
+      setLoading(false);
+      return;
+    }
+
     getMe()
       .then(({ user }) => {
-        setAuth(user, token || 'cookie-session');
+        setAuth(user, token);
       })
       .catch(() => {
-        if (token) {
-          clearAuth();
-        } else {
-          setLoading(false);
-        }
+        clearAuth();
       });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
