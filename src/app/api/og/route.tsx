@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
             Decantd
           </div>
           <div style={{ fontSize: 24, color: '#6B5E54', marginTop: 12 }}>
-            AI Wine Tasting Planner
+            Personalized Wine Tasting Planner
           </div>
         </div>
       ),
@@ -241,7 +241,7 @@ function fallbackImage() {
           Decantd
         </div>
         <div style={{ fontSize: 24, color: '#6B5E54', marginTop: 12 }}>
-          AI Wine Tasting Planner
+          Personalized Wine Tasting Planner
         </div>
       </div>
     ),

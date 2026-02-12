@@ -172,14 +172,14 @@ export function ReviewStep() {
         <p className="text-body-xs text-text-muted mt-1">
           {tierConfig.allowSpecialRequests
             ? `${specialRequest.length}/300 characters`
-            : 'Upgrade to use custom AI instructions.'}
+            : 'Upgrade to add custom sommelier instructions.'}
         </p>
       </div>
 
       {!tierConfig.allowSpecialRequests && (
         <UpgradeCTA
           className="mt-1"
-          message="Unlock custom sommelier requests and advanced AI refinements."
+          message="Unlock custom sommelier requests and advanced tasting refinements."
           variant="inline"
         />
       )}

@@ -95,7 +95,7 @@ export function getSharePlanEmail(input: SharePlanEmailInput): {
           <tr>
             <td style="padding:20px 32px;border-top:1px solid #f0ebe4;">
               <p style="margin:0;font-size:12px;color:#999;text-align:center;">
-                Sent via <a href="https://decantd.app" style="color:#7B2D3A;text-decoration:none;">Decantd</a> — AI Wine Tasting Planner
+                Sent via <a href="https://decantd.app" style="color:#7B2D3A;text-decoration:none;">Decantd</a> — Personalized Wine Tasting Planner
               </p>
             </td>
           </tr>

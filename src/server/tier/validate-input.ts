@@ -13,7 +13,7 @@ export function validateInputForTier(
   if (input.specialRequest && !config.allowSpecialRequests) {
     return {
       valid: false,
-      error: 'Upgrade to add custom sommelier requests and advanced AI refinements.',
+      error: 'Upgrade to add custom sommelier requests and advanced tasting refinements.',
     };
   }
 

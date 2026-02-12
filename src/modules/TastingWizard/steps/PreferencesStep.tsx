@@ -47,7 +47,7 @@ export function PreferencesStep() {
             Guide me!
           </span>
           <span className="text-body-xs text-text-muted">
-            Let our sommelier AI choose the best route for your occasion
+            Let our sommelier guide choose the best route for your occasion
           </span>
         </div>
       </button>

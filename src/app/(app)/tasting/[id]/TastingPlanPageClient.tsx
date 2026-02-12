@@ -2,6 +2,7 @@
 
 import { Wine } from 'lucide-react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
 import { Button } from '@/common/components/Button';
 import { useTastingPlan } from '@/common/hooks/services/useTastingPlan';
@@ -14,7 +15,9 @@ interface TastingPlanPageClientProps {
 }
 
 export function TastingPlanPageClient({ id }: TastingPlanPageClientProps) {
+  const searchParams = useSearchParams();
   const generatedPlan = useTastingStore((s) => s.generatedPlan);
+  const showBackToJournal = searchParams.get('from') === 'journal';
 
   // If we just generated the plan, use the store data (no fetch needed)
   const hasCachedPlan = generatedPlan?.id === id;
@@ -55,5 +58,5 @@ export function TastingPlanPageClient({ id }: TastingPlanPageClientProps) {
 
   if (!plan) return null;
 
-  return <TastingPlanView plan={plan} />;
+  return <TastingPlanView plan={plan} showBackToJournal={showBackToJournal} />;
 }

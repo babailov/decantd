@@ -1,9 +1,13 @@
 'use client';
 
 import { AnimatePresence, motion } from 'motion/react';
+import { ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
+import { Button } from '@/common/components/Button';
+import { Card } from '@/common/components/Card';
 import { useGuidedTasting } from '@/common/hooks/services/useGuidedTastings';
 import { trackEvent } from '@/common/services/analytics-api';
 import { useGuidedTastingStore } from '@/common/stores/useGuidedTastingStore';
@@ -26,6 +30,7 @@ const stepComponents: Record<string, React.ComponentType> = {
 export function GuidedTasting() {
   const searchParams = useSearchParams();
   const idParam = searchParams.get('id');
+  const isFromJournal = searchParams.get('from') === 'journal';
 
   const resetSession = useGuidedTastingStore((s) => s.resetSession);
   const hydrateFromSaved = useGuidedTastingStore((s) => s.hydrateFromSaved);
@@ -58,6 +63,24 @@ export function GuidedTasting() {
 
   return (
     <div className="max-w-md mx-auto px-s py-m">
+      {isFromJournal && (
+        <motion.div
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-s"
+          initial={{ opacity: 0, y: 10 }}
+          transition={{ duration: 0.3 }}
+        >
+          <Card className="p-xs bg-surface-elevated/70" variant="outlined">
+            <Link href="/journal">
+              <Button className="w-full justify-start gap-xs" variant="ghost">
+                <ArrowLeft className="h-4 w-4" />
+                Back to Journal
+              </Button>
+            </Link>
+          </Card>
+        </motion.div>
+      )}
+
       {currentStep !== 'summary' && <GuidedTastingProgress />}
 
       <AnimatePresence mode="wait">

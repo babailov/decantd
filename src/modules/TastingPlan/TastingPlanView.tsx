@@ -2,6 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import {
+  ArrowLeft,
   Bookmark,
   ChevronDown,
   ChevronUp,
@@ -31,6 +32,7 @@ import { WineRecommendation } from './WineRecommendation';
 
 interface TastingPlanViewProps {
   plan: TastingPlan;
+  showBackToJournal?: boolean;
 }
 
 interface RatingData {
@@ -39,7 +41,7 @@ interface RatingData {
   tastingNotes: string | null;
 }
 
-export function TastingPlanView({ plan }: TastingPlanViewProps) {
+export function TastingPlanView({ plan, showBackToJournal = false }: TastingPlanViewProps) {
   const [deepDiveExpanded, setDeepDiveExpanded] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
   const { isAuthenticated } = useAuthStore();
@@ -65,6 +67,24 @@ export function TastingPlanView({ plan }: TastingPlanViewProps) {
 
   return (
     <div className="max-w-md mx-auto px-s py-m">
+      {showBackToJournal && (
+        <motion.div
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-m"
+          initial={{ opacity: 0, y: 10 }}
+          transition={{ duration: 0.3 }}
+        >
+          <Card className="p-xs bg-surface-elevated/70" variant="outlined">
+            <Link href="/journal">
+              <Button className="w-full justify-start gap-xs" variant="ghost">
+                <ArrowLeft className="h-4 w-4" />
+                Back to Journal
+              </Button>
+            </Link>
+          </Card>
+        </motion.div>
+      )}
+
       {/* Header */}
       <motion.div
         animate={{ opacity: 1, y: 0 }}
