@@ -6,8 +6,6 @@ import { OCCASIONS } from '@/common/constants/wine.const';
 import { getDb } from '@/server/auth/get-db';
 import { fetchPlanById } from '@/server/plans/fetch-plan';
 
-export const runtime = 'edge';
-
 const WINE_TYPE_COLORS: Record<string, string> = {
   red: '#7B2D3A',
   white: '#C4953A',
