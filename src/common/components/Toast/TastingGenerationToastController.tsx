@@ -30,6 +30,13 @@ export function TastingGenerationToastController() {
       toast.loading('Generating your tasting plan...', {
         id: TASTING_GENERATION_TOAST_ID,
         duration: Infinity,
+        className: 'tasting-generation-toast',
+        icon: (
+          <span
+            aria-hidden
+            className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"
+          />
+        ),
         action: showReturnAction && sourcePath
           ? {
               label: 'Return to generator',
@@ -44,6 +51,7 @@ export function TastingGenerationToastController() {
       toast.success('Your tasting plan is ready.', {
         id: TASTING_GENERATION_TOAST_ID,
         duration: 8000,
+        className: 'tasting-generation-toast',
         action: {
           label: 'Open tasting',
           onClick: () => {
