@@ -121,26 +121,25 @@ export async function GET(request: NextRequest) {
     // Create session
     const { token, expiresAt } = await createSession(db, dbUser.id);
 
-    // Use HTML meta-refresh instead of 302 redirect so Set-Cookie headers
-    // are reliably processed by the browser on Cloudflare Workers.
-    const expires = new Date(expiresAt).toUTCString();
-    const html = `<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0;url=/"></head><body>Redirecting...</body></html>`;
-    const response = new NextResponse(html, {
-      status: 200,
-      headers: { 'Content-Type': 'text/html' },
+    // Use response.cookies.set() (Next.js cookie API) instead of raw
+    // Set-Cookie headers — @opennextjs/cloudflare strips raw headers.
+    const response = NextResponse.redirect(new URL('/', request.url));
+
+    response.cookies.set('decantd-session', token, {
+      path: '/',
+      httpOnly: true,
+      secure: true,
+      sameSite: 'lax',
+      expires: new Date(expiresAt),
     });
 
-    // Set session cookie
-    response.headers.append(
-      'Set-Cookie',
-      `decantd-session=${token}; Path=/; HttpOnly; Secure; SameSite=Lax; Expires=${expires}`,
-    );
-
     // Clear the state cookie
-    response.headers.append(
-      'Set-Cookie',
-      `${STATE_COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0`,
-    );
+    response.cookies.set(STATE_COOKIE, '', {
+      path: '/',
+      httpOnly: true,
+      sameSite: 'lax',
+      maxAge: 0,
+    });
 
     return response;
   } catch (err) {
