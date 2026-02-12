@@ -43,14 +43,14 @@ export function TastingGenerationPage() {
   const isReady = status === 'success' && Boolean(planId);
 
   return (
-    <div className="mx-auto flex min-h-[70vh] w-full max-w-xl flex-col justify-center px-s py-l">
+    <div className="mx-auto flex min-h-[56vh] w-full max-w-2xl flex-col justify-center px-s py-m md:px-m md:py-l">
       <motion.div
         animate={{ opacity: 1, y: 0 }}
-        className="overflow-hidden rounded-3xl border border-border bg-surface-elevated p-l shadow-sm"
+        className="rounded-3xl border border-border bg-surface-elevated p-m shadow-sm md:p-l"
         initial={{ opacity: 0, y: 16 }}
         transition={{ duration: 0.35, ease: 'easeOut' }}
       >
-        <div className="mb-m flex items-center gap-s">
+        <div className="mb-m flex flex-col items-start gap-s sm:flex-row sm:items-center">
           <div className="relative h-12 w-12 rounded-full bg-primary/15">
             <motion.div
               animate={{ rotate: 360 }}
@@ -58,7 +58,7 @@ export function TastingGenerationPage() {
               transition={{ duration: 1.2, repeat: Infinity, ease: 'linear' }}
             />
           </div>
-          <div>
+          <div className="min-w-0">
             <p className="font-display text-heading-s text-primary">Cellar in progress</p>
             <p className="text-body-s text-text-secondary">We are crafting your tasting journey.</p>
           </div>
@@ -78,12 +78,13 @@ export function TastingGenerationPage() {
               <motion.div
                 key={action.verb}
                 animate={{ opacity: 1, y: 0 }}
+                className="min-w-0"
                 exit={{ opacity: 0, y: -8 }}
                 initial={{ opacity: 0, y: 8 }}
                 transition={{ duration: 0.28 }}
               >
-                <p className="text-body-l font-semibold text-text-primary">{action.verb}</p>
-                <p className="text-body-s text-text-secondary">{action.detail}</p>
+                <p className="text-body-l font-semibold text-text-primary break-words">{action.verb}</p>
+                <p className="text-body-s text-text-secondary break-words">{action.detail}</p>
               </motion.div>
             </AnimatePresence>
           </>
