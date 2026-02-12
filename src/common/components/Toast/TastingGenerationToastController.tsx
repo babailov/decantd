@@ -2,6 +2,7 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import { Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { useTastingGenerationToastStore } from '@/common/stores/useTastingGenerationToastStore';
@@ -32,9 +33,9 @@ export function TastingGenerationToastController() {
         duration: Infinity,
         className: 'tasting-generation-toast',
         icon: (
-          <span
+          <Loader2
             aria-hidden
-            className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent"
+            className="h-4 w-4 animate-spin text-primary"
           />
         ),
         action: showReturnAction && sourcePath
