@@ -172,3 +172,16 @@ body {
   position: relative;
   z-index: 1;
 }
+
+/* Keep Sonner truly centered at top across shell layouts */
+[data-sonner-toaster][data-y-position='top'][data-x-position='center'] {
+  left: 50% !important;
+  right: auto !important;
+  transform: translateX(-50%) !important;
+  align-items: center !important;
+}
+
+[data-sonner-toaster][data-y-position='top'][data-x-position='center'] [data-sonner-toast] {
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
