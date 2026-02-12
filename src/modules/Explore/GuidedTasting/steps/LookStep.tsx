@@ -2,7 +2,6 @@
 
 import { Check, ArrowLeft } from 'lucide-react';
 import { motion } from 'motion/react';
-import Image from 'next/image';
 import Link from 'next/link';
 
 import { Button } from '@/common/components/Button';
@@ -96,22 +95,26 @@ export function LookStep() {
             <button
               key={opt.value}
               className={cn(
-                'flex flex-col items-center gap-1 p-xs rounded-xl border-2 transition-colors',
+                'relative overflow-hidden flex flex-col items-center justify-center gap-1 min-h-20 p-xs rounded-xl border-2 transition-all',
                 wineType === opt.value
-                  ? 'border-primary bg-primary/10'
-                  : 'border-border bg-surface-elevated hover:border-primary/30',
+                  ? 'border-primary ring-1 ring-primary/30 shadow-sm'
+                  : 'border-border hover:border-primary/30',
+                `bg-gradient-to-br ${opt.cardClassName}`,
               )}
               onClick={() => setWineType(opt.value)}
             >
-              <Image
-                unoptimized
-                alt={opt.label}
-                className="object-contain"
-                height={40}
-                src={opt.image}
-                width={30}
-              />
-              <span className="text-body-xs font-medium">{opt.label}</span>
+              {opt.hasBubbles && (
+                <div
+                  aria-hidden
+                  className={cn(
+                    'absolute inset-0 opacity-65',
+                    '[background-image:radial-gradient(circle_at_18%_78%,rgba(255,255,255,0.7)_0_2px,transparent_3px),radial-gradient(circle_at_42%_56%,rgba(255,255,255,0.8)_0_2px,transparent_3px),radial-gradient(circle_at_70%_70%,rgba(255,255,255,0.72)_0_3px,transparent_4px),radial-gradient(circle_at_84%_36%,rgba(255,255,255,0.65)_0_2px,transparent_3px),radial-gradient(circle_at_30%_24%,rgba(255,255,255,0.7)_0_1.5px,transparent_2.5px)]',
+                  )}
+                />
+              )}
+              <span className={cn('relative text-body-xs font-semibold', opt.textClassName)}>
+                {opt.label}
+              </span>
             </button>
           ))}
         </div>

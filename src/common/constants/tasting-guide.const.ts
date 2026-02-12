@@ -3,12 +3,35 @@ import type { WineTypeContext } from '@/common/types/explore';
 export const WINE_TYPE_OPTIONS: {
   value: WineTypeContext;
   label: string;
-  image: string;
+  cardClassName: string;
+  textClassName: string;
+  hasBubbles?: boolean;
 }[] = [
-  { value: 'red', label: 'Red', image: '/images/explore/bottle-red.webp' },
-  { value: 'white', label: 'White', image: '/images/explore/bottle-white.webp' },
-  { value: 'rose', label: 'Rosé', image: '/images/explore/bottle-rose.webp' },
-  { value: 'sparkling', label: 'Sparkling', image: '/images/explore/bottle-sparkling.webp' },
+  {
+    value: 'red',
+    label: 'Red',
+    cardClassName: 'from-[#5F2F43] to-[#7B2D3A]',
+    textClassName: 'text-text-on-primary',
+  },
+  {
+    value: 'white',
+    label: 'White',
+    cardClassName: 'from-[#F5E6B9] to-[#DEC17A]',
+    textClassName: 'text-[#3D2B13]',
+  },
+  {
+    value: 'rose',
+    label: 'Rosé',
+    cardClassName: 'from-[#F8C8D6] to-[#DB7093]',
+    textClassName: 'text-[#4A2432]',
+  },
+  {
+    value: 'sparkling',
+    label: 'Sparkling',
+    cardClassName: 'from-[#F4E3AF] to-[#D4A84B]',
+    textClassName: 'text-[#3D2B13]',
+    hasBubbles: true,
+  },
 ];
 
 export const COLOR_DEPTH_OPTIONS = {
