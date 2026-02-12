@@ -49,7 +49,9 @@ export async function getMe(): Promise<{ user: User }> {
   });
 
   if (!response.ok) {
-    throw new Error('Not authenticated');
+    const error = new Error('Not authenticated') as Error & { status: number };
+    error.status = response.status;
+    throw error;
   }
 
   return response.json();
