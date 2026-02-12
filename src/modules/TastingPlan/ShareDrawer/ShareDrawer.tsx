@@ -1,6 +1,6 @@
 'use client';
 
-import { Check, Copy, Mail, Share2 } from 'lucide-react';
+import { Check, Copy, Share2 } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
@@ -15,7 +15,6 @@ import {
 import { trackEvent } from '@/common/services/analytics-api';
 import { TastingPlan } from '@/common/types/tasting';
 
-import { EmailShareForm } from './EmailShareForm';
 import { OgPreview } from './OgPreview';
 import { ShareAsImage } from './ShareAsImage';
 
@@ -25,7 +24,6 @@ interface ShareDrawerProps {
 
 export function ShareDrawer({ plan }: ShareDrawerProps) {
   const [copied, setCopied] = useState(false);
-  const [emailOpen, setEmailOpen] = useState(false);
 
   const planUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/tasting/${plan.id}`;
 
@@ -113,31 +111,6 @@ export function ShareDrawer({ plan }: ShareDrawerProps) {
                 </div>
               </button>
             )}
-
-            {/* Email */}
-            <div>
-              <button
-                className="flex items-center gap-s w-full text-left px-s py-xs rounded-xl hover:bg-surface-elevated transition-colors"
-                onClick={() => setEmailOpen(!emailOpen)}
-              >
-                <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center shrink-0">
-                  <Mail className="w-5 h-5 text-accent" />
-                </div>
-                <div>
-                  <p className="text-body-m font-medium text-text-primary">
-                    Email to a Friend
-                  </p>
-                  <p className="text-body-xs text-text-muted">
-                    Send a beautiful plan summary
-                  </p>
-                </div>
-              </button>
-              {emailOpen && (
-                <div className="pl-[58px] pr-s pb-xs pt-1">
-                  <EmailShareForm planId={plan.id} />
-                </div>
-              )}
-            </div>
 
             {/* Save as Image */}
             <ShareAsImage plan={plan} />
