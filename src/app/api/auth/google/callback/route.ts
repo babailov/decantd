@@ -132,11 +132,79 @@ export async function GET(request: NextRequest) {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Signing in...</title>
   <style>
-    body { margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center; background: #1a1a2e; font-family: system-ui, sans-serif; color: #e0d6cc; }
-    .container { text-align: center; }
-    .spinner { width: 40px; height: 40px; border: 3px solid rgba(168,135,103,0.3); border-top-color: #a88767; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .error { color: #e57373; margin-top: 12px; }
+    :root {
+      --color-background: #FAF7F2;
+      --color-surface: #F5F0E8;
+      --color-surface-elevated: #FFFFFF;
+      --color-primary: #7B2D3A;
+      --color-accent: #C4953A;
+      --color-text-primary: #2D2926;
+      --color-text-secondary: #5C5650;
+      --color-text-on-primary: #FFF8F6;
+      --shadow-card: 0 22px 42px -28px rgba(123, 45, 58, 0.3);
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, var(--color-background) 0%, var(--color-surface) 60%, #EDE7DC 100%);
+      font-family: "Source Sans 3", "Source Sans Pro", system-ui, -apple-system, sans-serif;
+      color: var(--color-text-primary);
+      position: relative;
+      overflow: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(ellipse at 50% 0%, rgba(196, 149, 58, 0.08) 0%, transparent 60%);
+    }
+
+    .container {
+      text-align: center;
+      background: var(--color-surface-elevated);
+      border: 1px solid rgba(212, 204, 192, 0.7);
+      border-radius: 20px;
+      padding: 28px 32px;
+      box-shadow: var(--shadow-card);
+      position: relative;
+      z-index: 1;
+      max-width: 320px;
+    }
+
+    .spinner {
+      width: 44px;
+      height: 44px;
+      border: 3px solid rgba(123, 45, 58, 0.2);
+      border-top-color: var(--color-primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+
+    #status {
+      margin: 0;
+      font-weight: 600;
+      color: var(--color-text-secondary);
+    }
+
+    a {
+      color: var(--color-primary);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
