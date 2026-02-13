@@ -2,6 +2,7 @@
 
 import { format } from 'date-fns';
 import { Calendar, KeyRound, LogOut } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Drawer as DrawerPrimitive } from 'vaul';
@@ -113,6 +114,12 @@ export function ProfileDrawer({ open, onOpenChange }: ProfileDrawerProps) {
                     Change Password
                   </Button>
                 )}
+                <Link
+                  className="w-full text-center text-body-s text-primary font-medium hover:text-primary-hover hover:underline py-xs"
+                  href="mailto:info@decantd.app?subject=Decantd%20Support"
+                >
+                  Contact Support
+                </Link>
                 <Button
                   className="w-full"
                   size="md"
