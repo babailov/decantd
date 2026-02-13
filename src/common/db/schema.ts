@@ -263,6 +263,203 @@ export const savedVenues = sqliteTable('saved_venues', {
     .default(sql`(datetime('now'))`),
 });
 
+// ── External Data Sources & Curation ─────────────────
+
+export const sourceRegistry = sqliteTable('source_registry', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  sourceType: text('source_type').notNull(), // license | partner | public
+  licenseType: text('license_type').notNull(), // paid | permissioned | public_domain
+  trustTier: text('trust_tier').notNull().default('C'), // A | B | C
+  updateCadence: text('update_cadence'), // daily | weekly | monthly | ad_hoc
+  accessNotes: text('access_notes'),
+  isActive: integer('is_active', { mode: 'boolean' }).notNull().default(true),
+  createdAt: text('created_at')
+    .notNull()
+    .default(sql`(datetime('now'))`),
+  updatedAt: text('updated_at')
+    .notNull()
+    .default(sql`(datetime('now'))`),
+});
+
+export const wineCanonical = sqliteTable('wine_canonical', {
+  id: text('id').primaryKey(),
+  producerName: text('producer_name').notNull(),
+  wineName: text('wine_name').notNull(),
+  vintage: integer('vintage'),
+  varietal: text('varietal'),
+  region: text('region'),
+  subRegion: text('sub_region'),
+  country: text('country'),
+  styleDescription: text('style_description'),
+  acidity: real('acidity'),
+  tannin: real('tannin'),
+  sweetness: real('sweetness'),
+  alcohol: real('alcohol'),
+  body: real('body'),
+  servingTempCMin: real('serving_temp_c_min'),
+  servingTempCMax: real('serving_temp_c_max'),
+  decantMinutes: integer('decant_minutes'),
+  createdAt: text('created_at')
+    .notNull()
+    .default(sql`(datetime('now'))`),
+  updatedAt: text('updated_at')
+    .notNull()
+    .default(sql`(datetime('now'))`),
+});
+
+export const wineAliases = sqliteTable('wine_aliases', {
+  id: text('id').primaryKey(),
+  wineCanonicalId: text('wine_canonical_id')
+    .notNull()
+    .references(() => wineCanonical.id),
+  alias: text('alias').notNull(),
+  aliasType: text('alias_type').notNull().default('label'), // label | spelling | merchant_title
+  sourceId: text('source_id').references(() => sourceRegistry.id),
+  createdAt: text('created_at')
+    .notNull()
+    .default(sql`(datetime('now'))`),
+});
+
+export const partnerSubmissions = sqliteTable('partner_submissions', {
+  id: text('id').primaryKey(),
+  sourceId: text('source_id')
+    .notNull()
+    .references(() => sourceRegistry.id),
+  submittedByUserId: text('submitted_by_user_id').references(() => users.id),
+  submittedByLabel: text('submitted_by_label'),
+  submissionType: text('submission_type').notNull(), // venue_wine_list | market_listing | pairing_note
+  status: text('status').notNull().default('accepted'),
+  parserVersion: text('parser_version').notNull().default('v1'),
+  recordCount: integer('record_count').notNull().default(0),
+  validationErrors: text('validation_errors', { mode: 'json' })
+    .notNull()
+    .$type<string[]>()
+    .default(sql`'[]'`),
+  rawPayload: text('raw_payload', { mode: 'json' })
+    .notNull()
+    .$type<Record<string, unknown>>(),
+  receivedAt: text('received_at')
+    .notNull()
+    .default(sql`(datetime('now'))`),
+  createdAt: text('created_at')
+    .notNull()
+    .default(sql`(datetime('now'))`),
+});
+
+export const marketListings = sqliteTable('market_listings', {
+  id: text('id').primaryKey(),
+  sourceId: text('source_id')
+    .notNull()
+    .references(() => sourceRegistry.id),
+  wineCanonicalId: text('wine_canonical_id').references(() => wineCanonical.id),
+  merchantName: text('merchant_name').notNull(),
+  locationText: text('location_text'),
+  channel: text('channel').notNull(), // retail | restaurant | distributor | agent
+  currency: text('currency').notNull().default('USD'),
+  price: real('price').notNull(),
+  inStock: integer('in_stock', { mode: 'boolean' }).notNull().default(true),
+  stockWindowStart: text('stock_window_start'),
+  stockWindowEnd: text('stock_window_end'),
+  listingUrl: text('listing_url'),
+  effectiveFrom: text('effective_from'),
+  effectiveTo: text('effective_to'),
+  confidenceScore: real('confidence_score').notNull().default(0.5),
+  rawWineName: text('raw_wine_name').notNull(),
+  rawProducerName: text('raw_producer_name'),
+  rawVintage: integer('raw_vintage'),
+  capturedAt: text('captured_at')
+    .notNull()
+    .default(sql`(datetime('now'))`),
+});
+
+export const venueWineLists = sqliteTable('venue_wine_lists', {
+  id: text('id').primaryKey(),
+  sourceId: text('source_id')
+    .notNull()
+    .references(() => sourceRegistry.id),
+  wineCanonicalId: text('wine_canonical_id').references(() => wineCanonical.id),
+  venueName: text('venue_name').notNull(),
+  city: text('city').notNull(),
+  neighborhood: text('neighborhood'),
+  servingFormat: text('serving_format').notNull(), // glass | bottle
+  currency: text('currency').notNull().default('USD'),
+  price: real('price').notNull(),
+  available: integer('available', { mode: 'boolean' }).notNull().default(true),
+  effectiveFrom: text('effective_from'),
+  effectiveTo: text('effective_to'),
+  rawWineName: text('raw_wine_name').notNull(),
+  rawProducerName: text('raw_producer_name'),
+  rawVintage: integer('raw_vintage'),
+  createdAt: text('created_at')
+    .notNull()
+    .default(sql`(datetime('now'))`),
+  updatedAt: text('updated_at')
+    .notNull()
+    .default(sql`(datetime('now'))`),
+});
+
+export const pairingKnowledge = sqliteTable('pairing_knowledge', {
+  id: text('id').primaryKey(),
+  sourceId: text('source_id')
+    .notNull()
+    .references(() => sourceRegistry.id),
+  wineCanonicalId: text('wine_canonical_id').references(() => wineCanonical.id),
+  dishName: text('dish_name').notNull(),
+  cuisineType: text('cuisine_type'),
+  dishAttributes: text('dish_attributes', { mode: 'json' })
+    .notNull()
+    .$type<string[]>()
+    .default(sql`'[]'`),
+  rationale: text('rationale').notNull(),
+  evidenceLevel: text('evidence_level').notNull().default('practitioner'),
+  authorLabel: text('author_label'),
+  effectiveFrom: text('effective_from'),
+  effectiveTo: text('effective_to'),
+  createdAt: text('created_at')
+    .notNull()
+    .default(sql`(datetime('now'))`),
+  updatedAt: text('updated_at')
+    .notNull()
+    .default(sql`(datetime('now'))`),
+});
+
+export const dataConflicts = sqliteTable('data_conflicts', {
+  id: text('id').primaryKey(),
+  entityType: text('entity_type').notNull(),
+  entityId: text('entity_id').notNull(),
+  fieldName: text('field_name').notNull(),
+  leftValue: text('left_value', { mode: 'json' })
+    .notNull()
+    .$type<unknown>(),
+  rightValue: text('right_value', { mode: 'json' })
+    .notNull()
+    .$type<unknown>(),
+  leftSourceId: text('left_source_id').references(() => sourceRegistry.id),
+  rightSourceId: text('right_source_id').references(() => sourceRegistry.id),
+  status: text('status').notNull().default('open'),
+  detectedAt: text('detected_at')
+    .notNull()
+    .default(sql`(datetime('now'))`),
+  resolvedAt: text('resolved_at'),
+  resolvedByUserId: text('resolved_by_user_id').references(() => users.id),
+});
+
+export const curationActions = sqliteTable('curation_actions', {
+  id: text('id').primaryKey(),
+  conflictId: text('conflict_id').references(() => dataConflicts.id),
+  entityType: text('entity_type').notNull(),
+  entityId: text('entity_id').notNull(),
+  actionType: text('action_type').notNull(), // merge | split | override | reject
+  beforeValue: text('before_value', { mode: 'json' }).$type<unknown>(),
+  afterValue: text('after_value', { mode: 'json' }).$type<unknown>(),
+  notes: text('notes'),
+  actedByUserId: text('acted_by_user_id').references(() => users.id),
+  createdAt: text('created_at')
+    .notNull()
+    .default(sql`(datetime('now'))`),
+});
+
 export const analyticsEvents = sqliteTable('analytics_events', {
   id: text('id').primaryKey(),
   userId: text('user_id').references(() => users.id),
