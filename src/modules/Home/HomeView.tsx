@@ -3,7 +3,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { BookOpen, ChevronRight, Info, Sparkles } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Button } from '@/common/components/Button';
 import { Card } from '@/common/components/Card';
@@ -20,9 +20,21 @@ import { useAuthStore } from '@/common/stores/useAuthStore';
 import { PalateProfileCard } from '@/modules/PalateProfile';
 import { UserPlansList } from '@/modules/Profile/UserPlansList';
 
+function getTimeBasedGreeting(hour: number): string {
+  if (hour < 12) return 'Good morning';
+  if (hour < 18) return 'Good afternoon';
+  return 'Good evening';
+}
+
 export function HomeView() {
   const { user } = useAuthStore();
   const [streakInfoOpen, setStreakInfoOpen] = useState(false);
+  const [greeting, setGreeting] = useState('Welcome back');
+
+  useEffect(() => {
+    setGreeting(getTimeBasedGreeting(new Date().getHours()));
+  }, []);
+
   const { data: streak } = useQuery({
     queryKey: queryKeys.user.streak,
     queryFn: async (): Promise<{ currentStreak: number; actionsThisWeek: number }> => {
@@ -36,7 +48,7 @@ export function HomeView() {
     <div className="vineyard-bg px-s py-m max-w-lg mx-auto">
       {/* Greeting */}
       <h1 className="font-display text-heading-m text-primary mb-xs tracking-tight">
-        Welcome back, {user?.displayName}
+        {greeting}, {user?.displayName}
       </h1>
       <p className="text-body-s text-text-secondary mb-m">
         Your cellar club is ready. Pick a vibe and pour smarter tonight.
