@@ -14,6 +14,16 @@ const CELLAR_ACTIONS = [
   { verb: 'Crushing notes', detail: 'Pressing aromas, structure, and pairing logic together.' },
   { verb: 'Barrel resting', detail: 'Letting the final sequence settle from light to bold.' },
   { verb: 'Bottling your plan', detail: 'Sealing your tasting story for the table.' },
+  { verb: 'Swirling glasses', detail: 'Opening up aromas before the first sip lands.' },
+  { verb: 'Mapping acidity', detail: 'Balancing freshness so your lineup stays lively.' },
+  { verb: 'Tuning tannins', detail: 'Aligning grip and softness for smoother progression.' },
+  { verb: 'Layering body', detail: 'Stacking light, medium, and bold in the right order.' },
+  { verb: 'Pairing plates', detail: 'Matching flavors so each bite lifts the next pour.' },
+  { verb: 'Checking vintages', detail: 'Keeping style and character aligned with your vibe.' },
+  { verb: 'Polishing the flight', detail: 'Refining transitions from crisp whites to richer reds.' },
+  { verb: 'Decanting logic', detail: 'Letting structure breathe before finalizing your plan.' },
+  { verb: 'Balancing sweetness', detail: 'Placing fruit and dryness where they shine most.' },
+  { verb: 'Final cork twist', detail: 'Locking in your tasting journey, one great pour at a time.' },
 ] as const;
 
 const ACTION_INTERVAL_MS = 1700;
