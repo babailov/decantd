@@ -242,6 +242,14 @@ export function CorkageDirectory() {
             <div key={i} className="h-28 rounded-2xl bg-surface animate-pulse" />
           ))}
         </div>
+      ) : (data?.restaurants?.length ?? 0) === 0 ? (
+        <Card className="text-center py-l">
+          <UtensilsCrossed className="h-8 w-8 text-text-muted mx-auto mb-xs" />
+          <p className="text-body-m text-text-secondary">Listings coming soon</p>
+          <p className="text-body-s text-text-muted mt-1">
+            We&apos;re onboarding corkage-friendly businesses now. Check back soon.
+          </p>
+        </Card>
       ) : restaurants.length === 0 ? (
         <Card className="text-center py-l">
           <UtensilsCrossed className="h-8 w-8 text-text-muted mx-auto mb-xs" />
