@@ -7,7 +7,7 @@ import { cn } from '@/common/functions/cn';
 import { useTierConfig } from '@/common/hooks/useTierConfig';
 import { trackEvent } from '@/common/services/analytics-api';
 import { useAuthStore } from '@/common/stores/useAuthStore';
-import { useTastingStore } from '@/common/stores/useTastingStore';
+import { getStepOrder, useTastingStore } from '@/common/stores/useTastingStore';
 
 import { GuestPlansList } from '@/modules/Landing/GuestPlansList';
 
@@ -73,43 +73,46 @@ export function TastingWizard() {
 
   const currentStep = useTastingStore((s) => s.currentStep);
   const StepComponent = stepComponents[currentStep];
+  const isFirstStep = currentStep === getStepOrder(mode)[0];
 
   return (
     <div className="max-w-md mx-auto px-s py-m">
       {!isAuthenticated() && <GuestPlansList compact />}
 
-      <div className="mb-m rounded-2xl border border-border bg-surface-elevated p-s">
-        <div className="mb-s grid grid-cols-2 gap-2 rounded-xl bg-surface p-1">
-          <button
-            className={cn(
-              'rounded-lg px-s py-1.5 text-body-xs font-medium transition-colors',
-              mode === 'food_to_wine'
-                ? 'bg-primary text-text-on-primary'
-                : 'text-text-secondary',
-            )}
-            onClick={() => setMode('food_to_wine')}
-          >
-            Food -&gt; Wine
-          </button>
-          <button
-            className={cn(
-              'rounded-lg px-s py-1.5 text-body-xs font-medium transition-colors',
-              mode === 'wine_to_food'
-                ? 'bg-primary text-text-on-primary'
-                : 'text-text-secondary',
-            )}
-            onClick={() => setMode('wine_to_food')}
-          >
-            Wine -&gt; Food
-          </button>
+      {isFirstStep && (
+        <div className="mb-m rounded-2xl border border-border bg-surface-elevated p-s">
+          <div className="mb-s grid grid-cols-2 gap-2 rounded-xl bg-surface p-1">
+            <button
+              className={cn(
+                'rounded-lg px-s py-1.5 text-body-xs font-medium transition-colors',
+                mode === 'food_to_wine'
+                  ? 'bg-primary text-text-on-primary'
+                  : 'text-text-secondary',
+              )}
+              onClick={() => setMode('food_to_wine')}
+            >
+              Food -&gt; Wine
+            </button>
+            <button
+              className={cn(
+                'rounded-lg px-s py-1.5 text-body-xs font-medium transition-colors',
+                mode === 'wine_to_food'
+                  ? 'bg-primary text-text-on-primary'
+                  : 'text-text-secondary',
+              )}
+              onClick={() => setMode('wine_to_food')}
+            >
+              Wine -&gt; Food
+            </button>
+          </div>
+          <p className="font-display text-body-m text-primary">Build your tasting plan</p>
+          <p className="text-body-s text-text-secondary">
+            {mode === 'food_to_wine'
+              ? 'We will guide you through six quick steps to build a balanced lineup.'
+              : 'Start with your bottle and we will map food pairings that fit your table.'}
+          </p>
         </div>
-        <p className="font-display text-body-m text-primary">Build your tasting plan</p>
-        <p className="text-body-s text-text-secondary">
-          {mode === 'food_to_wine'
-            ? 'We will guide you through six quick steps to build a balanced lineup.'
-            : 'Start with your bottle and we will map food pairings that fit your table.'}
-        </p>
-      </div>
+      )}
 
       <WizardProgress />
 
