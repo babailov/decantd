@@ -1,20 +1,10 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
-import { BookOpen, ChevronRight, Info, Sparkles } from 'lucide-react';
+import { BookOpen, ChevronRight, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/common/components/Button';
-import { Card } from '@/common/components/Card';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogTitle,
-} from '@/common/components/Dialog';
-import { queryKeys } from '@/common/constants/queryKeys';
-import { cn } from '@/common/functions/cn';
 import { useAuthStore } from '@/common/stores/useAuthStore';
 
 import { PalateProfileCard } from '@/modules/PalateProfile';
@@ -28,21 +18,11 @@ function getTimeBasedGreeting(hour: number): string {
 
 export function HomeView() {
   const { user } = useAuthStore();
-  const [streakInfoOpen, setStreakInfoOpen] = useState(false);
   const [greeting, setGreeting] = useState('Welcome back');
 
   useEffect(() => {
     setGreeting(getTimeBasedGreeting(new Date().getHours()));
   }, []);
-
-  const { data: streak } = useQuery({
-    queryKey: queryKeys.user.streak,
-    queryFn: async (): Promise<{ currentStreak: number; actionsThisWeek: number }> => {
-      const res = await fetch('/api/user/streak');
-      if (!res.ok) throw new Error('Failed to fetch streak');
-      return res.json();
-    },
-  });
 
   return (
     <div className="vineyard-bg px-s py-m max-w-lg mx-auto">
@@ -70,56 +50,6 @@ export function HomeView() {
         </h2>
         <PalateProfileCard />
       </div>
-
-      {/* Gamified streak */}
-      <div className="mb-l">
-        <Card className="bg-gradient-to-r from-accent/18 via-primary/10 to-accent/10 border-primary/18 shadow-[0_14px_24px_-20px_rgba(45,41,38,0.12)]">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="flex items-center gap-1.5">
-                <p className="text-body-xs text-text-muted">Consistency Streak</p>
-                <button
-                  className={cn(
-                    'group relative inline-flex items-center justify-center text-text-muted hover:text-primary transition-colors',
-                    'focus:outline-none',
-                  )}
-                  type="button"
-                  onClick={() => setStreakInfoOpen(true)}
-                >
-                  <Info className="h-3.5 w-3.5" />
-                  <span className="sr-only">What counts toward consistency streak?</span>
-                  <span
-                    className={cn(
-                      'hidden md:block pointer-events-none absolute left-1/2 -translate-x-1/2 top-[calc(100%+0.35rem)]',
-                      'w-64 rounded-md border border-border bg-surface-elevated p-xs text-left text-body-xs text-text-secondary shadow-lg',
-                      'opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity',
-                    )}
-                  >
-                    Days count when you complete at least one meaningful action: generate a plan,
-                    complete a guided tasting, create a journal entry, save a venue, or claim a deal.
-                  </span>
-                </button>
-              </div>
-              <p className="font-display text-heading-s text-primary">
-                {streak?.currentStreak ?? 0} day{(streak?.currentStreak ?? 0) === 1 ? '' : 's'}
-              </p>
-              <p className="text-body-xs text-text-secondary mt-1">
-                {streak?.actionsThisWeek ?? 0} qualifying actions this week
-              </p>
-            </div>
-            <Sparkles className="w-8 h-8 text-primary" />
-          </div>
-        </Card>
-      </div>
-      <Dialog open={streakInfoOpen} onOpenChange={setStreakInfoOpen}>
-        <DialogContent>
-          <DialogTitle>Consistency Streak</DialogTitle>
-          <DialogDescription>
-            Your streak increases when you complete at least one meaningful action in a day:
-            generate a plan, complete a guided tasting, create a journal entry, save a venue, or claim a deal.
-          </DialogDescription>
-        </DialogContent>
-      </Dialog>
 
       {/* Recent Pairings */}
       <div className="mb-l">
