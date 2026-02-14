@@ -24,6 +24,7 @@ import { Card } from '@/common/components/Card';
 import { WineRating } from '@/common/components/WineRating';
 import { queryKeys } from '@/common/constants/queryKeys';
 import { OCCASIONS } from '@/common/constants/wine.const';
+import { copy } from '@/common/content';
 import { trackEvent } from '@/common/services/analytics-api';
 import { useAuthStore } from '@/common/stores/useAuthStore';
 import { TastingPlan } from '@/common/types/tasting';
@@ -80,7 +81,7 @@ export function TastingPlanView({ plan, showBackToJournal = false }: TastingPlan
             <Link href="/journal">
               <Button className="w-full justify-start gap-xs" variant="ghost">
                 <ArrowLeft className="h-4 w-4" />
-                Back to Journal
+                {copy.plan.backToJournal}
               </Button>
             </Link>
           </Card>
@@ -103,8 +104,8 @@ export function TastingPlanView({ plan, showBackToJournal = false }: TastingPlan
               <Badge>{occasionEmoji} {occasionLabel}</Badge>
               <Badge variant="default">
                 {isWineToFood
-                  ? `${plan.pairings.length} pairings`
-                  : `${plan.wineCount} ${plan.wineCount === 1 ? 'wine' : 'wines'}`}
+                  ? `${plan.pairings.length} ${copy.plan.pairingsCountLabel}`
+                  : `${plan.wineCount} ${plan.wineCount === 1 ? copy.plan.winesSingular : copy.plan.winesPlural}`}
               </Badge>
             </div>
           </div>
@@ -125,8 +126,8 @@ export function TastingPlanView({ plan, showBackToJournal = false }: TastingPlan
           </div>
           <p className="text-body-s text-text-muted">
             {isWineToFood
-              ? 'Start with the top dish ideas, then check notes for host execution tips.'
-              : 'Follow the order below, then open details only if you want the full sommelier breakdown.'}
+              ? copy.plan.summaryWineToFood
+              : copy.plan.summaryFoodToWine}
           </p>
         </Card>
       </motion.div>
@@ -149,10 +150,10 @@ export function TastingPlanView({ plan, showBackToJournal = false }: TastingPlan
             </div>
             <div className="flex-1">
               <p className="font-display text-body-m font-semibold text-primary">
-                Bring your wines to dinner?
+                {copy.plan.corkageTitle}
               </p>
               <p className="text-body-xs text-text-secondary">
-                Find corkage-friendly restaurants nearby
+                {copy.plan.corkageDescription}
               </p>
             </div>
           </Card>
@@ -169,7 +170,7 @@ export function TastingPlanView({ plan, showBackToJournal = false }: TastingPlan
                     {index + 1}. {pairing.dishName}
                   </p>
                   <p className="text-body-xs text-text-muted mt-0.5">
-                    {pairing.cuisineType || 'Flexible cuisine'}
+                    {pairing.cuisineType || copy.plan.flexibleCuisine}
                     {pairing.prepTimeBand ? ` · ${pairing.prepTimeBand}` : ''}
                     {pairing.estimatedCostMin && pairing.estimatedCostMax
                       ? ` · $${pairing.estimatedCostMin}-$${pairing.estimatedCostMax}`
@@ -219,7 +220,7 @@ export function TastingPlanView({ plan, showBackToJournal = false }: TastingPlan
           <div className="flex items-center gap-xs">
             <Lightbulb className="h-5 w-5 text-accent" />
             <span className="font-display text-body-m font-semibold text-text-primary">
-              Sommelier Notes
+              {copy.plan.deepDiveTitle}
             </span>
           </div>
           {deepDiveExpanded ? (
@@ -238,7 +239,7 @@ export function TastingPlanView({ plan, showBackToJournal = false }: TastingPlan
             <div className="flex items-center gap-xs text-body-s">
               <DollarSign className="h-4 w-4 text-accent" />
               <span className="text-text-secondary">
-                Estimated total: ${plan.totalEstimatedCostMin}–$
+                {copy.plan.estimatedTotalPrefix}: ${plan.totalEstimatedCostMin}–$
                 {plan.totalEstimatedCostMax}
               </span>
             </div>
@@ -247,7 +248,9 @@ export function TastingPlanView({ plan, showBackToJournal = false }: TastingPlan
               <div className="flex items-center gap-xs text-body-s">
                 <Wine className="h-4 w-4 text-primary" />
                 <span className="text-text-secondary">
-                  {isWineToFood ? `Selected wine: ${plan.foodPairing}` : `Pairing direction: ${plan.foodPairing}`}
+                  {isWineToFood
+                    ? `${copy.plan.selectedWinePrefix}: ${plan.foodPairing}`
+                    : `${copy.plan.pairingDirectionPrefix}: ${plan.foodPairing}`}
                 </span>
               </div>
             )}
@@ -286,17 +289,17 @@ export function TastingPlanView({ plan, showBackToJournal = false }: TastingPlan
           <Card className="text-center" variant="elevated">
             <Bookmark className="h-6 w-6 text-accent mx-auto mb-xs" />
             <p className="font-display text-body-l font-semibold text-primary mb-1">
-              Save this plan to your collection
+              {copy.plan.saveTitle}
             </p>
             <p className="text-body-s text-text-secondary mb-s">
-              Create an account to track your tastings, rate wines, and build your palate profile.
+              {copy.plan.saveDescription}
             </p>
             <Button
               size="md"
               variant="secondary"
               onClick={() => setAuthOpen(true)}
             >
-              Create Free Account
+              {copy.plan.saveCta}
             </Button>
           </Card>
         </motion.div>
@@ -312,7 +315,7 @@ export function TastingPlanView({ plan, showBackToJournal = false }: TastingPlan
         <Link href="/tasting/new">
           <Button className="gap-xs" size="lg" variant="primary">
             <Sparkles className="w-5 h-5" />
-            Create Another Plan
+            {copy.plan.createAnotherCta}
           </Button>
         </Link>
       </motion.div>

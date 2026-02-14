@@ -5,26 +5,10 @@ import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 
 import { Button } from '@/common/components/Button';
+import { copy } from '@/common/content';
 import { useTastingGenerationToastStore } from '@/common/stores/useTastingGenerationToastStore';
 
-const CELLAR_ACTIONS = [
-  { verb: 'Pruning vines', detail: 'Trimming your preferences into a sharper tasting lineup.' },
-  { verb: 'Clipping clusters', detail: 'Removing noise so every pour has a purpose.' },
-  { verb: 'Harvesting ideas', detail: 'Collecting bottles that fit your night and budget.' },
-  { verb: 'Crushing notes', detail: 'Pressing aromas, structure, and pairing logic together.' },
-  { verb: 'Barrel resting', detail: 'Letting the final sequence settle from light to bold.' },
-  { verb: 'Bottling your plan', detail: 'Sealing your tasting story for the table.' },
-  { verb: 'Swirling glasses', detail: 'Opening up aromas before the first sip lands.' },
-  { verb: 'Mapping acidity', detail: 'Balancing freshness so your lineup stays lively.' },
-  { verb: 'Tuning tannins', detail: 'Aligning grip and softness for smoother progression.' },
-  { verb: 'Layering body', detail: 'Stacking light, medium, and bold in the right order.' },
-  { verb: 'Pairing plates', detail: 'Matching flavors so each bite lifts the next pour.' },
-  { verb: 'Checking vintages', detail: 'Keeping style and character aligned with your vibe.' },
-  { verb: 'Polishing the flight', detail: 'Refining transitions from crisp whites to richer reds.' },
-  { verb: 'Decanting logic', detail: 'Letting structure breathe before finalizing your plan.' },
-  { verb: 'Balancing sweetness', detail: 'Placing fruit and dryness where they shine most.' },
-  { verb: 'Final cork twist', detail: 'Locking in your tasting journey, one great pour at a time.' },
-] as const;
+const CELLAR_ACTIONS = copy.generation.actions;
 
 const ACTION_INTERVAL_MS = 1700;
 
@@ -69,8 +53,8 @@ export function TastingGenerationPage() {
             />
           </div>
           <div className="min-w-0">
-            <p className="font-display text-heading-s text-primary">Cellar in progress</p>
-            <p className="text-body-s text-text-secondary">We are crafting your tasting journey.</p>
+            <p className="font-display text-heading-s text-primary">{copy.generation.title}</p>
+            <p className="text-body-s text-text-secondary">{copy.generation.subtitle}</p>
           </div>
         </div>
 
@@ -102,13 +86,11 @@ export function TastingGenerationPage() {
 
         {isReady && planId && (
           <div className="space-y-s">
-            <p className="text-body-l font-semibold text-text-primary">Your tasting is ready.</p>
-            <p className="text-body-s text-text-secondary">
-              Your lineup is sealed. Open it now and start pouring from light to bold.
-            </p>
+            <p className="text-body-l font-semibold text-text-primary">{copy.generation.readyTitle}</p>
+            <p className="text-body-s text-text-secondary">{copy.generation.readyDescription}</p>
             <Link href={`/tasting/${planId}`}>
               <Button className="w-full" onClick={() => clearGeneration()}>
-                Open tasting
+                {copy.generation.readyCta}
               </Button>
             </Link>
           </div>
@@ -116,13 +98,11 @@ export function TastingGenerationPage() {
 
         {!isLoading && !isReady && (
           <div className="space-y-s">
-            <p className="text-body-m font-medium text-text-primary">No active generation.</p>
-            <p className="text-body-s text-text-secondary">
-              Start a new tasting plan and we will bring you back here while the cellar works.
-            </p>
+            <p className="text-body-m font-medium text-text-primary">{copy.generation.idleTitle}</p>
+            <p className="text-body-s text-text-secondary">{copy.generation.idleDescription}</p>
             <Link href="/tasting/new">
               <Button className="w-full" variant="outline">
-                Start a new tasting
+                {copy.generation.idleCta}
               </Button>
             </Link>
           </div>

@@ -12,44 +12,45 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 import { AuthDialog } from '@/common/components/AuthDialog';
+import { copy } from '@/common/content';
 import { cn } from '@/common/functions/cn';
 import { trackEvent } from '@/common/services/analytics-api';
 import { useAuthStore } from '@/common/stores/useAuthStore';
 
 const FEATURES = [
   {
-    title: 'Guided Tasting',
-    description: 'Walk through Look → Smell → Taste → Think with quick, sensory prompts.',
+    title: copy.explore.features.guided.title,
+    description: copy.explore.features.guided.description,
     href: '/explore/tasting-guide',
     icon: Eye,
-    badge: 'Interactive',
+    badge: copy.explore.features.guided.badge,
     badgeColor: 'bg-primary/10 text-primary border-primary/20',
     requiresAuth: true,
   },
   {
-    title: 'Aroma Wheel',
-    description: 'Discover aroma families with a tap-first wheel made for fast recognition.',
+    title: copy.explore.features.aroma.title,
+    description: copy.explore.features.aroma.description,
     href: '/explore/aroma-wheel',
     icon: Flower2,
-    badge: 'Interactive',
+    badge: copy.explore.features.aroma.badge,
     badgeColor: 'bg-primary/10 text-primary border-primary/20',
     requiresAuth: true,
   },
   {
-    title: 'Serving Guide',
-    description: 'Simple serving cues for temperature, glassware, and when to decant.',
+    title: copy.explore.features.serving.title,
+    description: copy.explore.features.serving.description,
     href: '/explore/serving-guide',
     icon: Thermometer,
-    badge: 'Reference',
+    badge: copy.explore.features.serving.badge,
     badgeColor: 'bg-accent/10 text-accent border-accent/20',
     requiresAuth: false,
   },
   {
-    title: 'Corkage Directory',
-    description: 'Find local BYOB spots and corkage rules for easier night planning.',
+    title: copy.explore.features.corkage.title,
+    description: copy.explore.features.corkage.description,
     href: '/corkage',
     icon: MapPin,
-    badge: 'Toronto',
+    badge: copy.explore.features.corkage.badge,
     badgeColor: 'bg-wine-burgundy/10 text-wine-burgundy border-wine-burgundy/20',
     requiresAuth: false,
   },
@@ -67,11 +68,10 @@ export function ExploreHub() {
         transition={{ duration: 0.3 }}
       >
         <h1 className="font-display text-heading-l text-primary mb-2xs">
-          Vineyard Walk
+          {copy.explore.title}
         </h1>
         <p className="text-body-m text-text-secondary mb-l">
-          Explore wine with playful guides designed to build confidence, not
-          overwhelm you.
+          {copy.explore.subtitle}
         </p>
       </motion.div>
 
@@ -97,11 +97,10 @@ export function ExploreHub() {
               </div>
               <div className="flex-1 min-w-0">
                 <h2 className="font-display text-heading-xs text-primary mb-0.5">
-                  Start a New Tasting Story
+                  {copy.explore.newPlanTitle}
                 </h2>
                 <p className="text-body-s text-text-secondary">
-                  We turn your moment and menu into a guided lineup worth
-                  sharing.
+                  {copy.explore.newPlanDescription}
                 </p>
               </div>
             </div>

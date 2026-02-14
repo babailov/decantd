@@ -8,6 +8,7 @@ import { Badge } from '@/common/components/Badge';
 import { Button } from '@/common/components/Button';
 import { Card } from '@/common/components/Card';
 import { FlavorRadar } from '@/common/components/FlavorRadar';
+import { copy } from '@/common/content';
 import { cn } from '@/common/functions/cn';
 import { useAuthStore } from '@/common/stores/useAuthStore';
 
@@ -57,10 +58,10 @@ export function PalateProfileCard() {
       <Card className="text-center py-l" variant="outlined">
         <Wine className="h-8 w-8 text-text-muted mx-auto mb-xs" />
         <p className="font-display text-body-l font-semibold text-primary mb-1">
-          Your Palate Profile
+          {copy.profile.profileTitle}
         </p>
         <p className="text-body-s text-text-secondary">
-          {data?.message || 'Rate at least 3 wines to unlock your Palate Profile.'}
+          {data?.message || copy.profile.profileUnlockFallback}
         </p>
         {data && (
           <div className="mt-s">
@@ -82,11 +83,11 @@ export function PalateProfileCard() {
   const { profile } = data;
 
   const handleShare = async () => {
-    const text = `My Wine Palate: ${profile.archetype.label}\n${profile.archetype.description}\n\nTop regions: ${profile.topRegions.join(', ')}\nAdventurousness: ${profile.adventurousness}%\n\nDiscover your wine palate at Decantd!`;
+    const text = `${copy.profile.profileShareTitle}: ${profile.archetype.label}\n${profile.archetype.description}\n\n${copy.profile.topRegions}: ${profile.topRegions.join(', ')}\n${copy.profile.adventurousness}: ${profile.adventurousness}%\n\nDiscover your profile on Decantd.`;
 
     if (navigator.share) {
       try {
-        await navigator.share({ title: 'My Wine Palate', text });
+        await navigator.share({ title: copy.profile.profileShareTitle, text });
         return;
       } catch {
         // Fall through to clipboard
@@ -94,7 +95,7 @@ export function PalateProfileCard() {
     }
 
     await navigator.clipboard.writeText(text);
-    toast.success('Palate profile copied to clipboard!');
+    toast.success(copy.toasts.palateCopied);
   };
 
   return (
@@ -144,7 +145,7 @@ export function PalateProfileCard() {
       <div className="px-m pb-m">
         <div className="grid grid-cols-2 gap-xs">
           <div>
-            <p className="text-body-xs text-text-muted font-medium">Top Regions</p>
+            <p className="text-body-xs text-text-muted font-medium">{copy.profile.topRegions}</p>
             <div className="flex flex-wrap gap-1 mt-1">
               {profile.topRegions.slice(0, 3).map((region) => (
                 <span
@@ -157,7 +158,7 @@ export function PalateProfileCard() {
             </div>
           </div>
           <div>
-            <p className="text-body-xs text-text-muted font-medium">Top Varietals</p>
+            <p className="text-body-xs text-text-muted font-medium">{copy.profile.topVarietals}</p>
             <div className="flex flex-wrap gap-1 mt-1">
               {profile.topVarietals.slice(0, 3).map((varietal) => (
                 <span
@@ -174,7 +175,7 @@ export function PalateProfileCard() {
         {/* Adventurousness meter */}
         <div className="mt-s">
           <div className="flex items-center justify-between mb-1">
-            <span className="text-body-xs text-text-muted font-medium">Adventurousness</span>
+            <span className="text-body-xs text-text-muted font-medium">{copy.profile.adventurousness}</span>
             <span className="text-body-xs text-accent font-bold">{profile.adventurousness}%</span>
           </div>
           <div className="w-full bg-surface rounded-full h-2">
@@ -186,7 +187,7 @@ export function PalateProfileCard() {
         </div>
 
         <p className="text-body-xs text-text-muted text-center mt-s">
-          Based on {data.ratingsCount} wines rated
+          {copy.profile.basedOnRatingsPrefix} {data.ratingsCount} wines rated
         </p>
       </div>
     </div>

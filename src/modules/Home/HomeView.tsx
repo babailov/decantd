@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 import { Button } from '@/common/components/Button';
+import { copy } from '@/common/content';
 import { useAuthStore } from '@/common/stores/useAuthStore';
 
 import { PalateProfileCard } from '@/modules/PalateProfile';
@@ -31,14 +32,14 @@ export function HomeView() {
         {greeting}, {user?.displayName}
       </h1>
       <p className="text-body-s text-text-secondary mb-m">
-        Your cellar club is ready. Pick a vibe and pour smarter tonight.
+        {copy.home.subtitle}
       </p>
 
       {/* Create new plan CTA */}
       <Link href="/tasting/new">
         <Button className="w-full gap-xs mb-l shadow-[0_16px_28px_-20px_rgba(123,45,58,0.4)]" size="lg">
           <Sparkles className="w-5 h-5" />
-          Create New Tasting Plan
+          {copy.home.createPlan}
           <ChevronRight className="w-4 h-4" />
         </Button>
       </Link>
@@ -46,7 +47,7 @@ export function HomeView() {
       {/* Palate Profile */}
       <div className="mb-l">
         <h2 className="font-display text-heading-xs text-primary mb-s">
-          My Palate
+          {copy.home.palateTitle}
         </h2>
         <PalateProfileCard />
       </div>
@@ -55,13 +56,13 @@ export function HomeView() {
       <div className="mb-l">
         <div className="flex items-center justify-between mb-s">
           <h2 className="font-display text-heading-xs text-primary">
-            Recent Pairings
+            {copy.home.recentPlansTitle}
           </h2>
           <Link
             className="text-body-s text-primary font-medium hover:text-primary-hover"
             href="/journal"
           >
-            View all
+            {copy.home.viewAll}
           </Link>
         </div>
         <UserPlansList limit={3} />
@@ -73,7 +74,7 @@ export function HomeView() {
         href="/journal"
       >
         <BookOpen className="w-5 h-5" />
-        View your tasting journal
+        {copy.home.journalCta}
         <ChevronRight className="w-4 h-4" />
       </Link>
     </div>

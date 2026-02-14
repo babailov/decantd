@@ -5,6 +5,7 @@ import { motion } from 'motion/react';
 import Link from 'next/link';
 
 import { Button } from '@/common/components/Button';
+import { copy } from '@/common/content';
 import { trackEvent } from '@/common/services/analytics-api';
 
 export function LandingHero() {
@@ -18,18 +19,17 @@ export function LandingHero() {
         transition={{ duration: 0.6, ease: 'easeOut' }}
       >
         <span className="inline-flex items-center rounded-full bg-accent/20 text-primary px-s py-1 text-body-xs font-semibold mb-s">
-          Decantd Daily Pour
+          {copy.landing.badge}
         </span>
         <div className="flex items-center justify-center w-20 h-20 rounded-full bg-primary/12 mb-m shadow-inner border border-primary/20">
           <Wine className="w-10 h-10 text-primary" />
         </div>
 
         <h1 className="font-display text-heading-xl text-primary mb-xs tracking-tight">
-          Walk Through Your Next Tasting
+          {copy.landing.title}
         </h1>
         <p className="text-body-l text-text-secondary mb-l max-w-sm">
-          A guided, story-like tasting path through mood, bites, and bottles
-          that feel like your vibe tonight.
+          {copy.landing.subtitle}
         </p>
 
         <Link href="/tasting/new">
@@ -42,7 +42,7 @@ export function LandingHero() {
             }}
           >
             <Sparkles className="w-5 h-5" />
-            Start the Journey
+            {copy.landing.cta}
             <ChevronRight className="w-4 h-4" />
           </Button>
         </Link>
@@ -65,30 +65,11 @@ export function LandingHero() {
         transition={{ duration: 0.6, delay: 0.3, ease: 'easeOut' }}
       >
         <h2 className="font-display text-heading-s text-primary text-center mb-m">
-          Your Three Stops
+          {copy.landing.stepsTitle}
         </h2>
 
         <div className="flex flex-col gap-m">
-          {[
-            {
-              step: '1',
-              title: 'Set the scene',
-              description:
-                'Tell us your occasion, table mood, and what is on the plate.',
-            },
-            {
-              step: '2',
-              title: 'Meet your lineup',
-              description:
-                'Your sommelier guide suggests an order with simple notes and pairing cues.',
-            },
-            {
-              step: '3',
-              title: 'Pour and explore',
-              description:
-                'Save and share your tasting path for dinner, date night, or a hosted flight.',
-            },
-          ].map((item) => (
+          {copy.landing.steps.map((item) => (
             <div
               key={item.step}
               className="flex gap-s items-start rounded-2xl border border-border/70 bg-surface-elevated p-s shadow-[0_12px_24px_-20px_rgba(45,41,38,0.12)]"

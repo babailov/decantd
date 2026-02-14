@@ -12,6 +12,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from '@/common/components/Drawer';
+import { copy } from '@/common/content';
 import { trackEvent } from '@/common/services/analytics-api';
 import { TastingPlan } from '@/common/types/tasting';
 
@@ -30,7 +31,7 @@ export function ShareDrawer({ plan }: ShareDrawerProps) {
   const handleCopy = async () => {
     await navigator.clipboard.writeText(planUrl);
     setCopied(true);
-    toast.success('Link copied!');
+    toast.success(copy.toasts.shareCopied);
     trackEvent('plan_shared_copy', { planId: plan.id });
     setTimeout(() => setCopied(false), 2000);
   };
@@ -60,7 +61,7 @@ export function ShareDrawer({ plan }: ShareDrawerProps) {
         <div className="px-l pb-l pt-xs">
           <DrawerTitle className="px-0">Share this plan</DrawerTitle>
           <DrawerDescription className="px-0">
-            Send your tasting plan to friends
+            Send this plan to your table
           </DrawerDescription>
 
           {/* OG Preview */}

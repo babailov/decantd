@@ -6,6 +6,7 @@ import { useCallback, useRef, useState } from 'react';
 import { toast } from 'sonner';
 
 import { OCCASIONS } from '@/common/constants/wine.const';
+import { copy } from '@/common/content';
 import { trackEvent } from '@/common/services/analytics-api';
 import { TastingPlan } from '@/common/types/tasting';
 
@@ -47,10 +48,10 @@ export function ShareAsImage({ plan }: ShareAsImageProps) {
       link.href = dataUrl;
       link.click();
 
-      toast.success('Image saved!');
+      toast.success(copy.toasts.imageSaved);
       trackEvent('plan_shared_image', { planId: plan.id });
     } catch {
-      toast.error('Failed to save image');
+      toast.error(copy.toasts.imageSaveFailed);
     } finally {
       setSaving(false);
     }
@@ -150,7 +151,7 @@ export function ShareAsImage({ plan }: ShareAsImageProps) {
                     {index + 1}. {pairing.dishName}
                   </div>
                   <div style={{ fontSize: 13, color: '#6B5E54' }}>
-                    {pairing.cuisineType || 'Flexible cuisine'}
+                    {pairing.cuisineType || copy.plan.flexibleCuisine}
                   </div>
                 </div>
               ))

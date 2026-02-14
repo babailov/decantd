@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 
+import { copy } from '@/common/content';
 import { useTastingGenerationToastStore } from '@/common/stores/useTastingGenerationToastStore';
 
 const TASTING_GENERATION_TOAST_ID = 'tasting-generation-toast';
@@ -35,7 +36,7 @@ export function TastingGenerationToastController() {
 
       const showReturnAction = Boolean(sourcePath && pathname !== sourcePath);
 
-      toast('Generating your tasting plan...', {
+      toast(copy.toasts.generationLoading, {
         id: TASTING_GENERATION_TOAST_ID,
         duration: Infinity,
         className: 'tasting-generation-toast',
@@ -47,7 +48,7 @@ export function TastingGenerationToastController() {
         ),
         action: showReturnAction && sourcePath
           ? {
-              label: 'Return to generator',
+              label: copy.toasts.generationReturnAction,
               onClick: () => router.push(sourcePath),
             }
           : undefined,
@@ -56,13 +57,13 @@ export function TastingGenerationToastController() {
     }
 
     if (status === 'success' && planId) {
-      toast('Your tasting plan is ready.', {
+      toast(copy.toasts.generationReady, {
         id: TASTING_GENERATION_TOAST_ID,
         duration: 8000,
         className: 'tasting-generation-toast',
         icon: null,
         action: {
-          label: 'Open tasting',
+          label: copy.toasts.generationOpenAction,
           onClick: () => {
             router.push(`/tasting/${planId}`);
             clearGeneration();
@@ -75,7 +76,7 @@ export function TastingGenerationToastController() {
     }
 
     if (status === 'error') {
-      toast.error(errorMessage || 'Failed to generate tasting plan.', {
+      toast.error(errorMessage || copy.toasts.generationErrorFallback, {
         id: TASTING_GENERATION_TOAST_ID,
         onDismiss: () => clearGeneration(),
         onAutoClose: () => clearGeneration(),
