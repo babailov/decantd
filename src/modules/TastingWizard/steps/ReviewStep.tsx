@@ -10,6 +10,7 @@ import { Card } from '@/common/components/Card';
 import { UpgradeCTA } from '@/common/components/UpgradeCTA';
 import { queryKeys } from '@/common/constants/queryKeys';
 import { OCCASIONS, POPULAR_REGIONS } from '@/common/constants/wine.const';
+import { copy } from '@/common/content';
 import { cn } from '@/common/functions/cn';
 import { useTierConfig, useUserTier } from '@/common/hooks/useTierConfig';
 import { trackEvent } from '@/common/services/analytics-api';
@@ -144,7 +145,7 @@ export function ReviewStep() {
       }
     } catch (err) {
       const message =
-        err instanceof Error ? err.message : 'Something went wrong';
+        err instanceof Error ? err.message : copy.toasts.generationErrorFallback;
 
       if (message.includes('Daily limit') || message.includes('daily limit')) {
         setRateLimited(true);
@@ -160,12 +161,12 @@ export function ReviewStep() {
 
   const summaryItems = mode === 'food_to_wine'
     ? [
-        { label: 'Mode', value: 'Food -> Wine' },
+        { label: 'Mode', value: copy.review.modeFoodToWine },
         { label: 'Occasion', value: occasionLabel },
-        { label: 'Food', value: foodPairing || 'Not specified' },
+        { label: 'Food', value: foodPairing || copy.review.notSpecified },
         {
           label: 'Regions',
-          value: surpriseMe ? 'Surprise me!' : regionLabels.join(', '),
+          value: surpriseMe ? copy.review.surprise : regionLabels.join(', '),
         },
         { label: 'Budget', value: `$${budgetMin}-$${budgetMax} per bottle` },
         {
@@ -174,16 +175,16 @@ export function ReviewStep() {
         },
       ]
     : [
-        { label: 'Mode', value: 'Wine -> Food' },
+        { label: 'Mode', value: copy.review.modeWineToFood },
         { label: 'Occasion', value: occasionLabel },
-        { label: 'Wine', value: wineInputValue || 'Not specified' },
+        { label: 'Wine', value: wineInputValue || copy.review.notSpecified },
         { label: 'Diet', value: diet },
         { label: 'Prep', value: prepTime.replace('_', '-') },
         { label: 'Spice', value: spiceLevel },
         { label: 'Dish Budget', value: `$${dishBudgetMin}-$${dishBudgetMax} per dish` },
         {
           label: 'Cuisine',
-          value: cuisinePreferences.length > 0 ? cuisinePreferences.join(', ') : 'Open',
+          value: cuisinePreferences.length > 0 ? cuisinePreferences.join(', ') : copy.review.openCuisine,
         },
         { label: 'Guests', value: guestCountBand },
       ];
@@ -191,10 +192,10 @@ export function ReviewStep() {
   return (
     <div>
       <h2 className="font-display text-heading-m text-primary mb-2xs">
-        Ready to craft your tasting story
+        {copy.review.title}
       </h2>
       <p className="text-body-m text-text-secondary mb-m">
-        One last look, then we will build your recommendations.
+        {copy.review.subtitle}
       </p>
 
       <Card variant="outlined">
@@ -212,7 +213,7 @@ export function ReviewStep() {
 
       <div className="mt-s">
         <label className="text-body-s text-text-secondary block mb-xs" htmlFor="special-request">
-          Optional sommelier note
+          {copy.review.optionalNoteLabel}
         </label>
         <textarea
           className={cn(
@@ -225,8 +226,8 @@ export function ReviewStep() {
           maxLength={300}
           placeholder={
             tierConfig.allowSpecialRequests
-              ? 'e.g., prioritize no-cook dishes and one crowd-friendly option.'
-              : 'Paid feature: add your own custom sommelier note.'
+              ? copy.review.optionalNotePlaceholder
+              : copy.review.optionalNoteLockedPlaceholder
           }
           rows={3}
           value={specialRequest}
@@ -235,34 +236,34 @@ export function ReviewStep() {
         <p className="text-body-xs text-text-muted mt-1">
           {tierConfig.allowSpecialRequests
             ? `${specialRequest.length}/300 characters`
-            : 'Upgrade to add custom sommelier instructions.'}
+            : copy.review.optionalNoteUpgradeHint}
         </p>
       </div>
 
       {!tierConfig.allowSpecialRequests && (
         <UpgradeCTA
           className="mt-1"
-          message="Unlock custom sommelier requests and advanced tasting refinements."
+          message={copy.review.upgradeInlineMessage}
           variant="inline"
         />
       )}
 
       {tier === 'free' && genStatus && genStatus.dailyLimit !== null && (
         <p className="text-body-xs text-text-muted text-center mt-s">
-          {genStatus.remaining} of {genStatus.dailyLimit} tastings remaining today
+          {genStatus.remaining} of {genStatus.dailyLimit} {copy.review.remainingTodaySuffix}
         </p>
       )}
 
       {rateLimited && (
         <UpgradeCTA
-          message="You've used all your tastings for today. Upgrade for unlimited plans, or try again tomorrow."
+          message={copy.review.upgradeRateLimitMessage}
           variant="card"
         />
       )}
 
       {tier === 'anonymous' && (
         <UpgradeCTA
-          message="Sign up for personalized plans with custom options and 10 daily tastings."
+          message={copy.review.upgradeAnonymousMessage}
           variant="card"
         />
       )}
@@ -274,7 +275,7 @@ export function ReviewStep() {
           variant="ghost"
           onClick={prevStep}
         >
-          Back
+          {copy.review.backCta}
         </Button>
         <Button
           className="flex-1 gap-xs"
@@ -283,7 +284,11 @@ export function ReviewStep() {
           onClick={handleGenerate}
         >
           <Sparkles className="w-4 h-4" />
-          {isGenerating ? 'Generating...' : mode === 'food_to_wine' ? 'Generate My Plan' : 'Generate Pairings'}
+          {isGenerating
+            ? copy.review.generateLoading
+            : mode === 'food_to_wine'
+              ? copy.review.generateFoodToWine
+              : copy.review.generateWineToFood}
         </Button>
       </div>
     </div>

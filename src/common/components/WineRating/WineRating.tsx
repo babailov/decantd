@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { toast } from 'sonner';
 
 import { queryKeys } from '@/common/constants/queryKeys';
+import { copy } from '@/common/content';
 import { cn } from '@/common/functions/cn';
 import { useAuthStore } from '@/common/stores/useAuthStore';
 
@@ -42,11 +43,11 @@ export function WineRating({ planWineId, planId, existingRating }: WineRatingPro
       return res.json();
     },
     onSuccess: () => {
-      toast.success('Rating saved!');
+      toast.success(copy.toasts.ratingSaved);
       queryClient.invalidateQueries({ queryKey: queryKeys.user.ratingsForPlan(planId) });
     },
     onError: () => {
-      toast.error('Failed to save rating');
+      toast.error(copy.toasts.ratingFailed);
     },
   });
 

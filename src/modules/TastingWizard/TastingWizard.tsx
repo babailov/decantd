@@ -103,11 +103,11 @@ export function TastingWizard() {
             Wine -&gt; Food
           </button>
         </div>
-        <p className="font-display text-body-m text-primary">Build your tasting story</p>
+        <p className="font-display text-body-m text-primary">Build your tasting plan</p>
         <p className="text-body-s text-text-secondary">
           {mode === 'food_to_wine'
-            ? 'We will guide you through six quick stops to craft a balanced wine lineup.'
-            : 'Start with your bottle, then we will map food pairings that fit your table.'}
+            ? 'We will guide you through six quick steps to build a balanced lineup.'
+            : 'Start with your bottle and we will map food pairings that fit your table.'}
         </p>
       </div>
 

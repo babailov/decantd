@@ -13,6 +13,7 @@ import {
   DialogTitle,
 } from '@/common/components/Dialog';
 import { Input } from '@/common/components/Input';
+import { copy } from '@/common/content';
 import { cn } from '@/common/functions/cn';
 import { forgotPassword, login, signUp } from '@/common/services/auth-api';
 import { useAuthStore } from '@/common/stores/useAuthStore';
@@ -104,7 +105,7 @@ export function AuthDialog({ open, onOpenChange, defaultMode = 'signup' }: AuthD
         const session = await signUp({ email, password, displayName });
         setAuth(session.user, session.token);
         usePlanHistoryStore.getState().clearHistory();
-        toast.success('Welcome to Decantd!');
+        toast.success(copy.auth.welcomeSignupToast);
         resetForm();
         router.push('/');
         onOpenChange(false);
@@ -112,7 +113,7 @@ export function AuthDialog({ open, onOpenChange, defaultMode = 'signup' }: AuthD
         const session = await login({ email, password });
         setAuth(session.user, session.token);
         usePlanHistoryStore.getState().clearHistory();
-        toast.success('Welcome back!');
+        toast.success(copy.auth.welcomeLoginToast);
         resetForm();
         router.push('/');
         onOpenChange(false);
@@ -129,9 +130,9 @@ export function AuthDialog({ open, onOpenChange, defaultMode = 'signup' }: AuthD
       return (
         <div className="flex flex-col items-center text-center">
           <CheckCircle className="h-8 w-8 text-green-600 mb-s" />
-          <DialogTitle>Check Your Email</DialogTitle>
+          <DialogTitle>{copy.auth.forgotSentTitle}</DialogTitle>
           <DialogDescription className="mt-xs">
-            If an account exists with that email, we&apos;ve sent a password reset link. Check your inbox and spam folder.
+            {copy.auth.forgotSentDescription}
           </DialogDescription>
           <button
             className={cn(
@@ -141,7 +142,7 @@ export function AuthDialog({ open, onOpenChange, defaultMode = 'signup' }: AuthD
             type="button"
             onClick={() => switchMode('login')}
           >
-            Back to sign in
+            {copy.auth.backToSignIn}
           </button>
         </div>
       );
@@ -151,9 +152,9 @@ export function AuthDialog({ open, onOpenChange, defaultMode = 'signup' }: AuthD
       <>
         <div className="flex flex-col items-center mb-m">
           <Wine className="h-8 w-8 text-primary mb-xs" />
-          <DialogTitle>Forgot Password</DialogTitle>
+          <DialogTitle>{copy.auth.forgotTitle}</DialogTitle>
           <DialogDescription>
-            Enter your email and we&apos;ll send you a link to reset your password.
+            {copy.auth.forgotDescription}
           </DialogDescription>
         </div>
 
@@ -162,7 +163,7 @@ export function AuthDialog({ open, onOpenChange, defaultMode = 'signup' }: AuthD
             required
             id="forgotEmail"
             label="Email"
-            placeholder="you@example.com"
+            placeholder={copy.auth.placeholders.email}
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -178,7 +179,7 @@ export function AuthDialog({ open, onOpenChange, defaultMode = 'signup' }: AuthD
             size="lg"
             type="submit"
           >
-            Send Reset Link
+            {copy.auth.forgotSubmitCta}
           </Button>
         </form>
 
@@ -191,7 +192,7 @@ export function AuthDialog({ open, onOpenChange, defaultMode = 'signup' }: AuthD
             type="button"
             onClick={() => switchMode('login')}
           >
-            Back to sign in
+            {copy.auth.backToSignIn}
           </button>
         </p>
       </>
@@ -203,12 +204,12 @@ export function AuthDialog({ open, onOpenChange, defaultMode = 'signup' }: AuthD
       <div className="flex flex-col items-center mb-m">
         <Wine className="h-8 w-8 text-primary mb-xs" />
         <DialogTitle>
-          {mode === 'signup' ? 'Join Decantd' : 'Welcome Back'}
+          {mode === 'signup' ? copy.auth.signupTitle : copy.auth.loginTitle}
         </DialogTitle>
         <DialogDescription>
           {mode === 'signup'
-            ? 'Create an account to save your tastings and build your palate profile.'
-            : 'Sign in to access your tasting journal and saved plans.'}
+            ? copy.auth.signupDescription
+            : copy.auth.loginDescription}
         </DialogDescription>
       </div>
 
@@ -245,7 +246,7 @@ export function AuthDialog({ open, onOpenChange, defaultMode = 'signup' }: AuthD
             fill="#EA4335"
           />
         </svg>
-        {googleLoading ? 'Redirecting...' : 'Continue with Google'}
+        {googleLoading ? copy.auth.googleLoading : copy.auth.googleIdle}
       </button>
 
       <div className="flex items-center gap-s my-s">
@@ -260,7 +261,7 @@ export function AuthDialog({ open, onOpenChange, defaultMode = 'signup' }: AuthD
             required
             id="displayName"
             label="Display Name"
-            placeholder="Your name"
+            placeholder={copy.auth.placeholders.displayName}
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
           />
@@ -270,7 +271,7 @@ export function AuthDialog({ open, onOpenChange, defaultMode = 'signup' }: AuthD
           required
           id="email"
           label="Email"
-          placeholder="you@example.com"
+          placeholder={copy.auth.placeholders.email}
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -282,7 +283,7 @@ export function AuthDialog({ open, onOpenChange, defaultMode = 'signup' }: AuthD
             id="password"
             label="Password"
             minLength={mode === 'signup' ? 8 : undefined}
-            placeholder={mode === 'signup' ? '8+ characters' : 'Your password'}
+            placeholder={mode === 'signup' ? copy.auth.placeholders.signupPassword : copy.auth.placeholders.loginPassword}
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
@@ -311,12 +312,12 @@ export function AuthDialog({ open, onOpenChange, defaultMode = 'signup' }: AuthD
           size="lg"
           type="submit"
         >
-          {mode === 'signup' ? 'Create Account' : 'Sign In'}
+          {mode === 'signup' ? copy.auth.signupCta : copy.auth.loginCta}
         </Button>
       </form>
 
       <p className="text-body-s text-text-secondary text-center mt-m">
-        {mode === 'signup' ? 'Already have an account?' : "Don't have an account?"}{' '}
+        {mode === 'signup' ? copy.auth.signupSwitchPrompt : copy.auth.loginSwitchPrompt}{' '}
         <button
           className={cn(
             'text-primary font-medium hover:underline',
@@ -325,7 +326,7 @@ export function AuthDialog({ open, onOpenChange, defaultMode = 'signup' }: AuthD
           type="button"
           onClick={() => switchMode(mode === 'signup' ? 'login' : 'signup')}
         >
-          {mode === 'signup' ? 'Sign in' : 'Create one'}
+          {mode === 'signup' ? copy.auth.signupSwitchCta : copy.auth.loginSwitchCta}
         </button>
       </p>
     </>

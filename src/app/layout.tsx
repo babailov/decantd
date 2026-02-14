@@ -3,6 +3,7 @@ import type { PropsWithChildren } from 'react';
 
 import { Sonner } from '@/common/components/Toast';
 import { TastingGenerationToastController } from '@/common/components/Toast/TastingGenerationToastController';
+import { copy } from '@/common/content';
 import { playfairDisplay, sourceSans } from '@/common/fonts';
 import { cn } from '@/common/functions/cn';
 import { AuthProvider } from '@/common/providers/AuthProvider';
@@ -21,17 +22,15 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL('https://decantd.app'),
   title: {
-    default: 'Decantd — Personalized Wine Tasting Planner',
-    template: '%s | Decantd',
+    default: copy.metadata.titleDefault,
+    template: copy.metadata.titleTemplate,
   },
-  description:
-    'Plan the perfect wine tasting in seconds. Sommelier-guided tasting plans with food pairings, flavor profiles, and expert recommendations.',
+  description: copy.metadata.description,
   openGraph: {
     type: 'website',
     siteName: 'Decantd',
-    title: 'Decantd — Personalized Wine Tasting Planner',
-    description:
-      'Plan the perfect wine tasting in seconds. Sommelier-guided tasting plans with food pairings, flavor profiles, and expert recommendations.',
+    title: copy.metadata.titleDefault,
+    description: copy.metadata.description,
   },
   twitter: {
     card: 'summary_large_image',

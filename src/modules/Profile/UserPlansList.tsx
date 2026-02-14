@@ -9,6 +9,7 @@ import { Badge } from '@/common/components/Badge';
 import { Card } from '@/common/components/Card';
 import { queryKeys } from '@/common/constants/queryKeys';
 import { OCCASIONS } from '@/common/constants/wine.const';
+import { copy } from '@/common/content';
 import { cn } from '@/common/functions/cn';
 
 interface PlanSummary {
@@ -47,7 +48,7 @@ export function UserPlansList({ limit }: { limit?: number }) {
     return (
       <Card className="text-center py-l">
         <p className="text-body-m text-text-muted">
-          Unable to load your plans.
+          {copy.profile.plansLoadError}
         </p>
       </Card>
     );
@@ -57,9 +58,9 @@ export function UserPlansList({ limit }: { limit?: number }) {
     return (
       <Card className="text-center py-l">
         <Wine className="h-8 w-8 text-text-muted mx-auto mb-xs" />
-        <p className="text-body-m text-text-secondary">No plans yet</p>
+        <p className="text-body-m text-text-secondary">{copy.profile.noPlansTitle}</p>
         <p className="text-body-s text-text-muted mt-1">
-          Create your first tasting plan to see it here.
+          {copy.profile.noPlansDescription}
         </p>
       </Card>
     );

@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 
 import { Button } from '@/common/components/Button';
 import { Input } from '@/common/components/Input';
+import { copy } from '@/common/content';
 import { trackEvent } from '@/common/services/analytics-api';
 
 interface EmailShareFormProps {
@@ -40,10 +41,10 @@ export function EmailShareForm({ planId }: EmailShareFormProps) {
       }
 
       setSent(true);
-      toast.success('Email sent!');
+      toast.success(copy.toasts.emailSent);
       trackEvent('plan_shared_email', { planId });
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to send email');
+      toast.error(err instanceof Error ? err.message : copy.toasts.emailFailed);
     } finally {
       setSending(false);
     }

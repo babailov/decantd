@@ -1,11 +1,12 @@
 import type { MetadataRoute } from 'next';
 
+import { copy } from '@/common/content';
+
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Decantd - Personalized Wine Tasting Planner',
+    name: copy.metadata.manifestName,
     short_name: 'Decantd',
-    description:
-      'Plan the perfect wine tasting in seconds with sommelier-guided recommendations.',
+    description: copy.metadata.manifestDescription,
     start_url: '/',
     display: 'standalone',
     background_color: '#FAF7F2',

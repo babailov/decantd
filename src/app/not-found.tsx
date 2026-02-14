@@ -9,13 +9,13 @@ export default function NotFound() {
         Page Not Found
       </h1>
       <p className="text-text-secondary text-body-l mb-l">
-        This bottle seems to have gone missing from the cellar.
+        We couldn&apos;t find that page.
       </p>
       <Link
         className="bg-primary text-text-on-primary px-l py-xs rounded-full font-medium text-body-m hover:bg-primary-hover transition-colors"
         href="/"
       >
-        Back to Home
+        Return Home
       </Link>
     </div>
   );
