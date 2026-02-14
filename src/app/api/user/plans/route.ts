@@ -7,6 +7,7 @@ import { getDb } from '@/server/auth/get-db';
 import { getUserFromRequest } from '@/server/auth/session';
 
 type PlanMode = 'food_to_wine' | 'wine_to_food';
+type PairingLabel = 'Food pairing' | 'Wine pairing';
 
 interface GeneratedPlanSnapshot {
   mode?: PlanMode;
@@ -39,19 +40,23 @@ export async function GET(request: NextRequest) {
     const results = plans.map((plan) => {
       const generatedPlan = (plan.generatedPlan ?? {}) as GeneratedPlanSnapshot;
       const mode: PlanMode = generatedPlan.mode === 'wine_to_food' ? 'wine_to_food' : 'food_to_wine';
-      const winePairingsCount = mode === 'wine_to_food'
-        ? Array.isArray(generatedPlan.pairings) ? generatedPlan.pairings.length : 0
-        : plan.wineCount;
+      const pairingLabel: PairingLabel = mode === 'wine_to_food' ? 'Food pairing' : 'Wine pairing';
+      const pairingValue = mode === 'wine_to_food'
+        ? (
+            Array.isArray(generatedPlan.pairings) && generatedPlan.pairings.length > 0
+              ? `${generatedPlan.pairings.length} ${generatedPlan.pairings.length === 1 ? 'dish pairing' : 'dish pairings'}`
+              : 'No pairings yet'
+          )
+        : `${plan.wineCount} ${plan.wineCount === 1 ? 'wine' : 'wines'}`;
 
       return {
         id: plan.id,
         title: plan.title,
         description: plan.description,
         occasion: plan.occasion,
-        foodPairing: plan.foodPairing,
         mode,
-        wineCount: plan.wineCount,
-        winePairingsCount,
+        pairingLabel,
+        pairingValue,
         createdAt: plan.createdAt,
       };
     });

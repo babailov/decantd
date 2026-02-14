@@ -43,10 +43,9 @@ interface PlanSummary {
   title: string;
   description: string;
   occasion: string;
-  foodPairing: string;
   mode: 'food_to_wine' | 'wine_to_food';
-  wineCount: number;
-  winePairingsCount: number;
+  pairingLabel: 'Food pairing' | 'Wine pairing';
+  pairingValue: string;
   createdAt: string;
 }
 
@@ -213,10 +212,7 @@ function PlanCard({ plan }: { plan: PlanSummary }) {
           </div>
           <div className="mt-xs space-y-0.5">
             <p className="text-body-xs text-text-muted truncate">
-              Food pairing: <span className="text-text-secondary">{plan.foodPairing || 'Not specified'}</span>
-            </p>
-            <p className="text-body-xs text-text-muted">
-              Wine pairings: <span className="text-text-secondary">{plan.winePairingsCount}</span>
+              {plan.pairingLabel}: <span className="text-text-secondary">{plan.pairingValue}</span>
             </p>
           </div>
           <p className="text-body-xs text-text-muted mt-1">
