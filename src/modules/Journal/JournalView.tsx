@@ -43,7 +43,10 @@ interface PlanSummary {
   title: string;
   description: string;
   occasion: string;
+  foodPairing: string;
+  mode: 'food_to_wine' | 'wine_to_food';
   wineCount: number;
+  winePairingsCount: number;
   createdAt: string;
 }
 
@@ -207,9 +210,14 @@ function PlanCard({ plan }: { plan: PlanSummary }) {
                 {occasion.emoji} {occasion.label}
               </Badge>
             )}
-            <span className="text-body-xs text-text-muted">
-              {plan.wineCount} wines
-            </span>
+          </div>
+          <div className="mt-xs space-y-0.5">
+            <p className="text-body-xs text-text-muted truncate">
+              Food pairing: <span className="text-text-secondary">{plan.foodPairing || 'Not specified'}</span>
+            </p>
+            <p className="text-body-xs text-text-muted">
+              Wine pairings: <span className="text-text-secondary">{plan.winePairingsCount}</span>
+            </p>
           </div>
           <p className="text-body-xs text-text-muted mt-1">
             {format(new Date(plan.createdAt), 'MMM d, yyyy')}
