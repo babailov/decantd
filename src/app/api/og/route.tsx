@@ -58,6 +58,7 @@ export async function GET(request: NextRequest) {
       OCCASIONS.find((o) => o.value === plan.occasion)?.label || plan.occasion;
     const occasionEmoji =
       OCCASIONS.find((o) => o.value === plan.occasion)?.emoji || '';
+    const isWineToFood = plan.mode === 'wine_to_food';
 
     return new ImageResponse(
       (
@@ -72,7 +73,7 @@ export async function GET(request: NextRequest) {
             padding: '48px 56px',
           }}
         >
-          {/* Top bar: branding + wine count */}
+          {/* Top bar: branding + count */}
           <div
             style={{
               display: 'flex',
@@ -97,7 +98,9 @@ export async function GET(request: NextRequest) {
                 color: '#7B2D3A',
               }}
             >
-              {plan.wineCount} {plan.wineCount === 1 ? 'Wine' : 'Wines'}
+              {isWineToFood
+                ? `${plan.pairings.length} Pairings`
+                : `${plan.wineCount} ${plan.wineCount === 1 ? 'Wine' : 'Wines'}`}
             </div>
           </div>
 
@@ -137,7 +140,7 @@ export async function GET(request: NextRequest) {
             )}
           </div>
 
-          {/* Wine list chips */}
+          {/* List chips */}
           <div
             style={{
               display: 'flex',
@@ -147,7 +150,48 @@ export async function GET(request: NextRequest) {
               alignContent: 'flex-start',
             }}
           >
-            {plan.wines.slice(0, 6).map((wine, i) => (
+            {isWineToFood ? plan.pairings.slice(0, 6).map((pairing, i) => (
+              <div
+                key={i}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 10,
+                  background: '#FFFFFF',
+                  borderRadius: 12,
+                  padding: '12px 20px',
+                  borderLeft: '4px solid #7B2D3A',
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.06)',
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: 14,
+                    fontWeight: 700,
+                    color: '#FFFFFF',
+                    background: '#7B2D3A',
+                    width: 24,
+                    height: 24,
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  {i + 1}
+                </span>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <span
+                    style={{ fontSize: 16, fontWeight: 600, color: '#2C1810' }}
+                  >
+                    {pairing.dishName}
+                  </span>
+                  <span style={{ fontSize: 13, color: '#6B5E54' }}>
+                    {pairing.cuisineType || 'Flexible cuisine'}
+                  </span>
+                </div>
+              </div>
+            )) : plan.wines.slice(0, 6).map((wine, i) => (
               <div
                 key={i}
                 style={{

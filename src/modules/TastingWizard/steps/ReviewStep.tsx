@@ -17,9 +17,11 @@ import { generateTastingPlan, getGenerationStatus } from '@/common/services/tast
 import { usePlanHistoryStore } from '@/common/stores/usePlanHistoryStore';
 import { useTastingGenerationToastStore } from '@/common/stores/useTastingGenerationToastStore';
 import { useTastingStore } from '@/common/stores/useTastingStore';
+import { TastingPlanInput } from '@/common/types/tasting';
 
 export function ReviewStep() {
   const {
+    mode,
     occasion,
     foodPairing,
     regionPreferences,
@@ -29,6 +31,15 @@ export function ReviewStep() {
     wineCount,
     specialRequest,
     setSpecialRequest,
+    wineInputType,
+    wineInputValue,
+    diet,
+    prepTime,
+    spiceLevel,
+    dishBudgetMin,
+    dishBudgetMax,
+    cuisinePreferences,
+    guestCountBand,
     isGenerating,
     setIsGenerating,
     setGeneratedPlan,
@@ -43,7 +54,6 @@ export function ReviewStep() {
   const tierConfig = useTierConfig();
   const [rateLimited, setRateLimited] = useState(false);
 
-  // Fetch generation status for free users
   const { data: genStatus } = useQuery({
     queryKey: queryKeys.generation.status,
     queryFn: getGenerationStatus,
@@ -57,8 +67,16 @@ export function ReviewStep() {
     (r) => POPULAR_REGIONS.find((pr) => pr.value === r)?.label || r,
   );
 
+  const isReadyToGenerate = Boolean(
+    occasion && (
+      mode === 'food_to_wine'
+        ? foodPairing.trim()
+        : wineInputValue.trim()
+    ),
+  );
+
   const handleGenerate = async () => {
-    if (!occasion) return;
+    if (!occasion || !isReadyToGenerate) return;
 
     setIsGenerating(true);
     setGenerationError(null);
@@ -66,19 +84,40 @@ export function ReviewStep() {
     useTastingGenerationToastStore.getState().startGeneration('/tasting/generating');
     router.push('/tasting/generating');
 
-    try {
-      const plan = await generateTastingPlan({
-        occasion,
-        foodPairing,
-        regionPreferences,
-        budgetMin,
-        budgetMax,
-        budgetCurrency: 'USD',
-        wineCount,
-        specialRequest: specialRequest.trim() || undefined,
-      });
+    const payload: TastingPlanInput = mode === 'food_to_wine'
+      ? {
+          mode,
+          occasion,
+          foodPairing,
+          regionPreferences,
+          budgetMin,
+          budgetMax,
+          budgetCurrency: 'USD',
+          wineCount,
+          specialRequest: specialRequest.trim() || undefined,
+        }
+      : {
+          mode,
+          occasion,
+          wineInput: {
+            type: wineInputType,
+            value: wineInputValue.trim(),
+          },
+          diet,
+          prepTime,
+          spiceLevel,
+          dishBudgetMin,
+          dishBudgetMax,
+          cuisinePreferences,
+          guestCountBand,
+          specialRequest: specialRequest.trim() || undefined,
+        };
 
-      trackEvent('plan_generated', {
+    try {
+      const plan = await generateTastingPlan(payload);
+
+      trackEvent(mode === 'food_to_wine' ? 'plan_generated' : 'reverse_pairing_generated', {
+        mode,
         occasion: plan.occasion,
         wineCount: plan.wineCount,
         usedSpecialRequest: Boolean(specialRequest.trim()),
@@ -107,7 +146,6 @@ export function ReviewStep() {
       const message =
         err instanceof Error ? err.message : 'Something went wrong';
 
-      // Check for rate limit error
       if (message.includes('Daily limit') || message.includes('daily limit')) {
         setRateLimited(true);
         useTastingGenerationToastStore.getState().clearGeneration();
@@ -120,19 +158,35 @@ export function ReviewStep() {
     }
   };
 
-  const summaryItems = [
-    { label: 'Occasion', value: occasionLabel },
-    { label: 'Food', value: foodPairing || 'Not specified' },
-    {
-      label: 'Regions',
-      value: surpriseMe ? 'Surprise me!' : regionLabels.join(', '),
-    },
-    { label: 'Budget', value: `$${budgetMin}–$${budgetMax} per bottle` },
-    {
-      label: 'Wines',
-      value: `${wineCount} ${wineCount === 1 ? 'wine' : 'wines'}`,
-    },
-  ];
+  const summaryItems = mode === 'food_to_wine'
+    ? [
+        { label: 'Mode', value: 'Food -> Wine' },
+        { label: 'Occasion', value: occasionLabel },
+        { label: 'Food', value: foodPairing || 'Not specified' },
+        {
+          label: 'Regions',
+          value: surpriseMe ? 'Surprise me!' : regionLabels.join(', '),
+        },
+        { label: 'Budget', value: `$${budgetMin}-$${budgetMax} per bottle` },
+        {
+          label: 'Wines',
+          value: `${wineCount} ${wineCount === 1 ? 'wine' : 'wines'}`,
+        },
+      ]
+    : [
+        { label: 'Mode', value: 'Wine -> Food' },
+        { label: 'Occasion', value: occasionLabel },
+        { label: 'Wine', value: wineInputValue || 'Not specified' },
+        { label: 'Diet', value: diet },
+        { label: 'Prep', value: prepTime.replace('_', '-') },
+        { label: 'Spice', value: spiceLevel },
+        { label: 'Dish Budget', value: `$${dishBudgetMin}-$${dishBudgetMax} per dish` },
+        {
+          label: 'Cuisine',
+          value: cuisinePreferences.length > 0 ? cuisinePreferences.join(', ') : 'Open',
+        },
+        { label: 'Guests', value: guestCountBand },
+      ];
 
   return (
     <div>
@@ -140,13 +194,13 @@ export function ReviewStep() {
         Ready to craft your tasting story
       </h2>
       <p className="text-body-m text-text-secondary mb-m">
-        One last look, then we will build your lineup.
+        One last look, then we will build your recommendations.
       </p>
 
       <Card variant="outlined">
         <div className="flex flex-col gap-s">
           {summaryItems.map((item) => (
-            <div key={item.label} className="flex justify-between items-start">
+            <div key={item.label} className="flex justify-between items-start gap-s">
               <span className="text-body-s text-text-muted">{item.label}</span>
               <span className="text-body-s font-medium text-text-primary text-right max-w-[60%]">
                 {item.value}
@@ -171,7 +225,7 @@ export function ReviewStep() {
           maxLength={300}
           placeholder={
             tierConfig.allowSpecialRequests
-              ? 'e.g., prioritize low-intervention wines, include one Ontario option, and keep tannins softer.'
+              ? 'e.g., prioritize no-cook dishes and one crowd-friendly option.'
               : 'Paid feature: add your own custom sommelier note.'
           }
           rows={3}
@@ -193,14 +247,12 @@ export function ReviewStep() {
         />
       )}
 
-      {/* Generation status for free users */}
       {tier === 'free' && genStatus && genStatus.dailyLimit !== null && (
         <p className="text-body-xs text-text-muted text-center mt-s">
           {genStatus.remaining} of {genStatus.dailyLimit} tastings remaining today
         </p>
       )}
 
-      {/* Rate limit reached */}
       {rateLimited && (
         <UpgradeCTA
           message="You've used all your tastings for today. Upgrade for unlimited plans, or try again tomorrow."
@@ -208,7 +260,6 @@ export function ReviewStep() {
         />
       )}
 
-      {/* Anonymous CTA */}
       {tier === 'anonymous' && (
         <UpgradeCTA
           message="Sign up for personalized plans with custom options and 10 daily tastings."
@@ -227,12 +278,12 @@ export function ReviewStep() {
         </Button>
         <Button
           className="flex-1 gap-xs"
-          disabled={isGenerating || rateLimited}
+          disabled={isGenerating || rateLimited || !isReadyToGenerate}
           loading={isGenerating}
           onClick={handleGenerate}
         >
           <Sparkles className="w-4 h-4" />
-          {isGenerating ? 'Generating...' : 'Generate My Plan'}
+          {isGenerating ? 'Generating...' : mode === 'food_to_wine' ? 'Generate My Plan' : 'Generate Pairings'}
         </Button>
       </div>
     </div>

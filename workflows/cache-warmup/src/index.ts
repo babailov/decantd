@@ -23,6 +23,11 @@ interface Combo {
 
 export class CacheWarmupWorkflow extends WorkflowEntrypoint<Env> {
   async run(event: WorkflowEvent<unknown>, step: WorkflowStep) {
+    // Capture env bindings before entering steps — this.env may not
+    // resolve inside step.do() callbacks during workflow replay.
+    const apiKey = this.env.ANTHROPIC_API_KEY;
+    const d1 = this.env.DB;
+
     // Step 1: Enumerate all 36 combos
     const combos = await step.do('enumerate', async () => {
       const result: Combo[] = [];
@@ -56,6 +61,7 @@ export class CacheWarmupWorkflow extends WorkflowEntrypoint<Env> {
         },
         async () => {
           const input: TastingPlanInput = {
+            mode: 'food_to_wine',
             occasion: combo.occasion,
             foodPairing: combo.food,
             regionPreferences: [],
@@ -65,7 +71,7 @@ export class CacheWarmupWorkflow extends WorkflowEntrypoint<Env> {
             wineCount: 3,
           };
 
-          const db = createDbClient(this.env.DB);
+          const db = createDbClient(d1);
           const inputHash = await computeInputHash(input);
 
           // Check if already cached
@@ -75,7 +81,7 @@ export class CacheWarmupWorkflow extends WorkflowEntrypoint<Env> {
           }
 
           // Generate via AI
-          const generatedPlan = await generatePlan(input, this.env.ANTHROPIC_API_KEY);
+          const generatedPlan = await generatePlan(input, apiKey);
 
           // Store plan in D1
           const planId = crypto.randomUUID();

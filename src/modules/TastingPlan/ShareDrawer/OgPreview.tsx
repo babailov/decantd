@@ -10,6 +10,7 @@ interface OgPreviewProps {
 }
 
 export function OgPreview({ plan }: OgPreviewProps) {
+  const isWineToFood = plan.mode === 'wine_to_food';
   const occasionLabel =
     OCCASIONS.find((o) => o.value === plan.occasion)?.label || plan.occasion;
   const occasionEmoji =
@@ -24,7 +25,9 @@ export function OgPreview({ plan }: OgPreviewProps) {
             {plan.title}
           </p>
           <span className="text-body-xs text-text-muted shrink-0 ml-2">
-            {plan.wineCount} {plan.wineCount === 1 ? 'wine' : 'wines'}
+            {isWineToFood
+              ? `${plan.pairings.length} pairings`
+              : `${plan.wineCount} ${plan.wineCount === 1 ? 'wine' : 'wines'}`}
           </span>
         </div>
         <p className="text-body-xs text-text-secondary mb-2">
@@ -32,13 +35,28 @@ export function OgPreview({ plan }: OgPreviewProps) {
           {plan.foodPairing ? ` · ${plan.foodPairing}` : ''}
         </p>
         <div className="flex flex-wrap gap-1">
-          {plan.wines.slice(0, 4).map((wine) => (
-            <Badge key={wine.id} variant={wine.wineType as WineType}>
-              {wine.varietal}
-            </Badge>
-          ))}
-          {plan.wines.length > 4 && (
-            <Badge>+{plan.wines.length - 4} more</Badge>
+          {isWineToFood ? (
+            <>
+              {plan.pairings.slice(0, 4).map((pairing, idx) => (
+                <Badge key={`${pairing.dishName}-${idx}`}>
+                  {pairing.dishName}
+                </Badge>
+              ))}
+              {plan.pairings.length > 4 && (
+                <Badge>+{plan.pairings.length - 4} more</Badge>
+              )}
+            </>
+          ) : (
+            <>
+              {plan.wines.slice(0, 4).map((wine) => (
+                <Badge key={wine.id} variant={wine.wineType as WineType}>
+                  {wine.varietal}
+                </Badge>
+              ))}
+              {plan.wines.length > 4 && (
+                <Badge>+{plan.wines.length - 4} more</Badge>
+              )}
+            </>
           )}
         </div>
       </div>
