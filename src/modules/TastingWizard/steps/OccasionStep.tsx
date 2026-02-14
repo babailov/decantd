@@ -2,6 +2,7 @@
 
 import { motion } from 'motion/react';
 
+import { Button } from '@/common/components/Button';
 import { OCCASIONS } from '@/common/constants/wine.const';
 import { cn } from '@/common/functions/cn';
 import { useTastingStore } from '@/common/stores/useTastingStore';
@@ -10,7 +11,9 @@ import { Occasion } from '@/common/types/wine';
 export function OccasionStep() {
   const occasion = useTastingStore((s) => s.occasion);
   const setOccasion = useTastingStore((s) => s.setOccasion);
+  const mode = useTastingStore((s) => s.mode);
   const nextStep = useTastingStore((s) => s.nextStep);
+  const prevStep = useTastingStore((s) => s.prevStep);
 
   const handleSelect = (value: Occasion) => {
     setOccasion(value);
@@ -51,6 +54,14 @@ export function OccasionStep() {
           </motion.button>
         ))}
       </div>
+
+      {mode === 'wine_to_food' && (
+        <div className="flex gap-s mt-l">
+          <Button className="flex-1" variant="ghost" onClick={prevStep}>
+            Back
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
