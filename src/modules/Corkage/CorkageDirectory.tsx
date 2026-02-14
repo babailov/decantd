@@ -53,6 +53,8 @@ const CUISINE_FILTERS = [
   'Canadian',
 ];
 
+const CORKAGE_LISTINGS_LIVE = false;
+
 export function CorkageDirectory() {
   const { isAuthenticated } = useAuthStore();
   const [searchQuery, setSearchQuery] = useState('');
@@ -83,6 +85,7 @@ export function CorkageDirectory() {
       if (!res.ok) throw new Error('Failed to fetch');
       return res.json();
     },
+    enabled: CORKAGE_LISTINGS_LIVE,
   });
 
   const savedVenueIds = new Set(savedData?.restaurantIds ?? []);
@@ -92,6 +95,8 @@ export function CorkageDirectory() {
   }, []);
 
   useEffect(() => {
+    if (!CORKAGE_LISTINGS_LIVE) return;
+
     for (const restaurant of data?.restaurants || []) {
       if (restaurant.offerTitle && !viewedDealIds.current.has(restaurant.id)) {
         viewedDealIds.current.add(restaurant.id);
@@ -129,7 +134,7 @@ export function CorkageDirectory() {
     });
   };
 
-  const restaurants = (data?.restaurants || []).filter((r) => {
+  const restaurants = (CORKAGE_LISTINGS_LIVE ? data?.restaurants : [])?.filter((r) => {
     const matchesSearch =
       !searchQuery ||
       r.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -242,6 +247,14 @@ export function CorkageDirectory() {
             <div key={i} className="h-28 rounded-2xl bg-surface animate-pulse" />
           ))}
         </div>
+      ) : !CORKAGE_LISTINGS_LIVE || (data?.restaurants?.length ?? 0) === 0 ? (
+        <Card className="text-center py-l">
+          <UtensilsCrossed className="h-8 w-8 text-text-muted mx-auto mb-xs" />
+          <p className="text-body-m text-text-secondary">Listings coming soon</p>
+          <p className="text-body-s text-text-muted mt-1">
+            We&apos;re onboarding corkage-friendly businesses now. Check back soon.
+          </p>
+        </Card>
       ) : restaurants.length === 0 ? (
         <Card className="text-center py-l">
           <UtensilsCrossed className="h-8 w-8 text-text-muted mx-auto mb-xs" />

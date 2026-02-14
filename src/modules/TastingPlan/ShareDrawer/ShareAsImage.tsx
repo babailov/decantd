@@ -23,6 +23,7 @@ interface ShareAsImageProps {
 export function ShareAsImage({ plan }: ShareAsImageProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [saving, setSaving] = useState(false);
+  const isWineToFood = plan.mode === 'wine_to_food';
 
   const occasionLabel =
     OCCASIONS.find((o) => o.value === plan.occasion)?.label || plan.occasion;
@@ -91,10 +92,12 @@ export function ShareAsImage({ plan }: ShareAsImageProps) {
             >
               Decantd
             </div>
-            <div style={{ fontSize: 14, color: '#6B5E54' }}>
-              {plan.wineCount} {plan.wineCount === 1 ? 'wine' : 'wines'}
+              <div style={{ fontSize: 14, color: '#6B5E54' }}>
+              {isWineToFood
+                ? `${plan.pairings.length} pairings`
+                : `${plan.wineCount} ${plan.wineCount === 1 ? 'wine' : 'wines'}`}
+              </div>
             </div>
-          </div>
 
           {/* Title */}
           <div
@@ -121,40 +124,22 @@ export function ShareAsImage({ plan }: ShareAsImageProps) {
             {plan.foodPairing ? ` · Paired with ${plan.foodPairing}` : ''}
           </div>
 
-          {/* Wine list */}
+          {/* List */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {plan.wines.map((wine) => (
-              <div
-                key={wine.id}
-                style={{
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                  gap: 12,
-                  backgroundColor: '#FFFFFF',
-                  borderRadius: 10,
-                  padding: '14px 16px',
-                  borderLeft: `4px solid ${WINE_TYPE_COLORS[wine.wineType] || '#7B2D3A'}`,
-                }}
-              >
+            {isWineToFood
+              ? plan.pairings.slice(0, 6).map((pairing, index) => (
                 <div
+                  key={`${pairing.dishName}-${index}`}
                   style={{
-                    width: 24,
-                    height: 24,
-                    borderRadius: '50%',
-                    backgroundColor:
-                      WINE_TYPE_COLORS[wine.wineType] || '#7B2D3A',
-                    color: '#FFFFFF',
-                    fontSize: 12,
-                    fontWeight: 700,
                     display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
+                    flexDirection: 'column',
+                    gap: 6,
+                    backgroundColor: '#FFFFFF',
+                    borderRadius: 10,
+                    padding: '14px 16px',
+                    borderLeft: '4px solid #7B2D3A',
                   }}
                 >
-                  {wine.tastingOrder}
-                </div>
-                <div>
                   <div
                     style={{
                       fontSize: 15,
@@ -162,15 +147,61 @@ export function ShareAsImage({ plan }: ShareAsImageProps) {
                       color: '#2C1810',
                     }}
                   >
-                    {wine.varietal}
+                    {index + 1}. {pairing.dishName}
                   </div>
                   <div style={{ fontSize: 13, color: '#6B5E54' }}>
-                    {wine.region} · ${wine.estimatedPriceMin}–$
-                    {wine.estimatedPriceMax}
+                    {pairing.cuisineType || 'Flexible cuisine'}
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+              : plan.wines.map((wine) => (
+                <div
+                  key={wine.id}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'flex-start',
+                    gap: 12,
+                    backgroundColor: '#FFFFFF',
+                    borderRadius: 10,
+                    padding: '14px 16px',
+                    borderLeft: `4px solid ${WINE_TYPE_COLORS[wine.wineType] || '#7B2D3A'}`,
+                  }}
+                >
+                  <div
+                    style={{
+                      width: 24,
+                      height: 24,
+                      borderRadius: '50%',
+                      backgroundColor:
+                        WINE_TYPE_COLORS[wine.wineType] || '#7B2D3A',
+                      color: '#FFFFFF',
+                      fontSize: 12,
+                      fontWeight: 700,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                    }}
+                  >
+                    {wine.tastingOrder}
+                  </div>
+                  <div>
+                    <div
+                      style={{
+                        fontSize: 15,
+                        fontWeight: 600,
+                        color: '#2C1810',
+                      }}
+                    >
+                      {wine.varietal}
+                    </div>
+                    <div style={{ fontSize: 13, color: '#6B5E54' }}>
+                      {wine.region} · ${wine.estimatedPriceMin}–$
+                      {wine.estimatedPriceMax}
+                    </div>
+                  </div>
+                </div>
+              ))}
           </div>
 
           {/* Footer */}

@@ -1,11 +1,19 @@
 import { z } from 'zod';
 
-import { TastingPlanInput } from '@/common/types/tasting';
+import {
+  FoodToWineTastingPlanInput,
+  TastingPlanInput,
+  WineToFoodTastingPlanInput,
+} from '@/common/types/tasting';
 
 import {
   buildTastingPlanUserPrompt,
   TASTING_PLAN_SYSTEM_PROMPT,
 } from './prompts/tasting-plan';
+import {
+  buildWineToFoodUserPrompt,
+  WINE_TO_FOOD_SYSTEM_PROMPT,
+} from './prompts/wine-to-food';
 
 const flavorProfileSchema = z.object({
   acidity: z.number().min(0).max(5),
@@ -31,7 +39,7 @@ const wineSchema = z.object({
   tastingOrder: z.number().int().positive(),
 });
 
-const planResponseSchema = z.object({
+const foodToWinePlanResponseSchema = z.object({
   title: z.string(),
   description: z.string(),
   tastingTips: z.array(z.string()),
@@ -40,14 +48,30 @@ const planResponseSchema = z.object({
   wines: z.array(wineSchema),
 });
 
-export type GeneratedPlanResponse = z.infer<typeof planResponseSchema>;
+const pairingSchema = z.object({
+  dishName: z.string(),
+  cuisineType: z.string().optional(),
+  prepTimeBand: z.string().optional(),
+  estimatedCostMin: z.number().optional(),
+  estimatedCostMax: z.number().optional(),
+  rationale: z.string(),
+  dishAttributes: z.array(z.string()),
+});
 
-export async function generatePlan(
-  input: TastingPlanInput,
-  apiKey: string,
-): Promise<GeneratedPlanResponse> {
-  const userPrompt = buildTastingPlanUserPrompt(input);
+const wineToFoodPlanResponseSchema = z.object({
+  title: z.string(),
+  description: z.string(),
+  pairings: z.array(pairingSchema).min(5).max(8),
+  hostTips: z.array(z.string()),
+  totalEstimatedCostMin: z.number(),
+  totalEstimatedCostMax: z.number(),
+});
 
+export type FoodToWineGeneratedPlanResponse = z.infer<typeof foodToWinePlanResponseSchema>;
+export type WineToFoodGeneratedPlanResponse = z.infer<typeof wineToFoodPlanResponseSchema>;
+export type GeneratedPlanResponse = FoodToWineGeneratedPlanResponse | WineToFoodGeneratedPlanResponse;
+
+async function sendToAnthropic(apiKey: string, system: string, userPrompt: string): Promise<unknown> {
   const response = await fetch('https://api.anthropic.com/v1/messages', {
     method: 'POST',
     headers: {
@@ -58,7 +82,7 @@ export async function generatePlan(
     body: JSON.stringify({
       model: 'claude-sonnet-4-5-20250929',
       max_tokens: 4096,
-      system: TASTING_PLAN_SYSTEM_PROMPT,
+      system,
       messages: [{ role: 'user', content: userPrompt }],
     }),
   });
@@ -74,14 +98,44 @@ export async function generatePlan(
     throw new Error('No text response from AI');
   }
 
-  // Strip markdown code fences if present (```json ... ```)
   const rawText = textBlock.text
     .replace(/^```(?:json)?\s*\n?/i, '')
     .replace(/\n?```\s*$/i, '')
     .trim();
 
-  const parsed = JSON.parse(rawText);
-  const validated = planResponseSchema.parse(parsed);
+  return JSON.parse(rawText);
+}
 
-  return validated;
+async function generateFoodToWinePlan(
+  input: FoodToWineTastingPlanInput,
+  apiKey: string,
+): Promise<FoodToWineGeneratedPlanResponse> {
+  const parsed = await sendToAnthropic(
+    apiKey,
+    TASTING_PLAN_SYSTEM_PROMPT,
+    buildTastingPlanUserPrompt(input),
+  );
+  return foodToWinePlanResponseSchema.parse(parsed);
+}
+
+async function generateWineToFoodPlan(
+  input: WineToFoodTastingPlanInput,
+  apiKey: string,
+): Promise<WineToFoodGeneratedPlanResponse> {
+  const parsed = await sendToAnthropic(
+    apiKey,
+    WINE_TO_FOOD_SYSTEM_PROMPT,
+    buildWineToFoodUserPrompt(input),
+  );
+  return wineToFoodPlanResponseSchema.parse(parsed);
+}
+
+export async function generatePlan(
+  input: TastingPlanInput,
+  apiKey: string,
+): Promise<GeneratedPlanResponse> {
+  if (input.mode === 'wine_to_food') {
+    return generateWineToFoodPlan(input, apiKey);
+  }
+  return generateFoodToWinePlan(input, apiKey);
 }

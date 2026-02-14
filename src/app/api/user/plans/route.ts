@@ -6,6 +6,14 @@ import { tastingPlans } from '@/common/db/schema';
 import { getDb } from '@/server/auth/get-db';
 import { getUserFromRequest } from '@/server/auth/session';
 
+type PlanMode = 'food_to_wine' | 'wine_to_food';
+type PairingLabel = 'Food pairing' | 'Wine pairing';
+
+interface GeneratedPlanSnapshot {
+  mode?: PlanMode;
+  pairings?: unknown[];
+}
+
 export async function GET(request: NextRequest) {
   try {
     const db = await getDb();
@@ -29,14 +37,29 @@ export async function GET(request: NextRequest) {
       orderBy: [desc(tastingPlans.createdAt)],
     });
 
-    const results = plans.map((plan) => ({
-      id: plan.id,
-      title: plan.title,
-      description: plan.description,
-      occasion: plan.occasion,
-      wineCount: plan.wineCount,
-      createdAt: plan.createdAt,
-    }));
+    const results = plans.map((plan) => {
+      const generatedPlan = (plan.generatedPlan ?? {}) as GeneratedPlanSnapshot;
+      const mode: PlanMode = generatedPlan.mode === 'wine_to_food' ? 'wine_to_food' : 'food_to_wine';
+      const pairingLabel: PairingLabel = mode === 'wine_to_food' ? 'Food pairing' : 'Wine pairing';
+      const pairingValue = mode === 'wine_to_food'
+        ? (
+            Array.isArray(generatedPlan.pairings) && generatedPlan.pairings.length > 0
+              ? `${generatedPlan.pairings.length} ${generatedPlan.pairings.length === 1 ? 'dish pairing' : 'dish pairings'}`
+              : 'No pairings yet'
+          )
+        : `${plan.wineCount} ${plan.wineCount === 1 ? 'wine' : 'wines'}`;
+
+      return {
+        id: plan.id,
+        title: plan.title,
+        description: plan.description,
+        occasion: plan.occasion,
+        mode,
+        pairingLabel,
+        pairingValue,
+        createdAt: plan.createdAt,
+      };
+    });
 
     return NextResponse.json({ plans: results });
   } catch (err) {

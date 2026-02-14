@@ -21,6 +21,22 @@ export function validateInputForTier(
     return { valid: true };
   }
 
+  if (input.mode === 'wine_to_food') {
+    if (input.wineInput.type !== 'style') {
+      return {
+        valid: false,
+        error: 'Sign up to use specific bottle matching. Anonymous users use style-based pairing.',
+      };
+    }
+    if (input.dishBudgetMin < 15 || input.dishBudgetMax > 40) {
+      return {
+        valid: false,
+        error: 'Sign up for wider dish budget ranges. Anonymous users use USD $15-40.',
+      };
+    }
+    return { valid: true };
+  }
+
   if (!ANONYMOUS_FOOD_OPTIONS.includes(input.foodPairing)) {
     return {
       valid: false,

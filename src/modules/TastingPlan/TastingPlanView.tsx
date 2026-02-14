@@ -10,6 +10,7 @@ import {
   Lightbulb,
   MapPin,
   Sparkles,
+  UtensilsCrossed,
   Wine,
 } from 'lucide-react';
 import { motion } from 'motion/react';
@@ -45,6 +46,7 @@ export function TastingPlanView({ plan, showBackToJournal = false }: TastingPlan
   const [deepDiveExpanded, setDeepDiveExpanded] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
   const { isAuthenticated } = useAuthStore();
+  const isWineToFood = plan.mode === 'wine_to_food';
 
   const { data: ratingsData } = useQuery({
     queryKey: queryKeys.user.ratingsForPlan(plan.id),
@@ -53,7 +55,7 @@ export function TastingPlanView({ plan, showBackToJournal = false }: TastingPlan
       if (!res.ok) return { ratings: [] };
       return res.json();
     },
-    enabled: isAuthenticated(),
+    enabled: isAuthenticated() && !isWineToFood,
   });
 
   const ratingsMap = new Map(
@@ -100,7 +102,9 @@ export function TastingPlanView({ plan, showBackToJournal = false }: TastingPlan
             <div className="flex items-center gap-xs mt-1">
               <Badge>{occasionEmoji} {occasionLabel}</Badge>
               <Badge variant="default">
-                {plan.wineCount} {plan.wineCount === 1 ? 'wine' : 'wines'}
+                {isWineToFood
+                  ? `${plan.pairings.length} pairings`
+                  : `${plan.wineCount} ${plan.wineCount === 1 ? 'wine' : 'wines'}`}
               </Badge>
             </div>
           </div>
@@ -120,7 +124,9 @@ export function TastingPlanView({ plan, showBackToJournal = false }: TastingPlan
             <p className="text-body-m text-text-secondary">{plan.description}</p>
           </div>
           <p className="text-body-s text-text-muted">
-            Follow the order below, then open details only if you want the full sommelier breakdown.
+            {isWineToFood
+              ? 'Start with the top dish ideas, then check notes for host execution tips.'
+              : 'Follow the order below, then open details only if you want the full sommelier breakdown.'}
           </p>
         </Card>
       </motion.div>
@@ -153,29 +159,51 @@ export function TastingPlanView({ plan, showBackToJournal = false }: TastingPlan
         </Link>
       </motion.div>
 
-      {/* Wine timeline */}
-      <div className="relative">
-        {/* Timeline line */}
-        <div className="absolute left-[18px] top-4 bottom-4 w-0.5 bg-border" />
-
-        <div className="space-y-m">
-          {plan.wines.map((wine, i) => (
-            <div key={wine.id} className="relative pl-12">
-              {/* Timeline dot */}
-              <div className="absolute left-[7px] top-4 w-6 h-6 rounded-full bg-primary text-text-on-primary flex items-center justify-center text-body-xs font-bold z-elevated">
-                {wine.tastingOrder}
+      {isWineToFood ? (
+        <div className="space-y-s">
+          {plan.pairings.map((pairing, index) => (
+            <Card key={`${pairing.dishName}-${index}`} className="bg-surface-elevated border-border" variant="outlined">
+              <div className="flex items-start justify-between gap-s">
+                <div>
+                  <p className="font-display text-body-l font-semibold text-primary">
+                    {index + 1}. {pairing.dishName}
+                  </p>
+                  <p className="text-body-xs text-text-muted mt-0.5">
+                    {pairing.cuisineType || 'Flexible cuisine'}
+                    {pairing.prepTimeBand ? ` · ${pairing.prepTimeBand}` : ''}
+                    {pairing.estimatedCostMin && pairing.estimatedCostMax
+                      ? ` · $${pairing.estimatedCostMin}-$${pairing.estimatedCostMax}`
+                      : ''}
+                  </p>
+                </div>
+                <UtensilsCrossed className="h-5 w-5 text-accent shrink-0" />
               </div>
-              <WineRecommendation index={i} wine={wine}>
-                <WineRating
-                  existingRating={ratingsMap.get(wine.id)}
-                  planId={plan.id}
-                  planWineId={wine.id}
-                />
-              </WineRecommendation>
-            </div>
+              <p className="text-body-s text-text-secondary mt-xs">{pairing.rationale}</p>
+            </Card>
           ))}
         </div>
-      </div>
+      ) : (
+        <div className="relative">
+          <div className="absolute left-[18px] top-4 bottom-4 w-0.5 bg-border" />
+
+          <div className="space-y-m">
+            {plan.wines.map((wine, i) => (
+              <div key={wine.id} className="relative pl-12">
+                <div className="absolute left-[7px] top-4 w-6 h-6 rounded-full bg-primary text-text-on-primary flex items-center justify-center text-body-xs font-bold z-elevated">
+                  {wine.tastingOrder}
+                </div>
+                <WineRecommendation index={i} wine={wine}>
+                  <WineRating
+                    existingRating={ratingsMap.get(wine.id)}
+                    planId={plan.id}
+                    planWineId={wine.id}
+                  />
+                </WineRecommendation>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Sommelier deep dive */}
       <motion.div
@@ -219,12 +247,22 @@ export function TastingPlanView({ plan, showBackToJournal = false }: TastingPlan
               <div className="flex items-center gap-xs text-body-s">
                 <Wine className="h-4 w-4 text-primary" />
                 <span className="text-text-secondary">
-                  Pairing direction: {plan.foodPairing}
+                  {isWineToFood ? `Selected wine: ${plan.foodPairing}` : `Pairing direction: ${plan.foodPairing}`}
                 </span>
               </div>
             )}
 
-            {plan.tastingTips && plan.tastingTips.length > 0 && (
+            {isWineToFood && plan.hostTips.length > 0 && (
+              <ul className="space-y-xs pl-5">
+                {plan.hostTips.map((tip, i) => (
+                  <li key={i} className="list-disc text-body-s text-text-secondary">
+                    {tip}
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            {!isWineToFood && plan.tastingTips && plan.tastingTips.length > 0 && (
               <ul className="space-y-xs pl-5">
                 {plan.tastingTips.map((tip, i) => (
                   <li key={i} className="list-disc text-body-s text-text-secondary">

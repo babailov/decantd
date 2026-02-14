@@ -46,6 +46,15 @@ export function LandingHero() {
             <ChevronRight className="w-4 h-4" />
           </Button>
         </Link>
+        <p className="mt-s text-body-s text-text-secondary">
+          For partnerships or questions:{' '}
+          <a
+            className="text-primary font-medium hover:text-primary-hover hover:underline"
+            href="mailto:info@decantd.app"
+          >
+            info@decantd.app
+          </a>
+        </p>
       </motion.div>
 
       {/* How it works */}

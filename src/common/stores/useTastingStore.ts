@@ -5,15 +5,21 @@ import { createWithEqualityFn } from 'zustand/traditional';
 import { TastingPlan } from '@/common/types/tasting';
 import { Occasion } from '@/common/types/wine';
 
+export type WizardMode = 'food_to_wine' | 'wine_to_food';
+
 export type WizardStep =
   | 'occasion'
   | 'food'
   | 'preferences'
   | 'budget'
   | 'count'
+  | 'wine'
+  | 'refinements'
+  | 'cuisines'
+  | 'context'
   | 'review';
 
-const STEP_ORDER: WizardStep[] = [
+const FOOD_TO_WINE_STEP_ORDER: WizardStep[] = [
   'occasion',
   'food',
   'preferences',
@@ -22,7 +28,24 @@ const STEP_ORDER: WizardStep[] = [
   'review',
 ];
 
+const WINE_TO_FOOD_STEP_ORDER: WizardStep[] = [
+  'wine',
+  'occasion',
+  'refinements',
+  'cuisines',
+  'context',
+  'review',
+];
+
+function getStepOrder(mode: WizardMode): WizardStep[] {
+  return mode === 'wine_to_food' ? WINE_TO_FOOD_STEP_ORDER : FOOD_TO_WINE_STEP_ORDER;
+}
+
 interface TastingStore {
+  // Wizard mode
+  mode: WizardMode;
+  setMode: (mode: WizardMode) => void;
+
   // Wizard navigation
   currentStep: WizardStep;
   setCurrentStep: (step: WizardStep) => void;
@@ -54,6 +77,25 @@ interface TastingStore {
   specialRequest: string;
   setSpecialRequest: (value: string) => void;
 
+  // Wine to food inputs
+  wineInputType: 'style' | 'specific';
+  setWineInputType: (value: 'style' | 'specific') => void;
+  wineInputValue: string;
+  setWineInputValue: (value: string) => void;
+  diet: 'none' | 'vegetarian' | 'vegan' | 'pescatarian';
+  setDiet: (value: 'none' | 'vegetarian' | 'vegan' | 'pescatarian') => void;
+  prepTime: '<30' | '30_60' | '60_plus';
+  setPrepTime: (value: '<30' | '30_60' | '60_plus') => void;
+  spiceLevel: 'mild' | 'medium' | 'high';
+  setSpiceLevel: (value: 'mild' | 'medium' | 'high') => void;
+  dishBudgetMin: number;
+  dishBudgetMax: number;
+  setDishBudgetRange: (min: number, max: number) => void;
+  cuisinePreferences: string[];
+  toggleCuisinePreference: (value: string) => void;
+  guestCountBand: 'small' | 'medium' | 'large';
+  setGuestCountBand: (value: 'small' | 'medium' | 'large') => void;
+
   // Generation state
   isGenerating: boolean;
   setIsGenerating: (value: boolean) => void;
@@ -67,6 +109,7 @@ interface TastingStore {
 }
 
 const initialState = {
+  mode: 'food_to_wine' as WizardMode,
   currentStep: 'occasion' as WizardStep,
   occasion: null as Occasion | null,
   foodPairing: '',
@@ -76,6 +119,15 @@ const initialState = {
   budgetMax: 40,
   wineCount: 3,
   specialRequest: '',
+  wineInputType: 'style' as 'style' | 'specific',
+  wineInputValue: '',
+  diet: 'none' as 'none' | 'vegetarian' | 'vegan' | 'pescatarian',
+  prepTime: '30_60' as '<30' | '30_60' | '60_plus',
+  spiceLevel: 'medium' as 'mild' | 'medium' | 'high',
+  dishBudgetMin: 15,
+  dishBudgetMax: 40,
+  cuisinePreferences: [] as string[],
+  guestCountBand: 'medium' as 'small' | 'medium' | 'large',
   isGenerating: false,
   generatedPlan: null as TastingPlan | null,
   generationError: null as string | null,
@@ -86,21 +138,28 @@ const useTastingStore = createWithEqualityFn<TastingStore>()(
     (set, get) => ({
       ...initialState,
 
+      setMode: (mode) =>
+        set({
+          mode,
+          currentStep: getStepOrder(mode)[0],
+        }),
       setCurrentStep: (step) => set({ currentStep: step }),
       nextStep: () => {
-        const idx = STEP_ORDER.indexOf(get().currentStep);
-        if (idx < STEP_ORDER.length - 1) {
-          set({ currentStep: STEP_ORDER[idx + 1] });
+        const stepOrder = getStepOrder(get().mode);
+        const idx = stepOrder.indexOf(get().currentStep);
+        if (idx < stepOrder.length - 1) {
+          set({ currentStep: stepOrder[idx + 1] });
         }
       },
       prevStep: () => {
-        const idx = STEP_ORDER.indexOf(get().currentStep);
+        const stepOrder = getStepOrder(get().mode);
+        const idx = stepOrder.indexOf(get().currentStep);
         if (idx > 0) {
-          set({ currentStep: STEP_ORDER[idx - 1] });
+          set({ currentStep: stepOrder[idx - 1] });
         }
       },
-      currentStepIndex: () => STEP_ORDER.indexOf(get().currentStep),
-      totalSteps: () => STEP_ORDER.length,
+      currentStepIndex: () => getStepOrder(get().mode).indexOf(get().currentStep),
+      totalSteps: () => getStepOrder(get().mode).length,
 
       setOccasion: (occasion) => set({ occasion }),
 
@@ -122,6 +181,22 @@ const useTastingStore = createWithEqualityFn<TastingStore>()(
 
       setWineCount: (wineCount) => set({ wineCount }),
       setSpecialRequest: (specialRequest) => set({ specialRequest }),
+      setWineInputType: (wineInputType) => set({ wineInputType }),
+      setWineInputValue: (wineInputValue) => set({ wineInputValue }),
+      setDiet: (diet) => set({ diet }),
+      setPrepTime: (prepTime) => set({ prepTime }),
+      setSpiceLevel: (spiceLevel) => set({ spiceLevel }),
+      setDishBudgetRange: (dishBudgetMin, dishBudgetMax) =>
+        set({ dishBudgetMin, dishBudgetMax }),
+      toggleCuisinePreference: (value) => {
+        const current = get().cuisinePreferences;
+        if (current.includes(value)) {
+          set({ cuisinePreferences: current.filter((item) => item !== value) });
+        } else {
+          set({ cuisinePreferences: [...current, value] });
+        }
+      },
+      setGuestCountBand: (guestCountBand) => set({ guestCountBand }),
 
       setIsGenerating: (isGenerating) => set({ isGenerating }),
       setGeneratedPlan: (generatedPlan) => set({ generatedPlan }),
@@ -132,6 +207,7 @@ const useTastingStore = createWithEqualityFn<TastingStore>()(
     {
       name: 'decantd-tasting-wizard',
       partialize: (state) => ({
+        mode: state.mode,
         occasion: state.occasion,
         foodPairing: state.foodPairing,
         regionPreferences: state.regionPreferences,
@@ -140,6 +216,15 @@ const useTastingStore = createWithEqualityFn<TastingStore>()(
         budgetMax: state.budgetMax,
         wineCount: state.wineCount,
         specialRequest: state.specialRequest,
+        wineInputType: state.wineInputType,
+        wineInputValue: state.wineInputValue,
+        diet: state.diet,
+        prepTime: state.prepTime,
+        spiceLevel: state.spiceLevel,
+        dishBudgetMin: state.dishBudgetMin,
+        dishBudgetMax: state.dishBudgetMax,
+        cuisinePreferences: state.cuisinePreferences,
+        guestCountBand: state.guestCountBand,
         currentStep: state.currentStep,
       }),
     },
@@ -147,4 +232,9 @@ const useTastingStore = createWithEqualityFn<TastingStore>()(
   shallow,
 );
 
-export { STEP_ORDER, useTastingStore };
+export {
+  FOOD_TO_WINE_STEP_ORDER,
+  getStepOrder,
+  useTastingStore,
+  WINE_TO_FOOD_STEP_ORDER,
+};

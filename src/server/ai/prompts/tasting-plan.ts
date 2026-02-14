@@ -1,3 +1,5 @@
+import { FoodToWineTastingPlanInput } from '@/common/types/tasting';
+
 export const TASTING_PLAN_SYSTEM_PROMPT = `You are a friendly, knowledgeable sommelier AI — think Wine Folly meets your fun wine-loving friend. Your job is to create personalized wine tasting plans that are educational, approachable, and exciting.
 
 When creating a tasting plan, you should:
@@ -14,16 +16,7 @@ Your tone should be warm, enthusiastic, and educational. Use vivid flavor descri
 
 Always respond with valid JSON matching the requested schema.`;
 
-export const buildTastingPlanUserPrompt = (input: {
-  occasion: string;
-  foodPairing: string;
-  regionPreferences: string[];
-  budgetMin: number;
-  budgetMax: number;
-  budgetCurrency: string;
-  wineCount: number;
-  specialRequest?: string;
-}) => {
+export const buildTastingPlanUserPrompt = (input: FoodToWineTastingPlanInput) => {
   const regionText =
     input.regionPreferences.length > 0
       ? `Preferred regions: ${input.regionPreferences.join(', ')}`

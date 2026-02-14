@@ -4,16 +4,24 @@ import { z } from 'zod';
 
 import { createDbClient } from '@/common/db/client';
 import { generationLogs, tastingPlanWines, tastingPlans } from '@/common/db/schema';
-import { TastingPlanInput } from '@/common/types/tasting';
+import {
+  FoodToWineTastingPlanInput,
+  TastingPlanInput,
+} from '@/common/types/tasting';
 
-import { generatePlan } from '@/server/ai/generate-plan';
+import {
+  FoodToWineGeneratedPlanResponse,
+  generatePlan,
+  WineToFoodGeneratedPlanResponse,
+} from '@/server/ai/generate-plan';
 import { getUserFromRequest } from '@/server/auth/session';
 import { computeInputHash, getCachedPlan, setCachedPlan } from '@/server/cache/plan-cache';
 import { fetchPlanById } from '@/server/plans/fetch-plan';
-import { canGenerate, resolveUserTier, getTierConfig } from '@/server/tier/resolve-tier';
+import { canGenerate, getTierConfig, resolveUserTier } from '@/server/tier/resolve-tier';
 import { validateInputForTier } from '@/server/tier/validate-input';
 
-const inputSchema = z.object({
+const foodToWineInputSchema = z.object({
+  mode: z.literal('food_to_wine').default('food_to_wine'),
   occasion: z.enum(['dinner_party', 'date_night', 'casual', 'celebration', 'educational', 'business']),
   foodPairing: z.string(),
   regionPreferences: z.array(z.string()),
@@ -24,13 +32,41 @@ const inputSchema = z.object({
   specialRequest: z.string().max(300).optional(),
 });
 
+const wineToFoodInputSchema = z.object({
+  mode: z.literal('wine_to_food'),
+  occasion: z.enum(['dinner_party', 'date_night', 'casual', 'celebration', 'educational', 'business']),
+  wineInput: z.object({
+    type: z.enum(['style', 'specific']),
+    value: z.string().min(1),
+  }),
+  diet: z.enum(['none', 'vegetarian', 'vegan', 'pescatarian']),
+  prepTime: z.enum(['<30', '30_60', '60_plus']),
+  spiceLevel: z.enum(['mild', 'medium', 'high']),
+  dishBudgetMin: z.number().positive(),
+  dishBudgetMax: z.number().positive(),
+  cuisinePreferences: z.array(z.string()),
+  guestCountBand: z.enum(['small', 'medium', 'large']),
+  specialRequest: z.string().max(300).optional(),
+});
+
+const inputSchema = z.union([foodToWineInputSchema, wineToFoodInputSchema]);
+
+function normalizeInput(body: unknown): TastingPlanInput {
+  if (
+    typeof body === 'object' &&
+    body !== null &&
+    !('mode' in body)
+  ) {
+    return foodToWineInputSchema.parse({ ...body, mode: 'food_to_wine' }) as FoodToWineTastingPlanInput;
+  }
+  return inputSchema.parse(body) as TastingPlanInput;
+}
+
 export async function POST(request: NextRequest) {
   try {
-    // 1. Parse + validate input
     const body = await request.json();
-    const input = inputSchema.parse(body) as TastingPlanInput;
+    const input = normalizeInput(body);
 
-    // 2. Get DB + API key
     let apiKey = '';
     let d1: D1Database | null = null;
 
@@ -39,11 +75,9 @@ export async function POST(request: NextRequest) {
       apiKey = ctx.env.ANTHROPIC_API_KEY || '';
       d1 = ctx.env.DB;
     } catch {
-      // Cloudflare context not available (local next dev without wrangler)
       apiKey = process.env.ANTHROPIC_API_KEY || '';
     }
 
-    // 3. Resolve user + tier
     let user = null;
     const db = d1 ? createDbClient(d1) : null;
 
@@ -58,7 +92,6 @@ export async function POST(request: NextRequest) {
     const tier = resolveUserTier(user);
     const tierConfig = getTierConfig(tier);
 
-    // 4. Server-side validate input against tier
     const validation = validateInputForTier(input, tier);
     if (!validation.valid) {
       return NextResponse.json(
@@ -67,16 +100,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 5. Compute input hash
     const inputHash = await computeInputHash(input);
 
-    // 6. Check cache (anonymous users are served exclusively from cache)
     if (db) {
       const cached = await getCachedPlan(db, inputHash);
       if (cached) {
         const cachedPlanData = await fetchPlanById(db, cached.planId);
         if (cachedPlanData) {
-          // Log cache hit for authenticated users
           if (user) {
             await db.insert(generationLogs).values({
               id: crypto.randomUUID(),
@@ -86,13 +116,11 @@ export async function POST(request: NextRequest) {
               wasCacheHit: true,
             } as typeof generationLogs.$inferInsert);
           }
-
           return NextResponse.json({ ...cachedPlanData, cached: true });
         }
       }
     }
 
-    // 7. Anonymous users must not trigger live AI generation
     if (tier === 'anonymous') {
       return NextResponse.json(
         { message: 'This tasting plan is being prepared. Please try again in a few minutes, or sign up for instant custom plans.' },
@@ -100,7 +128,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 8. API key required from here on (authenticated AI generation)
     if (!apiKey) {
       return NextResponse.json(
         { message: 'API key not configured' },
@@ -108,7 +135,6 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 9. Rate limit check (only for authenticated free users)
     if (db && user) {
       const rateCheck = await canGenerate(db, user);
       if (!rateCheck.allowed) {
@@ -123,37 +149,47 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 10. Generate via AI
     const generatedPlan = await generatePlan(input, apiKey);
-
-    // 11. Store plan in D1
     const planId = crypto.randomUUID();
     const now = new Date().toISOString();
 
-    const wines = generatedPlan.wines.map((wine, i) => ({
-      id: crypto.randomUUID(),
-      planId,
-      ...wine,
-      acidity: wine.flavorProfile.acidity,
-      tannin: wine.flavorProfile.tannin,
-      sweetness: wine.flavorProfile.sweetness,
-      alcohol: wine.flavorProfile.alcohol,
-      body: wine.flavorProfile.body,
-      tastingOrder: wine.tastingOrder || i + 1,
-    }));
+    const foodToWinePlan = input.mode === 'food_to_wine'
+      ? generatedPlan as FoodToWineGeneratedPlanResponse
+      : null;
+    const wineToFoodPlan = input.mode === 'wine_to_food'
+      ? generatedPlan as WineToFoodGeneratedPlanResponse
+      : null;
+
+    const wines = input.mode === 'food_to_wine' && foodToWinePlan
+      ? foodToWinePlan.wines.map((wine, i) => ({
+          id: crypto.randomUUID(),
+          planId,
+          ...wine,
+          acidity: wine.flavorProfile.acidity,
+          tannin: wine.flavorProfile.tannin,
+          sweetness: wine.flavorProfile.sweetness,
+          alcohol: wine.flavorProfile.alcohol,
+          body: wine.flavorProfile.body,
+          tastingOrder: wine.tastingOrder || i + 1,
+        }))
+      : [];
 
     if (db) {
       const planValues = {
         id: planId,
         userId: user?.id || null,
         occasion: input.occasion,
-        foodPairing: input.foodPairing,
-        regionPreferences: input.regionPreferences,
-        budgetMin: input.budgetMin,
-        budgetMax: input.budgetMax,
-        budgetCurrency: input.budgetCurrency,
-        wineCount: input.wineCount,
-        generatedPlan: generatedPlan,
+        foodPairing: input.mode === 'food_to_wine' ? input.foodPairing : input.wineInput.value,
+        regionPreferences: input.mode === 'food_to_wine' ? input.regionPreferences : [],
+        budgetMin: input.mode === 'food_to_wine' ? input.budgetMin : input.dishBudgetMin,
+        budgetMax: input.mode === 'food_to_wine' ? input.budgetMax : input.dishBudgetMax,
+        budgetCurrency: input.mode === 'food_to_wine' ? input.budgetCurrency : 'USD',
+        wineCount: input.mode === 'food_to_wine' ? input.wineCount : 1,
+        generatedPlan: {
+          ...generatedPlan,
+          mode: input.mode,
+          inputSnapshot: input.mode === 'wine_to_food' ? input : undefined,
+        },
         title: generatedPlan.title,
         description: generatedPlan.description,
         isPublic: true,
@@ -187,10 +223,8 @@ export async function POST(request: NextRequest) {
         await db.insert(tastingPlanWines).values(wineValues as typeof tastingPlanWines.$inferInsert);
       }
 
-      // 12. Store in cache
       await setCachedPlan(db, input, inputHash, planId, tierConfig.cacheTtlHours);
 
-      // 13. Log generation
       if (user) {
         await db.insert(generationLogs).values({
           id: crypto.randomUUID(),
@@ -202,31 +236,66 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 14. Return plan response
-    const plan = {
+    if (input.mode === 'food_to_wine') {
+      if (!foodToWinePlan) {
+        throw new Error('Invalid generated plan shape for food-to-wine mode');
+      }
+      const plan = {
+        id: planId,
+        mode: 'food_to_wine' as const,
+        title: foodToWinePlan.title,
+        description: foodToWinePlan.description,
+        occasion: input.occasion,
+        foodPairing: input.foodPairing,
+        regionPreferences: input.regionPreferences,
+        budgetMin: input.budgetMin,
+        budgetMax: input.budgetMax,
+        budgetCurrency: input.budgetCurrency,
+        wineCount: input.wineCount,
+        wines: foodToWinePlan.wines.map((wine, i) => ({
+          id: wines[i].id,
+          wineName: wine.wineName,
+          ...wine,
+          tastingOrder: wine.tastingOrder || i + 1,
+        })),
+        tastingTips: foodToWinePlan.tastingTips,
+        totalEstimatedCostMin: foodToWinePlan.totalEstimatedCostMin,
+        totalEstimatedCostMax: foodToWinePlan.totalEstimatedCostMax,
+        createdAt: now,
+      };
+      return NextResponse.json(plan);
+    }
+
+    if (!wineToFoodPlan) {
+      throw new Error('Invalid generated plan shape for wine-to-food mode');
+    }
+
+    const reversePlan = {
       id: planId,
-      title: generatedPlan.title,
-      description: generatedPlan.description,
+      mode: 'wine_to_food' as const,
+      title: wineToFoodPlan.title,
+      description: wineToFoodPlan.description,
       occasion: input.occasion,
-      foodPairing: input.foodPairing,
-      regionPreferences: input.regionPreferences,
-      budgetMin: input.budgetMin,
-      budgetMax: input.budgetMax,
-      budgetCurrency: input.budgetCurrency,
-      wineCount: input.wineCount,
-      wines: generatedPlan.wines.map((wine, i) => ({
-        id: wines[i].id,
-        wineName: wine.wineName,
-        ...wine,
-        tastingOrder: wine.tastingOrder || i + 1,
-      })),
-      tastingTips: generatedPlan.tastingTips,
-      totalEstimatedCostMin: generatedPlan.totalEstimatedCostMin,
-      totalEstimatedCostMax: generatedPlan.totalEstimatedCostMax,
+      foodPairing: input.wineInput.value,
+      wineInput: input.wineInput,
+      diet: input.diet,
+      prepTime: input.prepTime,
+      spiceLevel: input.spiceLevel,
+      dishBudgetMin: input.dishBudgetMin,
+      dishBudgetMax: input.dishBudgetMax,
+      cuisinePreferences: input.cuisinePreferences,
+      guestCountBand: input.guestCountBand,
+      wineCount: 1,
+      wines: [],
+      pairings: wineToFoodPlan.pairings,
+      hostTips: wineToFoodPlan.hostTips,
+      tastingTips: [],
+      totalEstimatedCostMin: wineToFoodPlan.totalEstimatedCostMin,
+      totalEstimatedCostMax: wineToFoodPlan.totalEstimatedCostMax,
       createdAt: now,
     };
 
-    return NextResponse.json(plan);
+    return NextResponse.json(reversePlan);
   } catch (err) {
     console.error('Plan generation error:', err);
     const message =

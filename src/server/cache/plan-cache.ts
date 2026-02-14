@@ -5,15 +5,31 @@ import { cachedPlans } from '@/common/db/schema';
 import { TastingPlanInput } from '@/common/types/tasting';
 
 export async function computeInputHash(input: TastingPlanInput): Promise<string> {
-  const normalized = {
-    occasion: input.occasion,
-    foodPairing: input.foodPairing.toLowerCase().trim(),
-    regionPreferences: [...input.regionPreferences].sort(),
-    budgetMin: input.budgetMin,
-    budgetMax: input.budgetMax,
-    wineCount: input.wineCount,
-    specialRequest: input.specialRequest?.toLowerCase().trim() || '',
-  };
+  const normalized = input.mode === 'wine_to_food'
+    ? {
+        mode: input.mode,
+        occasion: input.occasion,
+        wineInputType: input.wineInput.type,
+        wineInputValue: input.wineInput.value.toLowerCase().trim(),
+        diet: input.diet,
+        prepTime: input.prepTime,
+        spiceLevel: input.spiceLevel,
+        dishBudgetMin: input.dishBudgetMin,
+        dishBudgetMax: input.dishBudgetMax,
+        cuisinePreferences: [...input.cuisinePreferences].sort(),
+        guestCountBand: input.guestCountBand,
+        specialRequest: input.specialRequest?.toLowerCase().trim() || '',
+      }
+    : {
+        mode: input.mode,
+        occasion: input.occasion,
+        foodPairing: input.foodPairing.toLowerCase().trim(),
+        regionPreferences: [...input.regionPreferences].sort(),
+        budgetMin: input.budgetMin,
+        budgetMax: input.budgetMax,
+        wineCount: input.wineCount,
+        specialRequest: input.specialRequest?.toLowerCase().trim() || '',
+      };
 
   const data = new TextEncoder().encode(JSON.stringify(normalized));
   const hashBuffer = await crypto.subtle.digest('SHA-256', data);
@@ -53,11 +69,11 @@ export async function setCachedPlan(
     id: crypto.randomUUID(),
     inputHash,
     occasion: input.occasion,
-    foodPairing: input.foodPairing,
-    regionPreferences: input.regionPreferences,
-    budgetMin: input.budgetMin,
-    budgetMax: input.budgetMax,
-    wineCount: input.wineCount,
+    foodPairing: input.mode === 'wine_to_food' ? input.wineInput.value : input.foodPairing,
+    regionPreferences: input.mode === 'wine_to_food' ? [] : input.regionPreferences,
+    budgetMin: input.mode === 'wine_to_food' ? input.dishBudgetMin : input.budgetMin,
+    budgetMax: input.mode === 'wine_to_food' ? input.dishBudgetMax : input.budgetMax,
+    wineCount: input.mode === 'wine_to_food' ? 1 : input.wineCount,
     planId,
     expiresAt,
   } as typeof cachedPlans.$inferInsert);
