@@ -137,7 +137,7 @@ export function ReviewStep() {
         typeof window !== 'undefined' && window.location.pathname === '/tasting/generating';
       resetWizard();
       if (shouldAutoNavigate) {
-        useTastingGenerationToastStore.getState().clearGeneration();
+        useTastingGenerationToastStore.getState().finishGeneration(plan.id);
         router.push(`/tasting/${plan.id}`);
       } else {
         useTastingGenerationToastStore.getState().finishGeneration(plan.id);
