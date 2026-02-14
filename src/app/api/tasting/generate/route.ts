@@ -7,7 +7,6 @@ import { generationLogs, tastingPlanWines, tastingPlans } from '@/common/db/sche
 import {
   FoodToWineTastingPlanInput,
   TastingPlanInput,
-  WineToFoodTastingPlanInput,
 } from '@/common/types/tasting';
 
 import {

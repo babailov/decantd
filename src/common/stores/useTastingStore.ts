@@ -234,7 +234,7 @@ const useTastingStore = createWithEqualityFn<TastingStore>()(
 
 export {
   FOOD_TO_WINE_STEP_ORDER,
-  WINE_TO_FOOD_STEP_ORDER,
   getStepOrder,
   useTastingStore,
+  WINE_TO_FOOD_STEP_ORDER,
 };
