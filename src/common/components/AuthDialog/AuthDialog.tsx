@@ -62,6 +62,21 @@ export function AuthDialog({ open, onOpenChange, defaultMode = 'signup' }: AuthD
     }
   }, []);
 
+  // Reset transient redirect state when navigating back from OAuth flow.
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const resetGoogleLoading = () => setGoogleLoading(false);
+
+    window.addEventListener('pageshow', resetGoogleLoading);
+    window.addEventListener('popstate', resetGoogleLoading);
+
+    return () => {
+      window.removeEventListener('pageshow', resetGoogleLoading);
+      window.removeEventListener('popstate', resetGoogleLoading);
+    };
+  }, []);
+
   const resetForm = () => {
     setEmail('');
     setPassword('');
@@ -320,6 +335,7 @@ export function AuthDialog({ open, onOpenChange, defaultMode = 'signup' }: AuthD
     if (!isOpen) {
       resetForm();
       setMode(defaultMode);
+      setGoogleLoading(false);
     }
     onOpenChange(isOpen);
   };
